@@ -13,9 +13,10 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/imageView"
@@ -24,22 +25,25 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
-            android:scaleType="fitStart"
             app:srcCompat="@drawable/ic_iconoperfil" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="Mi perfil" />
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="correo_del_usuario@gmail.com" />
         </LinearLayout>
 
