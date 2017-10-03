@@ -25,7 +25,7 @@
             android:layout_alignParentTop="true"
             android:adjustViewBounds="true"
             android:scaleType="fitStart"
-            app:srcCompat="@drawable/ic_iconoPerfil" />
+            app:srcCompat="@drawable/ic_iconoperfil" />
 
         <LinearLayout
             android:orientation="vertical"
