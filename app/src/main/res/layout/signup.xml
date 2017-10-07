@@ -4,48 +4,48 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/TFname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="Nombre"
         android:inputType="textPersonName"
-        android:text="Nombre"
         android:textColor="@android:color/darker_gray" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/TFuname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="Usuario"
         android:inputType="textPersonName"
-        android:text="Usuario"
         android:textColor="@android:color/darker_gray" />
 
     <EditText
-        android:id="@+id/editText5"
+        android:id="@+id/TFemail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="Correo electrónico"
         android:inputType="textPersonName"
-        android:text="Correo electrónico"
         android:textColor="@android:color/darker_gray" />
 
     <EditText
-        android:id="@+id/editText6"
+        android:id="@+id/TFpass1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="Contraseña"
         android:inputType="textPersonName"
-        android:text="Contraseña"
         android:textColor="@android:color/darker_gray" />
 
     <EditText
-        android:id="@+id/editText7"
+        android:id="@+id/TFpass2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="Confirmar contraseña"
         android:inputType="textPersonName"
-        android:text="Confirmar contraseña"
         android:textColor="@android:color/darker_gray" />
 
     <RelativeLayout
@@ -54,13 +54,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/Bsignupbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Aceptar" />
 
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/BCancelar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"

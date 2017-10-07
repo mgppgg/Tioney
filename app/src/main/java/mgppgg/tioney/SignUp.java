@@ -1,8 +1,10 @@
 package mgppgg.tioney;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -10,14 +12,25 @@ import android.widget.Toast;
  * Created by manug on 04/10/2017.
  */
 
-public class SignUp extends Activity {
+public class SignUp extends AppCompatActivity {
 
-
+    private Button BtnCancelar;
     DatabaseHelper helper = new DatabaseHelper(this);
+
+
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup);
+
+        BtnCancelar = (Button)findViewById(R.id.BCancelar);
+
+        BtnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     public void onSignUpClick(View v){
@@ -30,10 +43,10 @@ public class SignUp extends Activity {
             EditText pass2 = (EditText)findViewById(R.id.TFpass2);
 
             String namestr = name.getText().toString();
-            String emailstr = name.getText().toString();
-            String unamestr = name.getText().toString();
-            String pass1str = name.getText().toString();
-            String pass2str = name.getText().toString();
+            String emailstr = email.getText().toString();
+            String unamestr = uname.getText().toString();
+            String pass1str = pass1.getText().toString();
+            String pass2str = pass2.getText().toString();
 
             if(!pass1str.equals(pass2str))
             {
@@ -52,5 +65,10 @@ public class SignUp extends Activity {
 
         }
     }
+
+
+
+
+
 
 }
