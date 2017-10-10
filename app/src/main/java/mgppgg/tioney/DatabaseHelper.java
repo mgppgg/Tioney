@@ -2,6 +2,7 @@ package mgppgg.tioney;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -44,6 +45,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_PASS , c.getPass());
 
         db.insert(TABLE_NAME , null , values);
+        db.close();
+    }
+
+    public String searchPass(String user){
+
+        db = this.getReadableDatabase();
+        String query = "select uname,pass from "+TABLE_NAME;
+        Cursor cursor = db.rawQuery(query , null);
+
     }
 
 
