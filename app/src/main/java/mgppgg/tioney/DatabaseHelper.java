@@ -60,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String query = "select uname,pass from "+TABLE_NAME;
         Cursor cursor = db.rawQuery(query , null);
         String a, b;
-        b = "not fouund";
+        b = "not found";
         if(cursor.moveToFirst()){
             do{
                 a = cursor.getString(0);
