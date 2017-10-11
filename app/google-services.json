@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "842269989802",
+    "firebase_url": "https://tioney-40377.firebaseio.com",
+    "project_id": "tioney-40377",
+    "storage_bucket": "tioney-40377.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842269989802:android:0c633eaf269a565d",
+        "android_client_info": {
+          "package_name": "mgppgg.tioney"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "842269989802-uiregt6o1utmdl1tuman7nq3qllhi46s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mgppgg.tioney",
+            "certificate_hash": "8f59b0702469563b46f345c26c42c67e588577b4"
+          }
+        },
+        {
+          "client_id": "842269989802-0mk48isob62q0j6ir8atfh4ruokkou8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAQjTpMrHiWn_Fe0wnTdLM41wATF5GJic"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "842269989802-0mk48isob62q0j6ir8atfh4ruokkou8s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
