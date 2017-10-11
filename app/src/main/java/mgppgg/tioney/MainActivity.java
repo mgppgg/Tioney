@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity
                 .child("prediccion-hoy")
                 .child("cielo");
 
-        dbCielo.addValueEventListener(new ValueEventListener() {
+       /* dbCielo.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String valor = (String) dataSnapshot.getValue();
@@ -68,9 +68,9 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAGLOG, "Error!", databaseError.toException());
+                Log.e("qsdyjdtu", "Error!", databaseError.toException());
             }
-        });
+        });*/
 
     }
 
