@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_UNAME = "uname";
     private static final String COLUMN_PASS = "pass";
     SQLiteDatabase db;
-    private static final String TABLE_CREATE = "create table contacts (id integer primary key not null auto_increment , " +
+    private static final String TABLE_CREATE = "create table contacts (id integer primary key not null , " +
             "name text not null, email text not null , uname text not null, pass text not null);";
 
     public DatabaseHelper(Context context){
@@ -39,6 +39,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     {
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+
+        String query = "select * from contacts";
+        Cursor cursor = db.rawQuery(query , null);
+        int count = cursor.getCount();
+
+        values.put(COLUMN_ID, count);
         values.put(COLUMN_NAME , c.getName());
         values.put(COLUMN_EMAIL , c.getEmail());
         values.put(COLUMN_UNAME , c.getUname());
@@ -53,6 +59,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db = this.getReadableDatabase();
         String query = "select uname,pass from "+TABLE_NAME;
         Cursor cursor = db.rawQuery(query , null);
+        String a, b;
+        b = "not fouund";
+        if(cursor.moveToFirst()){
+            do{
+                a = cursor.getString(0);
+
+                if(a.equals(user)) {
+                    b = cursor.getString(1);
+                    break;
+                }
+            } while(cursor.moveToNext());
+        }
+
+        return b;
 
     }
 
