@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 /**
  * Created by manug on 04/10/2017.
  */
@@ -16,7 +19,7 @@ public class SignUp extends AppCompatActivity {
 
     private Button BtnCancelar;
     private Button BtnAceptar;
-    DatabaseHelper helper = new DatabaseHelper(this);
+    //DatabaseHelper helper = new DatabaseHelper(this);
 
 
     @Override
@@ -56,13 +59,13 @@ public class SignUp extends AppCompatActivity {
                 }
                 else
                 {
-                    Contact c = new Contact();
-                    c.setName(namestr);
-                    c.setEmail(emailstr);
-                    c.setUname(unamestr);
-                    c.setPass(pass1str);
+                    Contact c = new Contact(namestr,emailstr,unamestr,pass1str);
 
-                    helper.insertContact(c);
+                    DatabaseReference dbRef =
+                            FirebaseDatabase.getInstance().getReference()
+                                    .child("Usuarios");
+
+                    dbRef.setValue(c);
 
                     finish();
                 }

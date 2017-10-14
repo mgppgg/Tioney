@@ -3,8 +3,17 @@ package mgppgg.tioney;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class Contact extends AppCompatActivity {
-    String name, email, uname, pass;
+public class Contact  {
+   private  String name, email, uname, pass;
+
+    public Contact(){}
+
+    public Contact(String name, String email, String uname, String pass){
+        this.name = name;
+        this.email = email;
+        this.uname = uname;
+        this.pass = pass;
+    }
 
     public String getName() {
         return name;
@@ -38,9 +47,5 @@ public class Contact extends AppCompatActivity {
         this.pass = pass;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-    }
+
 }

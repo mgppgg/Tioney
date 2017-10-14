@@ -55,11 +55,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        DatabaseReference dbCielo = FirebaseDatabase.getInstance().getReference()
+       /* DatabaseReference dbCielo = FirebaseDatabase.getInstance().getReference()
                 .child("prediccion-hoy")
                 .child("cielo");
 
-       /* dbCielo.addValueEventListener(new ValueEventListener() {
+        dbCielo.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String valor = (String) dataSnapshot.getValue();
