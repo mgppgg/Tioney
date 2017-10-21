@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "842269989802-bqgu9jm7rvkmd9jiof6ohr8t0fm3qdoc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mgppgg.tioney",
+            "certificate_hash": "5db9acb0ea425444d0d36cedd571f94aca98be6f"
+          }
+        },
+        {
           "client_id": "842269989802-uiregt6o1utmdl1tuman7nq3qllhi46s.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

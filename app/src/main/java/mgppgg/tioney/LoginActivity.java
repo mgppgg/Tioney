@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,8 +23,6 @@ public class LoginActivity extends AppCompatActivity {
     private Button BtnLogin ;
     private EditText ETpass;
     private EditText ETemail;
-    private String pass;
-    private String user;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -42,17 +41,17 @@ public class LoginActivity extends AppCompatActivity {
         ETpass = (EditText)findViewById(R.id.ETpass);
         ETemail = (EditText)findViewById(R.id.ETuser);
 
+        mAuth = FirebaseAuth.getInstance();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                if(user!=null){
-                    Log.i("SESION","Sesión iniciada con usuario:"+user.getEmail());
-                }else{
-                    Log.i("SESION","Sesión cerrada");
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    Log.i(TAG,"Sesión iniciada con usuario:"+user.getEmail());
+                } else {
+                    Log.i(TAG,"Sesión cerrada");
                 }
-
             }
         };
 
@@ -63,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 String emailI = ETemail.getText().toString();
                 String passI = ETpass.getText().toString();
-                iniciarSesion(emailI,passI);
+                createAccount(emailI,passI);
 
             }
         });
@@ -73,82 +72,120 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String emailR = ETemail.getText().toString();
                 String passR = ETpass.getText().toString();
-                registrar(emailR,passR);
+                sigin(emailR,passR);
 
             }
         });
 
-
-
-
-
-
-
-       /* BtnRegistrarse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, SignUp.class);
-                startActivity(intent);
-
-            }
-        });*/
-
-        /*BtnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                pass = ETpass.getText().toString();
-                user = ETuser.getText().toString();
-
-                String password = helper.searchPass(user);
-                if(pass.equals(password)){
-
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("Username",user);
-                    startActivity(intent);
-
-                }
-
-                else{
-                    Toast Tpass = Toast.makeText(LoginActivity.this , "Usuario y contraseña incorrectos" , Toast.LENGTH_SHORT);
-                    Tpass.show();;
-                }
-
-            }
-        });*/
     }
 
-    private void registrar(String email, String pass){
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    Log.i("SESION","Usuario creado correctamente");
-                }else{
-                    Log.e("SESION",task.getException().getMessage()+"");
-                }
-            }
-        });
-    }
 
-    private void iniciarSesion(String email, String pass){
 
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,pass);
+    private void createAccount(String email,String password){
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(mAuthListener!=null){
-            FirebaseAuth.getInstance().removeAuthStateListener(mAuthListener);
+        if (!validateForm()) {
+            return;
         }
+
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Error al registrarse", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        // [START_EXCLUDE]
+                        //hideProgressDialog();
+                        // [END_EXCLUDE]
+                    }
+                });
+
+    }
+
+
+    private void sigin(String email,String password){
+
+        if (!validateForm()) {
+            return;
+        }
+
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Error al iniciar sesión",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        // [START_EXCLUDE]
+                       /* if (!task.isSuccessful()) {
+                            mStatusTextView.setText(R.string.auth_failed);
+                        }
+                        hideProgressDialog();*/
+                        // [END_EXCLUDE]
+                    }
+                });
+    }
+
+
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    private boolean validateForm() {
+        boolean valid = true;
+
+        String email = ETemail.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            ETemail.setError("Required.");
+            valid = false;
+        } else {
+            ETemail.setError(null);
+        }
+
+        String password = ETpass.getText().toString();
+        if (TextUtils.isEmpty(password)) {
+            ETpass.setError("Required.");
+            valid = false;
+        } else {
+            ETpass.setError(null);
+        }
+
+        return valid;
     }
 
 
