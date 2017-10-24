@@ -82,6 +82,14 @@ public class LoginActivity extends BaseActivity {
     }
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+
+
 
     private void createAccount(String email,String password){
 
@@ -153,12 +161,6 @@ public class LoginActivity extends BaseActivity {
 
 
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
 
     @Override
     public void onStop() {

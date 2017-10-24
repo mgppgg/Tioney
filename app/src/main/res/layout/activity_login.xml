@@ -4,25 +4,25 @@
     android:layout_height="match_parent">
 
 
-        <EditText
-            android:id="@+id/ETuser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Usuario"
-            android:inputType="textPersonName"
-            android:textColor="@android:color/darker_gray" />
+    <EditText
+        android:id="@+id/ETuser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Usuario"
+        android:inputType="textEmailAddress"
+        android:textColor="?attr/actionMenuTextColor" />
 
-        <EditText
-            android:id="@+id/ETpass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Contraseña"
-            android:inputType="textPersonName"
-            android:textColor="@android:color/darker_gray" />
+    <EditText
+        android:id="@+id/ETpass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Contraseña"
+        android:inputType="textPassword"
+        android:textColor="?attr/actionMenuTextColor" />
 
-        <RelativeLayout
+    <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
