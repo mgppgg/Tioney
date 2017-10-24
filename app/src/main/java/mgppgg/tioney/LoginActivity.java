@@ -89,6 +89,7 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
+        showProgressDialog();
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -108,9 +109,8 @@ public class LoginActivity extends BaseActivity {
 
                         }
 
-                        // [START_EXCLUDE]
-                        //hideProgressDialog();
-                        // [END_EXCLUDE]
+
+                        hideProgressDialog();
                     }
                 });
 
@@ -123,6 +123,7 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
+        showProgressDialog();
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -144,9 +145,8 @@ public class LoginActivity extends BaseActivity {
                         // [START_EXCLUDE]
                        /* if (!task.isSuccessful()) {
                             mStatusTextView.setText(R.string.auth_failed);
-                        }
-                        hideProgressDialog();*/
-                        // [END_EXCLUDE]
+                        }*/
+                        hideProgressDialog();
                     }
                 });
     }
