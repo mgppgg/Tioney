@@ -4,24 +4,6 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/TFname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Nombre"
-        android:inputType="textPersonName"
-        android:textColor="@android:color/darker_gray" />
-
-    <EditText
-        android:id="@+id/TFuname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Usuario"
-        android:inputType="textPersonName"
-        android:textColor="@android:color/darker_gray" />
-
-    <EditText
         android:id="@+id/TFemail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

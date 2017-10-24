@@ -30,8 +30,6 @@ public class LoginActivity extends BaseActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String TAG = "EmailPassword";
 
-    DatabaseHelper helper = new DatabaseHelper(this);
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +62,10 @@ public class LoginActivity extends BaseActivity {
 
                 String emailI = ETemail.getText().toString();
                 String passI = ETpass.getText().toString();
-                createAccount(emailI,passI);
+                Intent intent = new Intent(LoginActivity.this, SignUp.class);
+                startActivity(intent);
+
+
 
             }
         });
@@ -91,42 +92,6 @@ public class LoginActivity extends BaseActivity {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
         }
-
-    }
-
-
-
-
-    private void createAccount(String email,String password){
-
-        if (!validateForm()) {
-            return;
-        }
-
-        showProgressDialog();
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(intent);
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Error al registrarse", Toast.LENGTH_SHORT).show();
-
-                        }
-
-
-                        hideProgressDialog();
-                    }
-                });
 
     }
 
@@ -181,7 +146,7 @@ public class LoginActivity extends BaseActivity {
 
         String email = ETemail.getText().toString();
         if (TextUtils.isEmpty(email)) {
-            ETemail.setError("Required.");
+            ETemail.setError("Obligatorio");
             valid = false;
         } else {
             ETemail.setError(null);
@@ -189,7 +154,7 @@ public class LoginActivity extends BaseActivity {
 
         String password = ETpass.getText().toString();
         if (TextUtils.isEmpty(password)) {
-            ETpass.setError("Required.");
+            ETpass.setError("Obligatorio");
             valid = false;
         } else {
             ETpass.setError(null);
