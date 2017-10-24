@@ -78,7 +78,7 @@ public class SignUp extends LoginActivity {
 
                 if(!pass1str.equals(pass2str))
                 {
-                    Toast pass = Toast.makeText(SignUp.this , "Las contraseñas no coinciden!" , Toast.LENGTH_SHORT);
+                    Toast.makeText(SignUp.this, "Las contraseñas no coinciden!", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {

@@ -9,8 +9,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Correo electrónico"
-        android:inputType="textPersonName"
-        android:textColor="@android:color/darker_gray" />
+        android:inputType="textEmailAddress"
+        android:textColor="?attr/actionMenuTextColor" />
 
     <EditText
         android:id="@+id/TFpass1"
@@ -18,8 +18,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Contraseña"
-        android:inputType="textPersonName"
-        android:textColor="@android:color/darker_gray" />
+        android:inputType="textPassword"
+        android:textColor="?attr/actionMenuTextColor" />
 
     <EditText
         android:id="@+id/TFpass2"
@@ -27,8 +27,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Confirmar contraseña"
-        android:inputType="textPersonName"
-        android:textColor="@android:color/darker_gray" />
+        android:inputType="textPassword"
+        android:textColor="?attr/actionMenuTextColor" />
 
     <RelativeLayout
         android:layout_width="match_parent"
