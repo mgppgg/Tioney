@@ -83,6 +83,7 @@ public class SignUp extends LoginActivity {
                 else
                 {
                     createAccount(emailstr,pass1str);
+                    sendEmailVerification();
                 }
 
             }
@@ -121,6 +122,37 @@ public class SignUp extends LoginActivity {
                     }
                 });
 
+    }
+
+    private void sendEmailVerification() {
+        // Disable button
+        //findViewById(R.id.verify_email_button).setEnabled(false);
+
+        // Send verification email
+        // [START send_email_verification]
+        final FirebaseUser user = mAuth.getCurrentUser();
+        user.sendEmailVerification()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // [START_EXCLUDE]
+                        // Re-enable button
+                        //findViewById(R.id.verify_email_button).setEnabled(true);
+
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SignUp.this,
+                                    "Verification email sent to " + user.getEmail(),
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "sendEmailVerification", task.getException());
+                            Toast.makeText(SignUp.this,
+                                    "Failed to send verification email.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        // [END_EXCLUDE]
+                    }
+                });
+        // [END send_email_verification]
     }
 
     public boolean validateForm() {

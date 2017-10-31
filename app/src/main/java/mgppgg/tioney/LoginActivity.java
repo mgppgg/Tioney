@@ -117,19 +117,15 @@ public class LoginActivity extends BaseActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Error al iniciar sesión",
+                            Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrectas",
                                     Toast.LENGTH_SHORT).show();
                         }
 
-                        // [START_EXCLUDE]
-                       /* if (!task.isSuccessful()) {
-                            mStatusTextView.setText(R.string.auth_failed);
-                        }*/
+
                         hideProgressDialog();
                     }
                 });
     }
-
 
 
 
