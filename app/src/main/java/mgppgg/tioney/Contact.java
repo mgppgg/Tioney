@@ -3,7 +3,7 @@ package mgppgg.tioney;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class Contact  {
+public class Contact  extends AppCompatActivity{
    private  String name, email, uname, pass;
 
     public Contact(){}
