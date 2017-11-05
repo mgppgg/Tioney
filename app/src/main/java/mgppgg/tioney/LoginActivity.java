@@ -142,15 +142,15 @@ public class LoginActivity extends BaseActivity {
 
         String email = ETemail.getText().toString();
         if (TextUtils.isEmpty(email)) {
-            ETemail.setError("Obligatorio");
+            ETemail.setError("Obligatorio : ejemplo@ejemplo");
             valid = false;
         } else {
             ETemail.setError(null);
         }
 
         String password = ETpass.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            ETpass.setError("Obligatorio");
+        if (TextUtils.isEmpty(password) || password.length() < 6) {
+            ETpass.setError("Mínimo 6 caracteres");
             valid = false;
         } else {
             ETpass.setError(null);
