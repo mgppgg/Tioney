@@ -117,8 +117,8 @@ public class LoginActivity extends BaseActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Error al iniciar sesión",
-                                    Toast.LENGTH_SHORT).show();
+                            if(isOnlineNet()==false)Toast.makeText(LoginActivity.this, "Conexión a internet no disponible", Toast.LENGTH_SHORT).show();
+                            else Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                         }
 
 
@@ -157,6 +157,21 @@ public class LoginActivity extends BaseActivity {
         }
 
         return valid;
+    }
+
+    public Boolean isOnlineNet() {
+
+        try {
+            Process p = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.es");
+
+            int val           = p.waitFor();
+            boolean reachable = (val == 0);
+            return reachable;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
