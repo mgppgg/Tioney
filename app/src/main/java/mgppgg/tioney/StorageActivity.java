@@ -4,9 +4,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -21,13 +27,15 @@ import java.io.IOException;
 
 public class StorageActivity extends AppCompatActivity{
 
-    private StorageReference mStorageRef;
+
     Uri file;
     StorageReference riversRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        StorageReference mStorageRef;
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
         riversRef = mStorageRef.child("images/rivers.jpg");

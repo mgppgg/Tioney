@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,6 +33,10 @@ public class MainActivity extends AppCompatActivity
 
     private TextView t;
     private FirebaseAuth mAuth;
+    private static final String TAG = "Prueba";
+    DatabaseReference mDatabase;
+    private Button BtnSubir ;
+
 
 
     @Override
@@ -81,6 +86,39 @@ public class MainActivity extends AppCompatActivity
             }
         });*/
 
+        BtnSubir = (Button)findViewById(R.id.btnSubir);
+
+        BtnSubir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                writeNewPrueba("Prueba 1", "SUBIDO");
+
+            }
+        });
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        /*ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                Prueba post = dataSnapshot.getValue(Prueba.class);
+                // ...
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        mDatabase.addValueEventListener(postListener);*/
+    }
+
+    private void writeNewPrueba(String prueba1, String p) {
+        Prueba pr = new Prueba(p);
+
+        mDatabase.child("Objeto").child(prueba1).setValue(pr);
     }
 
     @Override
