@@ -33,8 +33,6 @@ public class MainActivity extends AppCompatActivity
 
     private TextView t;
     private FirebaseAuth mAuth;
-    private static final String TAG = "Prueba";
-    DatabaseReference mDatabase;
     private Button BtnSubir ;
 
 
@@ -55,8 +53,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, Publicar.class);
+                startActivity(intent);
             }
         });
 
@@ -69,57 +67,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-       /* DatabaseReference dbCielo = FirebaseDatabase.getInstance().getReference()
-                .child("prediccion-hoy")
-                .child("cielo");
 
-        dbCielo.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String valor = (String) dataSnapshot.getValue();
-                t.setText(valor);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("qsdyjdtu", "Error!", databaseError.toException());
-            }
-        });*/
-
-        BtnSubir = (Button)findViewById(R.id.btnSubir);
-
-        BtnSubir.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                writeNewPrueba("Prueba 1", "SUBIDO");
-
-            }
-        });
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        /*ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                Prueba post = dataSnapshot.getValue(Prueba.class);
-                // ...
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        };
-        mDatabase.addValueEventListener(postListener);*/
     }
 
-    private void writeNewPrueba(String prueba1, String p) {
-        Prueba pr = new Prueba(p);
-
-        mDatabase.child("Objeto").child(prueba1).setValue(pr);
-    }
 
     @Override
     public void onBackPressed() {
@@ -173,13 +123,10 @@ public class MainActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_Sesion) {
 
-           // mAuth.signOut();
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
-
-
 
         }
 
@@ -187,4 +134,14 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+
+
+
+
+
+
+
+
 }
