@@ -1,9 +1,15 @@
 package mgppgg.tioney;
 
+import android.*;
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,7 +38,7 @@ public class Publicar extends AppCompatActivity {
     //UploadTask uploadTask;
     //FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference storageRef;
-    private static final int GALLERY_INTENT = 1;
+    private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,28 +53,7 @@ public class Publicar extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                abrirGaleria();
-
-                /*storageRef = storage.getReference();
-
-                Uri file = Uri.fromFile(new File("0/DCIM/Camera/IMG_20160724_161338.jpg"));
-                StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
-                uploadTask = riversRef.putFile(file);
-
-                // Register observers to listen for when the download is done or if it fails
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                        @SuppressWarnings("VisibleForTests")Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    }
-                });*/
-
+                checkPermission();
 
             }
         });
@@ -77,15 +62,15 @@ public class Publicar extends AppCompatActivity {
 
 
     public void abrirGaleria(){
-        Intent intent = new Intent(Intent.ACTION_PICK);
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Seleccione imagenes"),GALLERY_INTENT);
+        startActivityForResult(Intent.createChooser(intent, "Seleccione imagenes"),10);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
-        if(requestCode==GALLERY_INTENT && resultCode==RESULT_OK){
+        if(resultCode==RESULT_OK){
             Uri uri = imageReturnedIntent.getData();
             StorageReference filepath = storageRef.child("fotos").child(uri.getLastPathSegment());
 
@@ -97,7 +82,57 @@ public class Publicar extends AppCompatActivity {
 
                 }
             });
+            filepath.putFile(uri).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(Publicar.this, "Error al subir", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
+
+
+    @TargetApi(24)
+    private void checkPermission() {
+
+            int hasWriteContactsPermission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
+
+            }else if (hasWriteContactsPermission == PackageManager.PERMISSION_GRANTED){
+
+                abrirGaleria();
+
+            }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    abrirGaleria();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+
 }
+
