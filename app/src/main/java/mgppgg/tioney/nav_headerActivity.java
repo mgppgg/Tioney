@@ -25,6 +25,7 @@ public class nav_headerActivity extends AppCompatActivity {
     }
 
     public void correo(FirebaseUser user){
+
         TVemail.setText(user.getEmail());
     }
 }
