@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -24,10 +25,13 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import static android.R.attr.data;
 
@@ -35,6 +39,7 @@ import static android.R.attr.data;
 public class Publicar extends AppCompatActivity {
 
     private Button BtnSubir;
+    private EditText ETdescripcion;
     //UploadTask uploadTask;
     //FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference storageRef;
@@ -46,6 +51,7 @@ public class Publicar extends AppCompatActivity {
         setContentView(R.layout.activity_publicar);
 
         BtnSubir = (Button)findViewById(R.id.BtnSubir);
+        ETdescripcion = (EditText)findViewById(R.id.ETdescripcion);
 
         storageRef = FirebaseStorage.getInstance().getReference();
 
@@ -68,25 +74,39 @@ public class Publicar extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Seleccione imagenes"),10);
     }
 
+
+    @TargetApi(24)
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
         if(resultCode==RESULT_OK){
             Uri uri = imageReturnedIntent.getData();
-            StorageReference filepath = storageRef.child("fotos").child(uri.getLastPathSegment());
+            String descripcion = ETdescripcion.getText().toString();
+            InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
+            StorageReference filepathFotos = storageRef.child("Anuncios/"+uri.getLastPathSegment());
+            StorageReference filepathDescripcion = storageRef.child("Anuncios//");
 
-            filepath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            filepathFotos.putFile(uri).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                    Toast.makeText(Publicar.this, "Subida correcta", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(Publicar.this, "Subida foto correcta", Toast.LENGTH_SHORT).show();
                 }
             });
-            filepath.putFile(uri).addOnFailureListener(new OnFailureListener() {
+
+            filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
                 @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(Publicar.this, "Error al subir", Toast.LENGTH_SHORT).show();
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(Publicar.this, "Error al subir tetxo", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(Publicar.this, "Subida texto correcta", Toast.LENGTH_SHORT).show();
                 }
             });
         }
