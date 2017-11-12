@@ -32,16 +32,15 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import static android.R.attr.data;
 
 
-public class Publicar extends AppCompatActivity {
+public class Publicar extends BaseActivity {
 
     private Button BtnSubir;
     private EditText ETdescripcion;
-    //UploadTask uploadTask;
-    //FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference storageRef;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
@@ -79,37 +78,43 @@ public class Publicar extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
+        showProgressDialog();
+
+
         if(resultCode==RESULT_OK){
             Uri uri = imageReturnedIntent.getData();
             String descripcion = ETdescripcion.getText().toString();
             InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
             StorageReference filepathFotos = storageRef.child("Anuncios/"+uri.getLastPathSegment());
-            StorageReference filepathDescripcion = storageRef.child("Anuncios//");
+            StorageReference filepathDescripcion = storageRef.child("Anuncios/"+ UUID.randomUUID().toString());
 
             filepathFotos.putFile(uri).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
+                    hideProgressDialog();
                     Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(Publicar.this, "Subida foto correcta", Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
                 }
             });
 
             filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
+                    hideProgressDialog();
                     Toast.makeText(Publicar.this, "Error al subir tetxo", Toast.LENGTH_SHORT).show();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(Publicar.this, "Subida texto correcta", Toast.LENGTH_SHORT).show();
+                    hideProgressDialog();
                 }
             });
         }
+
     }
 
 
