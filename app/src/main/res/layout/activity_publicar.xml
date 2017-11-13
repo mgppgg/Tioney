@@ -10,7 +10,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Descripción"
-            android:inputType="textPersonName" />
+            android:scrollbars = "vertical"
+            android:inputType = "textMultiLine"/>
 
         <Button
             android:id="@+id/BtnSubir"
