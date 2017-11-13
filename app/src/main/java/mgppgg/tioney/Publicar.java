@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -29,6 +30,9 @@ import java.util.UUID;
 public class Publicar extends BaseActivity {
 
     private Button BtnSubir;
+    private ImageButton BtnIma1;
+    private ImageButton BtnIma2;
+    private ImageButton BtnIma3;
     private EditText ETdescripcion;
     private StorageReference storageRef;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -39,6 +43,9 @@ public class Publicar extends BaseActivity {
         setContentView(R.layout.activity_publicar);
 
         BtnSubir = (Button)findViewById(R.id.BtnSubir);
+        BtnIma1 = (ImageButton)findViewById(R.id.imageButton1);
+        BtnIma2 = (ImageButton)findViewById(R.id.imageButton2);
+        BtnIma3 = (ImageButton)findViewById(R.id.imageButton3);
         ETdescripcion = (EditText)findViewById(R.id.ETdescripcion);
 
         storageRef = FirebaseStorage.getInstance().getReference();
@@ -53,12 +60,20 @@ public class Publicar extends BaseActivity {
             }
         });
 
+        BtnIma1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               // BtnIma1.setImageURI();
+
+            }
+        });
+
     }
 
     @TargetApi(24)
     public void abrirGaleria(){
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        //intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Seleccione imagenes"),10);
     }
