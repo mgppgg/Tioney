@@ -65,7 +65,6 @@ public class Publicar extends BaseActivity {
             @Override
             public void onClick(View v) {
                 checkPermission();
-                BtnIma1.setImageURI(uri);
             }
         });
 
@@ -86,6 +85,7 @@ public class Publicar extends BaseActivity {
 
         if(resultCode==RESULT_OK){
             uri = imageReturnedIntent.getData();
+            BtnIma1.setImageURI(uri);
         }
         else Toast.makeText(Publicar.this, "Error al seleccionar imagen", Toast.LENGTH_SHORT).show();
 
