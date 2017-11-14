@@ -33,7 +33,9 @@ public class Publicar extends BaseActivity {
     private ImageButton BtnIma1;
     private ImageButton BtnIma2;
     private ImageButton BtnIma3;
+    private int btn,i;
     private Uri uri;
+    private Uri[] uris;
     private EditText ETdescripcion;
     private StorageReference storageRef;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -48,6 +50,9 @@ public class Publicar extends BaseActivity {
         BtnIma2 = (ImageButton)findViewById(R.id.imageButton2);
         BtnIma3 = (ImageButton)findViewById(R.id.imageButton3);
         ETdescripcion = (EditText)findViewById(R.id.ETdescripcion);
+        btn = 0; i = 0;
+        uris = new Uri[3];
+        for(int b=0;b<3;b++)uris[b]=null;
 
         storageRef = FirebaseStorage.getInstance().getReference();
 
@@ -64,6 +69,23 @@ public class Publicar extends BaseActivity {
         BtnIma1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                i = 0;
+                checkPermission();
+            }
+        });
+
+        BtnIma2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                i = 1;
+                checkPermission();
+            }
+        });
+
+        BtnIma3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                i = 2;
                 checkPermission();
             }
         });
@@ -75,7 +97,7 @@ public class Publicar extends BaseActivity {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         //intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Seleccione imagen"),10);
+        startActivityForResult(Intent.createChooser(intent, "Seleccione imagen"),1);
     }
 
 
@@ -84,10 +106,16 @@ public class Publicar extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
         if(resultCode==RESULT_OK){
-            uri = imageReturnedIntent.getData();
-            BtnIma1.setImageURI(uri);
+            uris[i] = imageReturnedIntent.getData();
+            switch(i){
+                case 0: BtnIma1.setImageURI(uris[i]);
+                        break;
+                case 1: BtnIma2.setImageURI(uris[i]);
+                        break;
+                case 2: BtnIma3.setImageURI(uris[i]);
+                        break;
+            }
         }
-        else Toast.makeText(Publicar.this, "Error al seleccionar imagen", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -137,21 +165,28 @@ public class Publicar extends BaseActivity {
         showProgressDialog();
         String descripcion = ETdescripcion.getText().toString();
         InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
-        StorageReference filepathFotos = storageRef.child("Anuncios/"+uri.getLastPathSegment());
         StorageReference filepathDescripcion = storageRef.child("Anuncios/"+ UUID.randomUUID().toString());
 
-        filepathFotos.putFile(uri).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                hideProgressDialog();
-                Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
+
+        for(int b=0;b<3;b++) {
+
+            if(uris[b]!=null) {
+                StorageReference filepathFotos = storageRef.child("Anuncios/"+uris[b].getLastPathSegment());
+
+                filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    }
+                });
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                hideProgressDialog();
-            }
-        });
+        }
+
 
         filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
             @Override
