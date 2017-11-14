@@ -33,6 +33,7 @@ public class Publicar extends BaseActivity {
     private ImageButton BtnIma1;
     private ImageButton BtnIma2;
     private ImageButton BtnIma3;
+    private ImageButton BtnIma4;
     private int btn,i;
     private Uri uri;
     private Uri[] uris;
@@ -49,10 +50,11 @@ public class Publicar extends BaseActivity {
         BtnIma1 = (ImageButton)findViewById(R.id.imageButton1);
         BtnIma2 = (ImageButton)findViewById(R.id.imageButton2);
         BtnIma3 = (ImageButton)findViewById(R.id.imageButton3);
+        BtnIma4 = (ImageButton)findViewById(R.id.imageButton4);
         ETdescripcion = (EditText)findViewById(R.id.ETdescripcion);
         btn = 0; i = 0;
-        uris = new Uri[3];
-        for(int b=0;b<3;b++)uris[b]=null;
+        uris = new Uri[4];
+        for(int b=0;b<4;b++)uris[b]=null;
 
         storageRef = FirebaseStorage.getInstance().getReference();
 
@@ -90,6 +92,14 @@ public class Publicar extends BaseActivity {
             }
         });
 
+        BtnIma4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                i = 3;
+                checkPermission();
+            }
+        });
+
     }
 
     @TargetApi(24)
@@ -113,6 +123,8 @@ public class Publicar extends BaseActivity {
                 case 1: BtnIma2.setImageURI(uris[i]);
                         break;
                 case 2: BtnIma3.setImageURI(uris[i]);
+                        break;
+                case 3: BtnIma4.setImageURI(uris[i]);
                         break;
             }
         }
@@ -168,7 +180,7 @@ public class Publicar extends BaseActivity {
         StorageReference filepathDescripcion = storageRef.child("Anuncios/"+ UUID.randomUUID().toString());
 
 
-        for(int b=0;b<3;b++) {
+        for(int b=0;b<4;b++) {
 
             if(uris[b]!=null) {
                 StorageReference filepathFotos = storageRef.child("Anuncios/"+uris[b].getLastPathSegment());
