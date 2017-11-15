@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -38,6 +39,8 @@ public class Publicar extends BaseActivity {
     private Uri uri;
     private Uri[] uris;
     private EditText ETdescripcion;
+    private EditText ETtitulo;
+    private EditText ETprecio;
     private StorageReference storageRef;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
@@ -52,6 +55,8 @@ public class Publicar extends BaseActivity {
         BtnIma3 = (ImageButton)findViewById(R.id.imageButton3);
         BtnIma4 = (ImageButton)findViewById(R.id.imageButton4);
         ETdescripcion = (EditText)findViewById(R.id.ETdescripcion);
+        ETtitulo = (EditText)findViewById(R.id.ETtitulo);
+        ETprecio = (EditText)findViewById(R.id.ETprecio);
         btn = 0; i = 0;
         uris = new Uri[4];
         for(int b=0;b<4;b++)uris[b]=null;
@@ -99,6 +104,7 @@ public class Publicar extends BaseActivity {
                 checkPermission();
             }
         });
+
 
     }
 
@@ -175,14 +181,20 @@ public class Publicar extends BaseActivity {
     public void subir() {
 
         showProgressDialog();
-        String descripcion;
+        String descripcion, titulo,precio;
         if (ETdescripcion.getText().toString().isEmpty()) {
-            Toast.makeText(Publicar.this, "Obligatorio rellenar descripción", Toast.LENGTH_SHORT).show();
+            ETdescripcion.setError("Obligatorio");
             hideProgressDialog();
         } else {
             descripcion = ETdescripcion.getText().toString();
+            titulo = ETtitulo.getText().toString();
+            precio = ETprecio.getText().toString();
             InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
-            StorageReference filepathDescripcion = storageRef.child("Anuncios/" + UUID.randomUUID().toString());
+            InputStream streamTitulo = new ByteArrayInputStream(titulo.getBytes());
+            InputStream streamPrecio = new ByteArrayInputStream(precio.getBytes());
+            StorageReference filepathDescripcion = storageRef.child("Anuncios/" + "Des-" + UUID.randomUUID().toString());
+            StorageReference filepathTitulo = storageRef.child("Anuncios/" + "Tit-" + UUID.randomUUID().toString());
+            StorageReference filepathPrecio = storageRef.child("Anuncios/" + "Pre-" + UUID.randomUUID().toString());
 
 
             for (int b = 0; b < 4; b++) {
@@ -205,11 +217,36 @@ public class Publicar extends BaseActivity {
             }
 
 
+
+            filepathTitulo.putStream(streamTitulo).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(Publicar.this, "Error al subir titulo", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                }
+            });
+
             filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(Publicar.this, "Error al subir descripción", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                }
+            });
+
+            filepathPrecio.putStream(streamPrecio).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
                     hideProgressDialog();
-                    Toast.makeText(Publicar.this, "Error al subir tetxo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Publicar.this, "Error al subir precio", Toast.LENGTH_SHORT).show();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override

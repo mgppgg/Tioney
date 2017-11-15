@@ -142,7 +142,7 @@ public class LoginActivity extends BaseActivity {
 
         String email = ETemail.getText().toString();
         if (TextUtils.isEmpty(email)) {
-            ETemail.setError("Obligatorio : ejemplo@ejemplo");
+            ETemail.setError("Obligatorio");
             valid = false;
         } else {
             ETemail.setError(null);
