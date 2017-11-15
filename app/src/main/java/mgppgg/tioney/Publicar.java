@@ -172,49 +172,59 @@ public class Publicar extends BaseActivity {
         }
     }
 
-    public void subir(){
+    public void subir() {
 
         showProgressDialog();
-        String descripcion = ETdescripcion.getText().toString();
-        InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
-        StorageReference filepathDescripcion = storageRef.child("Anuncios/"+ UUID.randomUUID().toString());
+        String descripcion;
+        if (ETdescripcion.getText().toString().isEmpty()) {
+            Toast.makeText(Publicar.this, "Obligatorio rellenar descripción", Toast.LENGTH_SHORT).show();
+            hideProgressDialog();
+        } else {
+            descripcion = ETdescripcion.getText().toString();
+            InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
+            StorageReference filepathDescripcion = storageRef.child("Anuncios/" + UUID.randomUUID().toString());
 
 
-        for(int b=0;b<4;b++) {
+            for (int b = 0; b < 4; b++) {
 
-            if(uris[b]!=null) {
-                StorageReference filepathFotos = storageRef.child("Anuncios/"+uris[b].getLastPathSegment());
+                if (uris[b] != null) {
+                    StorageReference filepathFotos = storageRef.child("Anuncios/" + uris[b].getLastPathSegment());
 
-                filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    }
-                });
+                        }
+                    });
+                }
             }
+
+
+            filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    hideProgressDialog();
+                    Toast.makeText(Publicar.this, "Error al subir tetxo", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    hideProgressDialog();
+                }
+            });
+
+            Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Publicar.this, MainActivity.class);
+            startActivity(intent);
+
         }
 
 
-        filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                hideProgressDialog();
-                Toast.makeText(Publicar.this, "Error al subir tetxo", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                hideProgressDialog();
-            }
-        });
-
     }
-
-
 }
 
