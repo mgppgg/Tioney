@@ -192,15 +192,15 @@ public class Publicar extends BaseActivity {
             InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
             InputStream streamTitulo = new ByteArrayInputStream(titulo.getBytes());
             InputStream streamPrecio = new ByteArrayInputStream(precio.getBytes());
-            StorageReference filepathDescripcion = storageRef.child("Anuncios/" + "Des-" + UUID.randomUUID().toString());
-            StorageReference filepathTitulo = storageRef.child("Anuncios/" + "Tit-" + UUID.randomUUID().toString());
-            StorageReference filepathPrecio = storageRef.child("Anuncios/" + "Pre-" + UUID.randomUUID().toString());
+            StorageReference filepathDescripcion = storageRef.child("Anuncios/" + "Descripcion");
+            StorageReference filepathTitulo = storageRef.child("Anuncios/" + "Titulo");
+            StorageReference filepathPrecio = storageRef.child("Anuncios/" + "Precio");
 
 
             for (int b = 0; b < 4; b++) {
 
                 if (uris[b] != null) {
-                    StorageReference filepathFotos = storageRef.child("Anuncios/" + uris[b].getLastPathSegment());
+                    StorageReference filepathFotos = storageRef.child("Anuncios/" + "Foto" + b);
 
                     filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
                         @Override
