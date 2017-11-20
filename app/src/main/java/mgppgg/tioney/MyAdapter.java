@@ -33,6 +33,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // each data item is just a string in this case
         public ImageView image;
         public TextView titulo;
+
         public ViewHolder(View v) {
             super(v);
             image = (ImageView)v.findViewById(R.id.IVfoto);
@@ -67,7 +68,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // - replace the contents of the view with that element
         Anuncio anuncio = listaAnuncios.get(position);
         holder.titulo.setText(anuncio.getTitulo());
-        Glide.with(context).using(new FirebaseImageLoader()).load(filepathTFoto0).into(holder.image);
+        Glide.with(context).load(anuncio.getIma(0)).into(holder.image);
 
 
 
@@ -76,7 +77,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-
         return listaAnuncios.size();
     }
 }

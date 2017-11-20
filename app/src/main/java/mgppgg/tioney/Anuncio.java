@@ -9,12 +9,12 @@ import android.view.View;
 
 public class Anuncio {
 
-    private Drawable[] imagenes;
+    private String[] imagenes;
     private String titulo,descripcion,precio;
 
-    public Anuncio(){
-        imagenes =new  Drawable[4];
-        titulo = null;
+    public Anuncio(String tit){
+        imagenes =new  String[4];
+        this.titulo = tit;
         descripcion=null;
         precio = null;
 
@@ -23,16 +23,16 @@ public class Anuncio {
         }
     }
 
-    public void setIma(Drawable ima1,Drawable ima2,Drawable ima3,Drawable ima4){
-        imagenes[0] = ima1;
-        imagenes[1] = ima2;
-        imagenes[2] = ima3;
-        imagenes[3] = ima4;
+    public void setIma(String url1,String url2,String url3,String url4){
+        imagenes[0] = url1;
+        imagenes[1] = url2;
+        imagenes[2] = url3;
+        imagenes[3] = url4;
 
     }
 
-    public Drawable[] getIma(){
-        return imagenes;
+    public String getIma(int i){
+        return imagenes[i];
     }
 
     public String getTitulo(){
