@@ -1,12 +1,10 @@
 package mgppgg.tioney;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -20,32 +18,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth mAuth;
-    private RecyclerView rv;
-
-
-    private RecyclerView RecyclerView;
-    private RecyclerView.Adapter Adapter;
-    List<Anuncio> list;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private StorageReference storageRef;
-    private StorageReference filepathTitulo;
 
 
 
@@ -59,8 +39,6 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        rv= (RecyclerView) findViewById(R.id.recycler_view);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -79,52 +57,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
-
-
-
-
-
-
-
-
-
-
-        RecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        storageRef = FirebaseStorage.getInstance().getReference();
-        filepathTitulo = storageRef.child("Anuncios/" + "Titulo");
-        list = new ArrayList<>();
-
-
-        filepathTitulo.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @TargetApi(24)
-            public void onSuccess(byte[] bytes) {
-                // Use the bytes to display the image
-                String str = new String(bytes, StandardCharsets.UTF_8);
-                list.add(new Anuncio(str));
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(MainActivity.this, "Error al descargar anuncios", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        RecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
-        RecyclerView.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
-        Adapter = new MyAdapter(list,getApplicationContext());
-        RecyclerView.setAdapter(Adapter);
-
-
 
 
     }
