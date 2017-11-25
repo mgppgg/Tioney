@@ -16,15 +16,16 @@
 
 
         <ImageView
-            android:id="@+id/IVfoto"
+            android:id="@+id/IVfotoCard"
             android:layout_width="150dp"
             android:layout_height="150dp"
             app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
 
         <TextView
-            android:id="@+id/TVtitulo"
+            android:id="@+id/TVtituloCard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingLeft="50dp"
             android:text="Titulo"
             android:textSize="20sp" />
 
@@ -32,5 +33,5 @@
 
 
 
-
 </android.support.v7.widget.CardView>
+

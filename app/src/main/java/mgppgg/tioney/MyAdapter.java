@@ -1,12 +1,16 @@
 package mgppgg.tioney;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -22,9 +26,8 @@ import java.util.List;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private List<Anuncio> listaAnuncios;
     private StorageReference storageRef;
-    private StorageReference filepathTitulo;
-    private StorageReference filepathTFoto0;
     private Context context;
+
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -36,8 +39,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         public ViewHolder(View v) {
             super(v);
-            image = (ImageView)v.findViewById(R.id.IVfoto);
-            titulo = (TextView)v.findViewById(R.id.TVtitulo);
+            image = (ImageView)v.findViewById(R.id.IVfotoCard);
+            titulo = (TextView)v.findViewById(R.id.TVtituloCard);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    v.getContext().startActivity(new Intent(v.getContext(),Publicar.class));
+                }
+            });
         }
     }
 
@@ -46,8 +55,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         this.listaAnuncios =  list;
         this.context = context;
         storageRef = FirebaseStorage.getInstance().getReference();
-        filepathTitulo = storageRef.child("Anuncios/" + "Titulo");
-        filepathTFoto0 = storageRef.child("Anuncios/" + "Foto0");
     }
 
     // Create new views (invoked by the layout manager)
@@ -66,11 +73,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        Anuncio anuncio = listaAnuncios.get(position);
-        holder.titulo.setText(anuncio.getTitulo());
-        Glide.with(context).load(anuncio.getIma(0)).into(holder.image);
-
-
+        holder.titulo.setText(listaAnuncios.get(position).getTitulo());
+        Glide.with(context).using(new FirebaseImageLoader()).load(listaAnuncios.get(position).getIma(0)).into(holder.image);
+        Log.i("recycler",listaAnuncios.get(position).getTitulo());
 
     }
 
@@ -79,4 +84,5 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public int getItemCount() {
         return listaAnuncios.size();
     }
+
 }

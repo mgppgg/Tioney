@@ -37,7 +37,7 @@ public class content_main extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
-        RecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        /*RecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         storageRef = FirebaseStorage.getInstance().getReference();
         filepathTitulo = storageRef.child("Anuncios/" + "Titulo");
         list = new ArrayList<>();
@@ -69,6 +69,7 @@ public class content_main extends AppCompatActivity{
         // specify an adapter (see also next example)
         Adapter = new MyAdapter(list,getApplicationContext());
         RecyclerView.setAdapter(Adapter);
+        */
 
 
     }

@@ -3,27 +3,25 @@ package mgppgg.tioney;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import com.google.firebase.storage.StorageReference;
+
 /**
  * Created by pablich on 19/11/2017.
  */
 
 public class Anuncio {
 
-    private String[] imagenes;
+    private StorageReference[] imagenes;
     private String titulo,descripcion,precio;
 
-    public Anuncio(String tit){
-        imagenes =new  String[4];
-        this.titulo = tit;
-        descripcion=null;
-        precio = null;
-
+    public Anuncio(){
+        imagenes =new  StorageReference[4];
         for(int i =0;i<4;i++){
             imagenes[i] = null;
         }
     }
 
-    public void setIma(String url1,String url2,String url3,String url4){
+    public void setIma(StorageReference url1,StorageReference url2,StorageReference url3,StorageReference url4){
         imagenes[0] = url1;
         imagenes[1] = url2;
         imagenes[2] = url3;
@@ -31,8 +29,12 @@ public class Anuncio {
 
     }
 
-    public String getIma(int i){
+    public StorageReference getIma(int i){
         return imagenes[i];
+    }
+
+    public void setTitulo(String str){
+        this.titulo = str;
     }
 
     public String getTitulo(){
