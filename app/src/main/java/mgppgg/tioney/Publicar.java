@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -31,6 +33,7 @@ import java.util.UUID;
 public class Publicar extends BaseActivity {
 
     private Button BtnSubir;
+    private String uid;
     private ImageButton BtnIma1;
     private ImageButton BtnIma2;
     private ImageButton BtnIma3;
@@ -62,6 +65,8 @@ public class Publicar extends BaseActivity {
         for(int b=0;b<4;b++)uris[b]=null;
 
         storageRef = FirebaseStorage.getInstance().getReference();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        uid = user.getUid();
 
         BtnSubir.setOnClickListener(new View.OnClickListener() {
             @Override

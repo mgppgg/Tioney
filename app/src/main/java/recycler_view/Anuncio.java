@@ -1,4 +1,4 @@
-package mgppgg.tioney;
+package recycler_view;
 
 import android.graphics.drawable.Drawable;
 import android.view.View;
@@ -35,6 +35,14 @@ public class Anuncio {
 
     public void setTitulo(String str){
         this.titulo = str;
+    }
+
+    public void setDescripcion(String str){
+        this.descripcion = str;
+    }
+
+    public void setPrecio(String str){
+        this.precio = str;
     }
 
     public String getTitulo(){
