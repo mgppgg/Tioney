@@ -2,7 +2,9 @@ package mgppgg.tioney;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView.Adapter Adapter;
     private RecyclerView.LayoutManager LayoutManager;
     private ObtenerDatos ob;
+    private SwipeRefreshLayout refreshLayout;
 
 
 
@@ -40,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
 
         rv = (RecyclerView)findViewById(R.id.recycler_view);
@@ -68,6 +73,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        ob.obtener();
+                        ( new Handler()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                refreshLayout.setRefreshing(false);
+                            }
+                        }, 3000);
+                    }
+                }
+        );
+
 
 
     }
@@ -79,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            //super.onBackPressed();  //para que no se vaya al login
+            finishAffinity();
         }
     }
 

@@ -27,7 +27,7 @@ public class ObtenerDatos {
     private String titulo,descripcion,precio;
     private Anuncio a;
     private StorageReference filepathTitulo,filepathDescripcion,filepathPrecio;
-    private StorageReference filepathTFoto0;
+    private StorageReference filepathTFoto0,filepathTFoto1;
     private StorageReference storageRef;
     private RecyclerView.Adapter Adapter;
     private RecyclerView.LayoutManager LayoutManager;
@@ -47,6 +47,7 @@ public class ObtenerDatos {
         filepathDescripcion = storageRef.child("Anuncios/" + "Descripcion");
         filepathPrecio = storageRef.child("Anuncios/" + "Precio");
         filepathTFoto0 = storageRef.child("Anuncios/" + "Foto0");
+        filepathTFoto1 = storageRef.child("Anuncios/" + "Foto1");
         list.clear();
 
         filepathTitulo.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -70,7 +71,7 @@ public class ObtenerDatos {
                                 // Use the bytes to display the image
                                 precio = new String(bytes, StandardCharsets.UTF_8);
                                 a.setPrecio(precio);
-                                a.setIma(filepathTFoto0,null,null,null);
+                                a.setIma(filepathTFoto0,filepathTFoto1,null,null);
 
                                 list.add(a);
 

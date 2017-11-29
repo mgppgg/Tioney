@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -79,7 +80,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.titulo.setText(listaAnuncios.get(position).getTitulo());
         holder.descripcion.setText(listaAnuncios.get(position).getDescripcion());
         holder.precio.setText(listaAnuncios.get(position).getPrecio());
-        Glide.with(context).using(new FirebaseImageLoader()).load(listaAnuncios.get(position).getIma(0)).into(holder.image);
+        Glide.with(context).using(new FirebaseImageLoader()).load(listaAnuncios.get(position).getIma(0)).diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true).into(holder.image);
 
     }
 
@@ -88,5 +90,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public int getItemCount() {
         return listaAnuncios.size();
     }
+
+
 
 }
