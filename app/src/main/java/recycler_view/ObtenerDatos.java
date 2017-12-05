@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -27,7 +28,7 @@ public class ObtenerDatos {
     private String titulo,descripcion,precio;
     private Anuncio a;
     private StorageReference filepathTitulo,filepathDescripcion,filepathPrecio;
-    private StorageReference filepathTFoto0,filepathTFoto1;
+    private StorageReference filepathTFoto0,filepathTFoto1,filepathTFoto2,filepathTFoto3;
     private StorageReference storageRef;
     private RecyclerView.Adapter Adapter;
     private RecyclerView.LayoutManager LayoutManager;
@@ -48,6 +49,8 @@ public class ObtenerDatos {
         filepathPrecio = storageRef.child("Anuncios/" + "Precio");
         filepathTFoto0 = storageRef.child("Anuncios/" + "Foto0");
         filepathTFoto1 = storageRef.child("Anuncios/" + "Foto1");
+        filepathTFoto2 = storageRef.child("Anuncios/" + "Foto2");
+        filepathTFoto3 = storageRef.child("Anuncios/" + "Foto3");
         list.clear();
 
         filepathTitulo.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -71,12 +74,13 @@ public class ObtenerDatos {
                                 // Use the bytes to display the image
                                 precio = new String(bytes, StandardCharsets.UTF_8);
                                 a.setPrecio(precio);
-                                a.setIma(filepathTFoto0,filepathTFoto1,null,null);
-
+                                a.setIma(filepathTFoto0.toString(),filepathTFoto1.toString(),filepathTFoto2.toString(),filepathTFoto3.toString());
+                                Log.i("anun",filepathTFoto0.toString());
                                 list.add(a);
 
                                 Adapter = new MyAdapter(list, context);
                                 rv.setAdapter(Adapter);
+
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override

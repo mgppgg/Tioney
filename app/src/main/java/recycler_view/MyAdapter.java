@@ -2,6 +2,7 @@ package recycler_view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
+import mgppgg.tioney.MostrarAnun;
 import mgppgg.tioney.Publicar;
 import mgppgg.tioney.R;
 
@@ -26,9 +28,10 @@ import mgppgg.tioney.R;
  */
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private List<Anuncio> listaAnuncios;
-    private StorageReference storageRef;
+    private static List<Anuncio> listaAnuncios;
     private Context context;
+    private static Anuncio anun = new Anuncio();
+    private FirebaseStorage  storage;
 
 
     // Provide a reference to the views for each data item
@@ -48,7 +51,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    v.getContext().startActivity(new Intent(v.getContext(),Publicar.class));
+                    anun = listaAnuncios.get(getAdapterPosition());
+                    Intent intent = new Intent(v.getContext(), MostrarAnun.class);
+                    intent.putExtra("Anuncio", anun);
+                    v.getContext().startActivity(intent);
+
                 }
             });
         }
@@ -58,7 +65,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public MyAdapter(List<Anuncio> list, Context context) {
         this.listaAnuncios =  list;
         this.context = context;
-        storageRef = FirebaseStorage.getInstance().getReference();
+        storage = FirebaseStorage.getInstance();
     }
 
     // Create new views (invoked by the layout manager)
@@ -77,11 +84,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        StorageReference filepathFoto0 = storage.getReferenceFromUrl(listaAnuncios.get(position).getIma(0));
+
         holder.titulo.setText(listaAnuncios.get(position).getTitulo());
         holder.descripcion.setText(listaAnuncios.get(position).getDescripcion());
         holder.precio.setText(listaAnuncios.get(position).getPrecio());
-        Glide.with(context).using(new FirebaseImageLoader()).load(listaAnuncios.get(position).getIma(0)).diskCacheStrategy(DiskCacheStrategy.NONE)
+        Glide.with(context).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true).into(holder.image);
+
+        anun.setTitulo(listaAnuncios.get(position).getTitulo());
+        anun.setDescripcion(listaAnuncios.get(position).getDescripcion());
+        anun.setPrecio(listaAnuncios.get(position).getPrecio());
+        anun.setIma(listaAnuncios.get(position).getIma(0),listaAnuncios.get(position).getIma(1),listaAnuncios.get(position).getIma(2),listaAnuncios.get(position).getIma(3));
 
     }
 

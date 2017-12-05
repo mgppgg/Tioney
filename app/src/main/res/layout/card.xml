@@ -34,9 +34,10 @@
                     android:id="@+id/TVtituloCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
                     android:paddingLeft="10dp"
                     android:text="Titulo"
-                    android:textSize="25sp" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/TVdescripcionCard"
@@ -45,15 +46,30 @@
                     android:maxLines="3"
                     android:paddingLeft="10dp"
                     android:text="Descripcion"
-                    android:textSize="20sp" />
+                    android:textSize="15sp" />
 
-                <TextView
-                    android:id="@+id/TVprecioCard"
+                <LinearLayout
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                    android:id="@+id/TVprecioCard"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
                     android:text="10"
                     android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/TVeuro"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:text="€"
+                        android:textSize="25sp" />
+
+                </LinearLayout>
 
 
             </LinearLayout>

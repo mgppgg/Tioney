@@ -33,6 +33,9 @@
         <activity android:name=".Publicar"
                   android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".MostrarAnun"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>

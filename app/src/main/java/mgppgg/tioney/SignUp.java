@@ -138,19 +138,19 @@ public class SignUp extends LoginActivity {
         }
 
         String password = ETpass.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            ETpass.setError("Obligatorio");
+        if (TextUtils.isEmpty(password) || password.length() < 6) {
+            ETpass.setError("Mínimo 6 caracteres");
             valid = false;
         } else {
             ETpass.setError(null);
         }
 
         String password2 = ETpass2.getText().toString();
-        if (TextUtils.isEmpty(password)) {
-            ETpass2.setError("Obligatorio");
+        if (TextUtils.isEmpty(password2) || password2.length() < 6) {
+            ETpass.setError("Mínimo 6 caracteres");
             valid = false;
         } else {
-            ETpass2.setError(null);
+            ETpass.setError(null);
         }
 
         return valid;
