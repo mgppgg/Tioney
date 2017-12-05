@@ -43,9 +43,9 @@ public class MostrarAnun extends AppCompatActivity {
         precio.setText(anun.getPrecio());
 
 
-       // ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
         Adaptador_ViewPager adapterView = new Adaptador_ViewPager(this,anun,storage);
-        //mViewPager.setAdapter(adapterView);
+        mViewPager.setAdapter(adapterView);
 
 
 

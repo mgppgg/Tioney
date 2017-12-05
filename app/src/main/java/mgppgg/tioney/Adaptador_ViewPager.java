@@ -23,24 +23,27 @@ public class Adaptador_ViewPager extends PagerAdapter {
     Context Context;
     Anuncio anun;
     FirebaseStorage storage;
+    ImageView imagenes[];
 
 
     Adaptador_ViewPager(Context context, Anuncio anun,FirebaseStorage sto) {
         this.Context = context;
         this.anun = anun;
         this.storage = sto;
+        this.imagenes =new ImageView[4];
     }
 
     @Override
     public int getCount() {
-        return sliderImagesId.length;
+        int i=0;
+        for(int b =0;b<4;b++){
+            if(anun.getIma(b)!=null)i++;
+        }
+
+        return i;
     }
 
-    private StorageReference[] sliderImagesId = new StorageReference[]{
-           /* R.drawable.image1, R.drawable.image2, R.drawable.cat,
-            R.drawable.image1, R.drawable.image2, R.drawable.cat,*/
-           //anun.getIma(0),anun.getIma(1),anun.getIma(2),anun.getIma(3),
-    };
+
 
     @Override
     public boolean isViewFromObject(View v, Object obj) {
@@ -51,10 +54,8 @@ public class Adaptador_ViewPager extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int i) {
         ImageView image = new ImageView(Context);
         image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-       // mImageView.setImageResource(sliderImagesId[i]);*/
-        StorageReference filepathFoto = storage.getReferenceFromUrl(anun.getIma(0));
-        Glide.with(Context).using(new FirebaseImageLoader()).load(filepathFoto).diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true).into(image);
+        StorageReference filepathFoto = storage.getReferenceFromUrl(anun.getIma(i));
+        Glide.with(Context).using(new FirebaseImageLoader()).load(filepathFoto).diskCacheStrategy(DiskCacheStrategy.NONE).into(image);
         container.addView(image, 0);
         return image;
     }
