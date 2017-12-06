@@ -185,7 +185,7 @@ public class Publicar extends BaseActivity {
 
     public void subir() {
 
-        showProgressDialog();
+        showProgressDialog(this);
         String descripcion, titulo,precio;
         if (ETdescripcion.getText().toString().isEmpty()) {
             ETdescripcion.setError("Obligatorio");

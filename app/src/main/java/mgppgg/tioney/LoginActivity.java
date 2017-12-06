@@ -102,7 +102,7 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
-        showProgressDialog();
+        showProgressDialog(this);
 
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

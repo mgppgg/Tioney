@@ -18,11 +18,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import mgppgg.tioney.BaseActivity;
+
 /**
  * Created by pablich on 25/11/2017.
  */
 
-public class ObtenerDatos {
+public class ObtenerDatos extends BaseActivity{
 
     private List<Anuncio> list;
     private Context context;
@@ -44,6 +46,7 @@ public class ObtenerDatos {
 
 
     public void obtener(){
+        showProgressDialog(context);
         storageRef = FirebaseStorage.getInstance().getReference();
         filepathTitulo = storageRef.child("Anuncios/" + "Titulo");
         filepathDescripcion = storageRef.child("Anuncios/" + "Descripcion");
@@ -91,6 +94,8 @@ public class ObtenerDatos {
 
                                 Adapter = new MyAdapter(list, context);
                                 rv.setAdapter(Adapter);
+
+                                hideProgressDialog();
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {

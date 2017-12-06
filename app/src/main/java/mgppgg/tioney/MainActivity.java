@@ -33,6 +33,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private RecyclerView.LayoutManager LayoutManager;
     private ObtenerDatos ob;
     private SwipeRefreshLayout refreshLayout;
+    private Snackbar snackbar;
 
 
 
@@ -49,7 +50,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
-        View parentLayout = findViewById(android.R.id.content);
+        Snackbar snackbar = Snackbar.make( findViewById(android.R.id.content), "Sin conexión a internet",  Snackbar.LENGTH_INDEFINITE).setAction("Action", null);
 
         rv = (RecyclerView)findViewById(R.id.recycler_view);
         rv.setHasFixedSize(true);
@@ -57,14 +58,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         rv.setLayoutManager(LayoutManager);
         ob = new ObtenerDatos(this,rv);
         if(isOnlineNet())ob.obtener();
-        else  {
-            Snackbar snackbar = Snackbar.make(parentLayout, "Sin conexión a internet", Snackbar.LENGTH_LONG).setAction("Action", null);
-            View sbView = snackbar.getView();
-            snackbar.setActionTextColor(Color.BLACK);
-            sbView.setBackgroundColor(Color.RED);
-            snackbar.show();
-        }
-
+        else  Snack1();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +92,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     }
                 }
         );
-
 
 
     }
@@ -167,6 +160,40 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void Snack1(){
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Sin conexión a internet",  Snackbar.LENGTH_INDEFINITE).setAction("Action", null);
+        View sbView = snackbar.getView();
+        snackbar.setActionTextColor(Color.BLACK);
+        sbView.setBackgroundColor(Color.RED);
+        snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isOnlineNet())ob.obtener();
+                else Snack2();
+            }
+        });
+
+        snackbar.show();
+    }
+
+    public void Snack2(){
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Sin conexión a internet",  Snackbar.LENGTH_INDEFINITE).setAction("Action", null);
+        View sbView = snackbar.getView();
+        snackbar.setActionTextColor(Color.BLACK);
+        sbView.setBackgroundColor(Color.RED);
+        snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isOnlineNet())ob.obtener();
+                else Snack1();
+            }
+        });
+
+        snackbar.show();
+    }
+
+
 
 
 
