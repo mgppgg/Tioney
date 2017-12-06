@@ -1,4 +1,4 @@
-package mgppgg.tioney;
+package mostrar_Anuncio;
 
 /**
  * Created by pablich on 02/12/2017.
@@ -35,12 +35,12 @@ public class Adaptador_ViewPager extends PagerAdapter {
 
     @Override
     public int getCount() {
-        int i=0;
+        int cont=0;
         for(int b =0;b<4;b++){
-            if(anun.getIma(b)!=null)i++;
+            if(anun.getIma(b)!=null)cont++;
         }
 
-        return i;
+        return cont;
     }
 
 

@@ -1,9 +1,12 @@
 package mgppgg.tioney;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import recycler_view.ObtenerDatos;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseAuth mAuth;
     private RecyclerView rv;
@@ -46,13 +49,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
+        View parentLayout = findViewById(android.R.id.content);
 
         rv = (RecyclerView)findViewById(R.id.recycler_view);
         rv.setHasFixedSize(true);
         LayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(LayoutManager);
         ob = new ObtenerDatos(this,rv);
-        ob.obtener();
+        if(isOnlineNet())ob.obtener();
+        else  {
+            Snackbar snackbar = Snackbar.make(parentLayout, "Sin conexión a internet", Snackbar.LENGTH_LONG).setAction("Action", null);
+            View sbView = snackbar.getView();
+            snackbar.setActionTextColor(Color.BLACK);
+            sbView.setBackgroundColor(Color.RED);
+            snackbar.show();
+        }
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

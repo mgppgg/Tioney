@@ -26,7 +26,6 @@ public class Anuncio implements Serializable {
     }
 
 
-
     public void setIma(String url1, String url2, String url3, String url4){
         imagenes[0] = url1;
         imagenes[1] = url2;
@@ -63,39 +62,4 @@ public class Anuncio implements Serializable {
         return precio;
     }
 
-
-
-
-/*
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(titulo);
-        parcel.writeString(descripcion);
-        parcel.writeString(precio);
-        parcel.writeArray(imagenes);
-    }
-
-    protected Anuncio(Parcel in) {
-        titulo = in.readString();
-        descripcion = in.readString();
-        precio = in.readString();
-        imagenes = (StorageReference[])in.readArray(getClass().getClassLoader());
-    }
-
-   /* public static final Creator<Anuncio> CREATOR = new Creator<Anuncio>() {
-        @Override
-        public Anuncio createFromParcel(Parcel in) {
-            return new Anuncio(in);
-        }
-
-        @Override
-        public Anuncio[] newArray(int size) {
-            return new Anuncio[size];
-        }
-    };*/
 }

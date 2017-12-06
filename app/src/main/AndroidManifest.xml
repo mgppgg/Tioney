@@ -33,7 +33,7 @@
         <activity android:name=".Publicar"
                   android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".MostrarAnun"
+        <activity android:name="mostrar_Anuncio.MostrarAnun"
             android:screenOrientation="portrait">
         </activity>
     </application>

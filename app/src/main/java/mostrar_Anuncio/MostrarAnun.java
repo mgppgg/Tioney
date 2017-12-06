@@ -1,18 +1,15 @@
-package mgppgg.tioney;
+package mostrar_Anuncio;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
+import mgppgg.tioney.R;
+import mostrar_Anuncio.Adaptador_ViewPager;
 import recycler_view.Anuncio;
 
 /**
