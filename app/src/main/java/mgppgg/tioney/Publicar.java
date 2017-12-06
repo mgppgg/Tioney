@@ -5,11 +5,13 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +27,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.UUID;
 
 
@@ -51,6 +55,8 @@ public class Publicar extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publicar);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         BtnSubir = (Button)findViewById(R.id.BtnSubir);
         BtnIma1 = (ImageButton)findViewById(R.id.imageButton1);
@@ -268,5 +274,12 @@ public class Publicar extends BaseActivity {
 
 
     }
+
+   /* public void comprimir(){
+        Bitmap bm2 = createBitmap();
+        OutputStream stream = new FileOutputStream(uris[0]);
+        //Write bitmap to file using JPEG and 80% quality hint for JPEG.
+        bm2.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+    }*/
 }
 
