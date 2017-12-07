@@ -141,7 +141,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_chat) {
+
+            Intent intent = new Intent(MainActivity.this, Chat.class);
+            startActivity(intent);
+
 
         } else if (id == R.id.nav_share) {
 

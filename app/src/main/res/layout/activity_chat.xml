@@ -17,8 +17,9 @@
             android:id="@+id/list_chat"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/fab"
-            android:layout_margin="10dp" />
+            android:layout_above="@+id/fab_chat"
+            android:layout_margin="10dp"
+            android:scrollbars="none" />
 
         <EditText
             android:id="@+id/input"
@@ -28,7 +29,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_margin="10dp"
-            android:layout_toLeftOf="@+id/fab"
+            android:layout_toLeftOf="@+id/fab_chat"
             android:hint="Escribir mensaje" />
 
         <android.support.design.widget.FloatingActionButton
