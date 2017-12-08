@@ -13,6 +13,14 @@
         android:textColor="?attr/actionMenuTextColor" />
 
     <EditText
+        android:id="@+id/ETnombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Nombre y apellidos"
+        android:inputType="textPersonName" />
+
+    <EditText
         android:id="@+id/TFpass1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

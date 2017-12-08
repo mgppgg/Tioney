@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -27,10 +28,7 @@ public class SignUp extends LoginActivity {
 
     private Button BtnCancelar;
     private Button BtnAceptar;
-    private EditText ETpass;
-    private EditText ETpass2;
-    private EditText ETemail;
-
+    private EditText ETpass,ETpass2,ETemail,ETnombre;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String TAG = "EmailPasswordReg";
@@ -44,6 +42,7 @@ public class SignUp extends LoginActivity {
         ETemail = (EditText)findViewById(R.id.TFemail);
         ETpass = (EditText)findViewById(R.id.TFpass1);
         ETpass2 = (EditText)findViewById(R.id.TFpass2);
+        ETnombre = (EditText)findViewById(R.id.ETnombre);
         BtnCancelar = (Button)findViewById(R.id.BCancelar);
         BtnAceptar = (Button)findViewById(R.id.Bsignupbutton);
 
@@ -75,6 +74,7 @@ public class SignUp extends LoginActivity {
                 String emailstr = ETemail.getText().toString();
                 String pass1str = ETpass.getText().toString();
                 String pass2str = ETpass2.getText().toString();
+                String nombre = ETnombre.getText().toString();
 
                 if(!pass1str.equals(pass2str))
                 {
@@ -82,7 +82,7 @@ public class SignUp extends LoginActivity {
                 }
                 else
                 {
-                    createAccount(emailstr,pass1str);
+                    createAccount(emailstr,pass1str,nombre);
 
                 }
 
@@ -91,7 +91,7 @@ public class SignUp extends LoginActivity {
     }
 
 
-    private void createAccount(String email,String password){
+    private void createAccount(String email, String password, final String nombre){
 
         if (!validateForm()) {
             return;
@@ -107,6 +107,11 @@ public class SignUp extends LoginActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             //FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(nombre).build();
+                            user.updateProfile(profileUpdates);
+
                             Intent intent = new Intent(SignUp.this, MainActivity.class);
                             startActivity(intent);
 
@@ -147,11 +152,23 @@ public class SignUp extends LoginActivity {
 
         String password2 = ETpass2.getText().toString();
         if (TextUtils.isEmpty(password2) || password2.length() < 6) {
-            ETpass.setError("Mínimo 6 caracteres");
+            ETpass2.setError("Mínimo 6 caracteres");
             valid = false;
         } else {
-            ETpass.setError(null);
+            ETpass2.setError(null);
         }
+
+        String nombre = ETnombre.getText().toString();
+        if (TextUtils.isEmpty(nombre)) {
+            ETnombre.setError("Obligatorio");
+            valid = false;
+        } else {
+            ETnombre.setError(null);
+        }
+
+
+
+
 
         return valid;
     }

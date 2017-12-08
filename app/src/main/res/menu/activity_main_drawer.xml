@@ -18,7 +18,7 @@
             android:title="Categorias" />
         <item
             android:id="@+id/nav_chat"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@android:drawable/sym_action_chat"
             android:title="Conversaciones" />
     </group>
 

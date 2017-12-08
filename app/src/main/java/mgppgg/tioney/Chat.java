@@ -14,18 +14,28 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseListAdapter;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class Chat extends AppCompatActivity{
 
         private FirebaseListAdapter <Mensaje_chat> adapter;
         private ListView listOfMessages;
+        private DatabaseReference database;
+        private FirebaseAuth mAuth;
+        private String IDuser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        database = FirebaseDatabase.getInstance().getReference();
+        mAuth = FirebaseAuth.getInstance();
+        final FirebaseUser user = mAuth.getCurrentUser();
+
+        IDuser = getIntent().getStringExtra("Id");
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_chat);
         listOfMessages = (ListView)findViewById(R.id.list_chat);
@@ -39,17 +49,16 @@ public class Chat extends AppCompatActivity{
 
                 // Read the input field and push a new instance
                 // of ChatMessage to the Firebase database
-                FirebaseDatabase.getInstance()
+                /*FirebaseDatabase.getInstance()
                         .getReference()
                         .push()
                         .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
-                        );
+                        );*/
+
+                database.child(user.getUid()).child(IDuser).setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
 
                 // Clear the input
                 input.setText("");
-                //listOfMessages.scrollTo(0, listOfMessages.getHeight());
-                /*InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);*/
             }
         });
 

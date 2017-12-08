@@ -111,13 +111,12 @@ public class LoginActivity extends BaseActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
-                           // FirebaseUser user = mAuth.getCurrentUser();
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
-                            if(isOnlineNet()==false)Toast.makeText(LoginActivity.this, "Conexión a internet no disponible", Toast.LENGTH_SHORT).show();
+                            if(!isOnlineNet())Toast.makeText(LoginActivity.this, "Conexión a internet no disponible", Toast.LENGTH_SHORT).show();
                             else Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                         }
 
