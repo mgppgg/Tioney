@@ -60,12 +60,8 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-                String emailI = ETemail.getText().toString();
-                String passI = ETpass.getText().toString();
                 Intent intent = new Intent(LoginActivity.this, SignUp.class);
                 startActivity(intent);
-
-
 
             }
         });
@@ -87,10 +83,10 @@ public class LoginActivity extends BaseActivity {
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null){
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if(currentUser!=null){
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
         }
 
     }

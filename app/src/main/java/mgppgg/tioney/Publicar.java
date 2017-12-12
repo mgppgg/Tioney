@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -22,6 +23,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -37,18 +45,18 @@ import java.util.UUID;
 public class Publicar extends BaseActivity {
 
     private Button BtnSubir;
-    private String uid;
     private ImageButton BtnIma1;
     private ImageButton BtnIma2;
     private ImageButton BtnIma3;
     private ImageButton BtnIma4;
-    private int btn,i;
-    private Uri uri;
+    private int i,numAnun;
     private Uri[] uris;
     private EditText ETdescripcion;
     private EditText ETtitulo;
     private EditText ETprecio;
     private StorageReference storageRef;
+    private DatabaseReference database;
+    private FirebaseUser user;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
     @Override
@@ -66,19 +74,19 @@ public class Publicar extends BaseActivity {
         ETdescripcion = (EditText)findViewById(R.id.ETdescripcion);
         ETtitulo = (EditText)findViewById(R.id.ETtitulo);
         ETprecio = (EditText)findViewById(R.id.ETprecio);
-        btn = 0; i = 0;
+        i = 0;
         uris = new Uri[4];
         for(int b=0;b<4;b++)uris[b]=null;
 
+        database = FirebaseDatabase.getInstance().getReference();
         storageRef = FirebaseStorage.getInstance().getReference();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        uid = user.getUid();
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         BtnSubir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(isOnlineNet()==true) subir();
+                if(isOnlineNet()) subir();
                 else Toast.makeText(Publicar.this, "Conexión a internet no disponible", Toast.LENGTH_SHORT).show();
 
             }
@@ -116,13 +124,23 @@ public class Publicar extends BaseActivity {
             }
         });
 
+        /*
+        database.child(user.getUid()).child("numAnun").addValueEventListener(new ValueEventListener(){
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot){
+                numAnun = (int)dataSnapshot.getValue();
+                database.child(user.getUid()).child("numAnun").setValue(numAnun++);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });*/
 
     }
 
     @TargetApi(24)
     public void abrirGaleria(){
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        //intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Seleccione imagen"),1);
     }
@@ -196,81 +214,86 @@ public class Publicar extends BaseActivity {
         if (ETdescripcion.getText().toString().isEmpty()) {
             ETdescripcion.setError("Obligatorio");
             hideProgressDialog();
-        } else {
-            descripcion = ETdescripcion.getText().toString();
-            titulo = ETtitulo.getText().toString();
-            precio = ETprecio.getText().toString();
-            InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
-            InputStream streamTitulo = new ByteArrayInputStream(titulo.getBytes());
-            InputStream streamPrecio = new ByteArrayInputStream(precio.getBytes());
-            StorageReference filepathDescripcion = storageRef.child("Anuncios/" + "Descripcion");
-            StorageReference filepathTitulo = storageRef.child("Anuncios/" + "Titulo");
-            StorageReference filepathPrecio = storageRef.child("Anuncios/" + "Precio");
-
-
-            for (int b = 0; b < 4; b++) {
-
-                if (uris[b] != null) {
-                    StorageReference filepathFotos = storageRef.child("Anuncios/" + "Foto" + b);
-
-                    filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        }
-                    });
-                }
-            }
-
-
-
-            filepathTitulo.putStream(streamTitulo).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(Publicar.this, "Error al subir titulo", Toast.LENGTH_SHORT).show();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                }
-            });
-
-            filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(Publicar.this, "Error al subir descripción", Toast.LENGTH_SHORT).show();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                }
-            });
-
-            filepathPrecio.putStream(streamPrecio).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
+        } else if (ETtitulo.getText().toString().isEmpty()) {
+                    ETtitulo.setError("Obligatorio");
                     hideProgressDialog();
-                    Toast.makeText(Publicar.this, "Error al subir precio", Toast.LENGTH_SHORT).show();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    hideProgressDialog();
-                }
-            });
+            }else {
 
-            Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(Publicar.this, MainActivity.class);
-            startActivity(intent);
+                descripcion = ETdescripcion.getText().toString();
+                titulo = ETtitulo.getText().toString();
+                precio = ETprecio.getText().toString();
+                final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
+                InputStream streamTitulo = new ByteArrayInputStream(titulo.getBytes());
+                final InputStream streamPrecio = new ByteArrayInputStream(precio.getBytes());
+                final StorageReference filepathDescripcion = storageRef.child("Anuncios/" + "Descripcion");
+                final StorageReference filepathTitulo = storageRef.child("Anuncios/" + "Titulo");
+                final StorageReference filepathPrecio = storageRef.child("Anuncios/" + "Precio");
+                final StorageReference filepathPropietario = storageRef.child("Anuncios/" + "Propietario");
 
-        }
+
+                for (int b = 0; b < 4; b++) {
+
+                    if (uris[b] != null) {
+                        StorageReference filepathFotos = storageRef.child("Anuncios/" + "Foto" + b);
+
+                        filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            }
+                        });
+                    }
+                }
+
+                filepathTitulo.putStream(streamTitulo).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(Publicar.this, "Error al subir titulo", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Toast.makeText(Publicar.this, "Error al subir descripción", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                filepathPrecio.putStream(streamPrecio).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        hideProgressDialog();
+                                        Toast.makeText(Publicar.this, "Error al subir precio", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                        hideProgressDialog();
+
+                                        Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(Publicar.this, MainActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+
+
+                            }
+                        });
+
+                    }
+                });
+
+             }
 
 
     }

@@ -45,8 +45,8 @@ public class ObtenerDatos extends BaseActivity{
     }
 
 
-    public void obtener(){
-        showProgressDialog(context);
+    public void obtener(final boolean p){
+        if(p)showProgressDialog(context);
         storageRef = FirebaseStorage.getInstance().getReference();
         filepathTitulo = storageRef.child("Anuncios/" + "Titulo");
         filepathDescripcion = storageRef.child("Anuncios/" + "Descripcion");

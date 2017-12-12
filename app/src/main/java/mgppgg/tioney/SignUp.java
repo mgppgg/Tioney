@@ -31,6 +31,7 @@ public class SignUp extends LoginActivity {
     private EditText ETpass,ETpass2,ETemail,ETnombre;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private DatabaseReference database;
     private static final String TAG = "EmailPasswordReg";
 
 
@@ -47,6 +48,7 @@ public class SignUp extends LoginActivity {
         BtnAceptar = (Button)findViewById(R.id.Bsignupbutton);
 
         mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance().getReference();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -76,15 +78,14 @@ public class SignUp extends LoginActivity {
                 String pass2str = ETpass2.getText().toString();
                 String nombre = ETnombre.getText().toString();
 
-                if(!pass1str.equals(pass2str))
-                {
-                    Toast.makeText(SignUp.this, "Las contraseñas no coinciden!", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    createAccount(emailstr,pass1str,nombre);
+                if(!isOnlineNet()) Toast.makeText(SignUp.this, "Sin conexión a internet", Toast.LENGTH_SHORT).show();
 
-                }
+                else if(!pass1str.equals(pass2str)) {
+                    Toast.makeText(SignUp.this, "Las contraseñas no coinciden!", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                    createAccount(emailstr,pass1str,nombre);
+                    }
 
             }
         });
@@ -111,6 +112,8 @@ public class SignUp extends LoginActivity {
 
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(nombre).build();
                             user.updateProfile(profileUpdates);
+
+                            database.child("Usuarios").child(user.getUid()).setValue(new Usuario(nombre,user.getEmail(),0));
 
                             Intent intent = new Intent(SignUp.this, MainActivity.class);
                             startActivity(intent);
