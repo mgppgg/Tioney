@@ -2,8 +2,11 @@ package mgppgg.tioney;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.VisibleForTesting;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 /**
  * Created by manug on 24/10/2017.
@@ -47,5 +50,14 @@ public class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    public void snackBar(String text ){
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), text,  Snackbar.LENGTH_LONG);
+        View sbView = snackbar.getView();
+        snackbar.setActionTextColor(Color.BLACK);
+        sbView.setBackgroundColor(Color.RED);
+        snackbar.show();
     }
 }
