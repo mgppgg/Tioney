@@ -42,7 +42,7 @@ public class BaseActivity extends AppCompatActivity {
         try {
             Process p = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.es");
 
-            int val           = p.waitFor();
+            int val  = p.waitFor();
             boolean reachable = (val == 0);
             return reachable;
 

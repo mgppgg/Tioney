@@ -93,6 +93,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         );
 
 
+
     }
 
 
@@ -195,16 +196,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         snackbar.show();
     }
-
-
-
-
-
-
-
-
-
-
 
 
 
