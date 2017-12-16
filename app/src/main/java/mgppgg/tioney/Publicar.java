@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -65,6 +66,12 @@ public class Publicar extends BaseActivity {
         setContentView(R.layout.activity_publicar);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        if(getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
 
         BtnSubir = (Button)findViewById(R.id.BtnSubir);
         BtnIma1 = (ImageButton)findViewById(R.id.imageButton1);
@@ -308,6 +315,13 @@ public class Publicar extends BaseActivity {
         }
         if(!v)hideProgressDialog();
         return v;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==android.R.id.home)finish();
+        return super.onOptionsItemSelected(item);
     }
 
    /* public void comprimir(){

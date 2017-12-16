@@ -40,9 +40,10 @@ public class MostrarAnun extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mostrar);
 
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);*/
+        if(getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         storage = FirebaseStorage.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -80,16 +81,7 @@ public class MostrarAnun extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
+        if(item.getItemId()==android.R.id.home)finish();
         return super.onOptionsItemSelected(item);
     }
-
-
-
 }
