@@ -240,7 +240,7 @@ public class Publicar extends BaseActivity {
 
             String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
             Map<String, Object> map = new HashMap<>();
-            map.put(key, "gs://tioney-40377.appspot.com/Anuncios/" + ID);
+            map.put(key, "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/");
             database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
             database.child("Anuncios1").updateChildren(map);
 
