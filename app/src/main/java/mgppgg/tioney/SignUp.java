@@ -115,6 +115,7 @@ public class SignUp extends LoginActivity {
 
                             database.child("Usuarios").child(user.getUid()).setValue(new Usuario(nombre,user.getEmail(),0));
 
+
                             Intent intent = new Intent(SignUp.this, MainActivity.class);
                             startActivity(intent);
 

@@ -39,6 +39,9 @@ import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -217,24 +220,35 @@ public class Publicar extends BaseActivity {
     public void subir() {
 
         showProgressDialog(this);
-        String descripcion, titulo,precio;
+        final String descripcion, titulo,precio,ID,email;
+        ID = UUID.randomUUID().toString();
+        Log.d("uid", ID);
         if (validar()) {
             descripcion = ETdescripcion.getText().toString();
             titulo = ETtitulo.getText().toString();
             precio = ETprecio.getText().toString();
+            email = user.getEmail();
             final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
-            InputStream streamTitulo = new ByteArrayInputStream(titulo.getBytes());
+            final InputStream streamTitulo = new ByteArrayInputStream(titulo.getBytes());
             final InputStream streamPrecio = new ByteArrayInputStream(precio.getBytes());
-            final StorageReference filepathDescripcion = storageRef.child("Anuncios/" + "Descripcion");
-            final StorageReference filepathTitulo = storageRef.child("Anuncios/" + "Titulo");
-            final StorageReference filepathPrecio = storageRef.child("Anuncios/" + "Precio");
-            final StorageReference filepathPropietario = storageRef.child("Anuncios/" + "Propietario");
+            final InputStream streamEmail = new ByteArrayInputStream(email.getBytes());
+            final StorageReference filepathDescripcion = storageRef.child("Anuncios/" + ID + "/" + "Descripcion");
+            final StorageReference filepathTitulo = storageRef.child("Anuncios/" + ID + "/" + "Titulo");
+            final StorageReference filepathPrecio = storageRef.child("Anuncios/" + ID + "/" + "Precio");
+            final StorageReference filepathEmail = storageRef.child("Anuncios/" + ID + "/" + "Email");
+
+
+            String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
+            Map<String, Object> map = new HashMap<>();
+            map.put(key, "gs://tioney-40377.appspot.com/Anuncios/" + ID);
+            database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
+            database.child("Anuncios1").updateChildren(map);
 
 
             for (int b = 0; b < 4; b++) {
 
                 if (uris[b] != null) {
-                    StorageReference filepathFotos = storageRef.child("Anuncios/" + "Foto" + b);
+                    StorageReference filepathFotos = storageRef.child("Anuncios/" + ID + "/" + "Foto" + b);
 
                     filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -278,11 +292,24 @@ public class Publicar extends BaseActivity {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                                    hideProgressDialog();
 
-                                    Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(Publicar.this, MainActivity.class);
-                                    startActivity(intent);
+                                    filepathEmail.putStream(streamEmail).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception exception) {
+                                            hideProgressDialog();
+                                            Toast.makeText(Publicar.this, "Error al subir email", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                            hideProgressDialog();
+
+                                            Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(Publicar.this, MainActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    });
                                 }
                             });
 
@@ -293,7 +320,12 @@ public class Publicar extends BaseActivity {
                 }
             });
 
-         }
+
+
+
+
+
+        }
 
 
     }
