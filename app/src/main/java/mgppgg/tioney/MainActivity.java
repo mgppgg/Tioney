@@ -56,7 +56,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         LayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(LayoutManager);
         ob = new ObtenerDatos(this,rv);
-        if(isOnlineNet())ob.obtener(true);
+        if(isOnlineNet()){
+            ob.setProg(true);
+            ob.obtener();
+        }
         else  Snack1();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -81,7 +84,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        ob.obtener(false);
+                        ob.setProg(false);
+                        ob.obtener();
                         ( new Handler()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -173,7 +177,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isOnlineNet())ob.obtener(true);
+                ob.setProg(true);
+                if(isOnlineNet())ob.execute();
                 else Snack2();
             }
         });
@@ -189,7 +194,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isOnlineNet())ob.obtener(true);
+                ob.setProg(true);
+                if(isOnlineNet())ob.execute();
                 else Snack1();
             }
         });

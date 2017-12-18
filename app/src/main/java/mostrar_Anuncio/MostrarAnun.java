@@ -3,16 +3,19 @@ package mostrar_Anuncio;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
@@ -51,7 +54,7 @@ public class MostrarAnun extends AppCompatActivity {
 
         contactar = (Button)findViewById(R.id.BTNcontactar);
 
-        Anuncio anun = (Anuncio) getIntent().getSerializableExtra("Anuncio");
+        final Anuncio anun = (Anuncio) getIntent().getSerializableExtra("Anuncio");
 
         titulo = (TextView) findViewById(R.id.TVtituloMostrar);
         descripcion = (TextView) findViewById(R.id.TVdescripcionMostrar);
@@ -61,10 +64,24 @@ public class MostrarAnun extends AppCompatActivity {
         descripcion.setText(anun.getDescripcion());
         precio.setText(anun.getPrecio());
 
+        for (int i = 0; i < 4; i++) {
+            final int finalI = i;
+            storage.getReferenceFromUrl(anun.getIma(i)).getDownloadUrl().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    anun.setNull(finalI);
+                }
+            });
 
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        Adaptador_ViewPager adapterView = new Adaptador_ViewPager(this,anun,storage);
-        mViewPager.setAdapter(adapterView);
+            if(i==3){
+                ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
+                Adaptador_ViewPager adapterView = new Adaptador_ViewPager(this,anun,storage);
+                mViewPager.setAdapter(adapterView);
+            }
+        }
+
+
+
 
 
         contactar.setOnClickListener(new View.OnClickListener() {

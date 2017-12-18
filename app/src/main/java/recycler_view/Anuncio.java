@@ -34,6 +34,10 @@ public class Anuncio implements Serializable {
 
     }
 
+    public void setNull(int n){
+        imagenes[n] = null;
+    }
+
     public String getIma(int i){
         return imagenes[i];
     }
