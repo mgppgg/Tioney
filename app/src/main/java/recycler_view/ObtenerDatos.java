@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -94,7 +95,6 @@ public class ObtenerDatos extends AsyncTask<Void, Void, Void> {
     }
 
     public void obtener(){
-        Log.d("data123", "hola2");
         list.clear();
         urls.clear();
         final int[] c = {0};
@@ -107,7 +107,10 @@ public class ObtenerDatos extends AsyncTask<Void, Void, Void> {
                     //Log.d("data123", postSnapshot.getValue().toString());
                     //Log.d("data123", "tam "+ c[0]);
                     urls.add(postSnapshot.getValue().toString());
+                    Log.d("data123",postSnapshot.getValue().toString());
                     for(int i =0;i<4;i++)paths[i]=urls.get(c[0]) + "Foto" + i;
+
+                    Log.d("data123", "hola1");
 
                     filepathTitulo = storage.getReferenceFromUrl(urls.get(c[0]) + "Titulo");
                     filepathDescripcion =  storage.getReferenceFromUrl(urls.get(c[0]) + "Descripcion");
@@ -117,6 +120,7 @@ public class ObtenerDatos extends AsyncTask<Void, Void, Void> {
                         @TargetApi(24)
                         public void onSuccess(byte[] bytes) {
                             // Use the bytes to display the image
+                            Log.d("data123", "hola2");
                             titulo = new String(bytes, StandardCharsets.UTF_8);
                             a.setTitulo(titulo);
 
@@ -124,6 +128,7 @@ public class ObtenerDatos extends AsyncTask<Void, Void, Void> {
                                 @TargetApi(24)
                                 public void onSuccess(byte[] bytes) {
                                     // Use the bytes to display the image
+                                    Log.d("data123", "hola3");
                                     descripcion = new String(bytes, StandardCharsets.UTF_8);
                                     a.setDescripcion(descripcion);
 
@@ -131,18 +136,22 @@ public class ObtenerDatos extends AsyncTask<Void, Void, Void> {
                                         @TargetApi(24)
                                         public void onSuccess(byte[] bytes) {
                                             // Use the bytes to display the image
+                                            Log.d("data123", "hola4");
                                             precio = new String(bytes, StandardCharsets.UTF_8);
                                             a.setPrecio(precio);
                                             a.setIma(paths[0],paths[1],paths[2],paths[3]);
                                             list.add(a);
                                             Log.d("data123", "tam "+ c[0]);
-                                            c[0]++;
-                                           // Log.d("data123", "count"+dataSnapshot.getChildrenCount());
+                                            Log.d("data123","titulo:"+a.getTitulo());
 
-                                                Log.d("data123", "hola3");
+                                            if(c[0]+1 == dataSnapshot.getChildrenCount()){
+                                                Log.d("data123","holaaaaaaaaaaa");
                                                 Adapter = new MyAdapter(list, context);
                                                 rv.setAdapter(Adapter);
                                                 progress.dismiss();
+                                            }
+
+                                            c[0]++;
 
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
