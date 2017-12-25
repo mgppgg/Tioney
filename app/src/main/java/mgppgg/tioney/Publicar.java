@@ -134,17 +134,6 @@ public class Publicar extends BaseActivity {
             }
         });
 
-        /*
-        database.child(user.getUid()).child("numAnun").addValueEventListener(new ValueEventListener(){
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot){
-                numAnun = (int)dataSnapshot.getValue();
-                database.child(user.getUid()).child("numAnun").setValue(numAnun++);
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });*/
 
     }
 

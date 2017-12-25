@@ -40,61 +40,28 @@ import mgppgg.tioney.BaseActivity;
 
 public class ObtenerDatos extends BaseActivity {
 
-    private List<Anuncio> list;
     private List<String> urls;
     private Context context;
-    private ProgressDialog progress;
     private RecyclerView rv;
-    private String titulo,descripcion,precio;
     private Anuncio a;
-    private StorageReference filepathTitulo,filepathDescripcion,filepathPrecio;
-    private FirebaseStorage storage;
     private DatabaseReference database;
     private RecyclerView.Adapter Adapter;
-    private String paths[];
 
     public ObtenerDatos(Context context,RecyclerView rv){
-        list = new ArrayList<>();
         urls = new ArrayList<>();
         this.context = context;
         this.rv = rv;
-        a = new Anuncio();
-        paths = new String[4];
         database = FirebaseDatabase.getInstance().getReference();
-        storage = FirebaseStorage.getInstance();
     }
 
-        /*
-    @Override
-    protected Void doInBackground(Void... voids) {
-
-        return null;
-    }*/
-
-/*
-    @Override
-    protected void onPostExecute(Void result) {
-
-        try {
-            Log.d("data123", "hola1");
-            while(seguir){
-                Adapter = new MyAdapter(list, context);
-                rv.setAdapter(Adapter);
-                progress.dismiss();
-            }
-
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-    }*/
 
     public void obtener(boolean b){
 
-       if(b) showProgressDialog(context);
+        final ProgressDialog dialog = new ProgressDialog(context);
+        dialog.setMessage("Cargando anuncios..");
 
-        list.clear();
+        if(b) dialog.show();
+
         urls.clear();
 
         Query query = database.child("Anuncios1");
@@ -105,12 +72,10 @@ public class ObtenerDatos extends BaseActivity {
                     //Log.d("data123", postSnapshot.getValue().toString());
                     //Log.d("data123", "tam "+ c[0]);
                     urls.add(postSnapshot.getValue().toString());
-                    Log.d("data123",postSnapshot.getValue().toString());
                 }
 
-                Adapter = new MyAdapter(urls, context);
+                Adapter = new MyAdapter(urls, context,dialog);
                 rv.setAdapter(Adapter);
-                hideProgressDialog();
             }
 
             @Override

@@ -1,6 +1,7 @@
 package recycler_view;
 
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import mgppgg.tioney.BaseActivity;
 import mostrar_Anuncio.MostrarAnun;
 import mgppgg.tioney.R;
 
@@ -36,6 +38,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private static List<Anuncio> listaAnuncios;
     private static List<String> urls;
     private Context context;
+    private ProgressDialog dialog;
     private static Anuncio anun;
     private FirebaseStorage  storage;
 
@@ -68,12 +71,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<String> url, Context context) {
+    public MyAdapter(List<String> url, Context context,ProgressDialog d) {
         urls = url;
         listaAnuncios = new ArrayList<>();
         this.context = context;
         anun = new Anuncio();
         storage = FirebaseStorage.getInstance();
+        dialog = d;
     }
 
     // Create new views (invoked by the layout manager)
@@ -98,7 +102,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         final StorageReference filepathTitulo,filepathDescripcion,filepathPrecio;
 
         for(int i =0;i<4;i++)paths[i]=urls.get(position) + "Foto" + i;
+
         final StorageReference filepathFoto0 = storage.getReferenceFromUrl(paths[0]);
+        listaAnuncios.add(a);
 
         filepathTitulo = storage.getReferenceFromUrl(urls.get(position) + "Titulo");
         filepathDescripcion =  storage.getReferenceFromUrl(urls.get(position) + "Descripcion");
@@ -108,40 +114,29 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             @TargetApi(24)
             public void onSuccess(byte[] bytes) {
                 // Use the bytes to display the image
-                Log.d("data123", "hola2");
                 String titulo = new String(bytes, StandardCharsets.UTF_8);
-                a.setTitulo(titulo);
+                listaAnuncios.get(position).setTitulo(titulo);
 
                 filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @TargetApi(24)
                     public void onSuccess(byte[] bytes) {
                         // Use the bytes to display the image
-                        Log.d("data123", "hola3:");
                         String descripcion = new String(bytes, StandardCharsets.UTF_8);
-                        a.setDescripcion(descripcion);
+                        listaAnuncios.get(position).setDescripcion(descripcion);
 
                         filepathPrecio.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                             @TargetApi(24)
                             public void onSuccess(byte[] bytes) {
                                 // Use the bytes to display the image
-                                Log.d("data123", "hola4");
                                 String precio = new String(bytes, StandardCharsets.UTF_8);
-                                a.setPrecio(precio);
-                                a.setIma(paths[0],paths[1],paths[2],paths[3]);
-                                listaAnuncios.add(a);
-
-                                Log.d("data123","posicion"+position);
-
-                                /*if(c[0]+1 == dataSnapshot.getChildrenCount()){
-                                    Log.d("data123","holaaaaaaaaaaa");
-                                    Adapter = new MyAdapter(list, context);
-                                    rv.setAdapter(Adapter);
-                                    progress.dismiss();
-                                }*/
+                                listaAnuncios.get(position).setPrecio(precio);
+                                listaAnuncios.get(position).setIma(paths[0],paths[1],paths[2],paths[3]);
 
                                 holder.titulo.setText(a.getTitulo());
                                 holder.descripcion.setText(a.getDescripcion());
                                 holder.precio.setText(a.getPrecio());
+
+                                if(position == urls.size()-1)dialog.dismiss();
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -167,11 +162,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 .skipMemoryCache(true).into(holder.image);
 
 
-        /*anun.setTitulo(listaAnuncios.get(position).getTitulo());
-        anun.setDescripcion(listaAnuncios.get(position).getDescripcion());
-        anun.setPrecio(listaAnuncios.get(position).getPrecio());
-        anun.setIma(listaAnuncios.get(position).getIma(0),listaAnuncios.get(position).getIma(1),listaAnuncios.get(position).getIma(2),listaAnuncios.get(position).getIma(3));
-        */
     }
 
     // Return the size of your dataset (invoked by the layout manager)

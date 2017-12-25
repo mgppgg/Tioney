@@ -2,6 +2,7 @@ package mostrar_Anuncio;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
@@ -16,9 +17,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import mgppgg.tioney.Chat;
 import mgppgg.tioney.MainActivity;
@@ -64,24 +67,10 @@ public class MostrarAnun extends AppCompatActivity {
         descripcion.setText(anun.getDescripcion());
         precio.setText(anun.getPrecio());
 
-        for (int i = 0; i < 4; i++) {
-            final int finalI = i;
-            storage.getReferenceFromUrl(anun.getIma(i)).getDownloadUrl().addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    anun.setNull(finalI);
-                }
-            });
 
-            if(i==3){
-                ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
-                Adaptador_ViewPager adapterView = new Adaptador_ViewPager(this,anun,storage);
-                mViewPager.setAdapter(adapterView);
-            }
-        }
-
-
-
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        Adaptador_ViewPager adapterView = new Adaptador_ViewPager(this,anun,storage);
+        mViewPager.setAdapter(adapterView);
 
 
         contactar.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +86,7 @@ public class MostrarAnun extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {  //boton de atras
         if(item.getItemId()==android.R.id.home)finish();
         return super.onOptionsItemSelected(item);
     }

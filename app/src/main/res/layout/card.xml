@@ -1,59 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_view"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:layout_margin="5dp"
+    card_view:cardCornerRadius="15dp"
+    card_view:cardElevation="10dp">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        card_view:cardCornerRadius="15dp"
-        card_view:cardElevation="10dp">
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/IVfotoCard"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:padding="0dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/TVtituloCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:paddingLeft="10dp"
+                android:text="Titulo"
+                android:textSize="20sp" />
 
-            <ImageView
-                android:id="@+id/IVfotoCard"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:padding="0dp"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+            <TextView
+                android:id="@+id/TVdescripcionCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:paddingLeft="10dp"
+                android:text="Descripcion"
+                android:textSize="15sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/TVtituloCard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:paddingLeft="10dp"
-                    android:text="Titulo"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/TVdescripcionCard"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="3"
-                    android:paddingLeft="10dp"
-                    android:text="Descripcion"
-                    android:textSize="15sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
                     android:id="@+id/TVprecioCard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -61,22 +62,22 @@
                     android:text="10"
                     android:textSize="25sp" />
 
-                    <TextView
-                        android:id="@+id/TVeuro"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingLeft="10dp"
-                        android:text="€"
-                        android:textSize="25sp" />
-
-                </LinearLayout>
-
+                <TextView
+                    android:id="@+id/TVeuro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:text="€"
+                    android:textSize="25sp" />
 
             </LinearLayout>
 
+
         </LinearLayout>
 
+    </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+
+</android.support.v7.widget.CardView>
 
 
