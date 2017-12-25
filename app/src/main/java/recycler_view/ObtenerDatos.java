@@ -38,7 +38,7 @@ import mgppgg.tioney.BaseActivity;
  * Created by pablich on 25/11/2017.
  */
 
-public class ObtenerDatos extends AsyncTask<Void, Void, Void> {
+public class ObtenerDatos extends BaseActivity {
 
     private List<Anuncio> list;
     private List<String> urls;
@@ -64,12 +64,12 @@ public class ObtenerDatos extends AsyncTask<Void, Void, Void> {
         storage = FirebaseStorage.getInstance();
     }
 
-
+        /*
     @Override
     protected Void doInBackground(Void... voids) {
 
         return null;
-    }
+    }*/
 
 /*
     @Override
@@ -90,17 +90,15 @@ public class ObtenerDatos extends AsyncTask<Void, Void, Void> {
         }
     }*/
 
-    public void setProg(boolean b){
-        if(b)progress = ProgressDialog.show(context,"", "Cargando anuncios", true);
-    }
+    public void obtener(boolean b){
 
-    public void obtener(){
+       if(b) showProgressDialog(context);
+
         list.clear();
         urls.clear();
-        final int[] c = {0};
 
-        Query myTopPostsQuery = database.child("Anuncios1");
-        myTopPostsQuery.addValueEventListener(new ValueEventListener() {
+        Query query = database.child("Anuncios1");
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(final DataSnapshot dataSnapshot) {
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
@@ -108,74 +106,11 @@ public class ObtenerDatos extends AsyncTask<Void, Void, Void> {
                     //Log.d("data123", "tam "+ c[0]);
                     urls.add(postSnapshot.getValue().toString());
                     Log.d("data123",postSnapshot.getValue().toString());
-                    for(int i =0;i<4;i++)paths[i]=urls.get(c[0]) + "Foto" + i;
-
-                    Log.d("data123", "hola1");
-
-                    filepathTitulo = storage.getReferenceFromUrl(urls.get(c[0]) + "Titulo");
-                    filepathDescripcion =  storage.getReferenceFromUrl(urls.get(c[0]) + "Descripcion");
-                    filepathPrecio =  storage.getReferenceFromUrl(urls.get(c[0]) + "Precio");
-
-                    filepathTitulo.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                        @TargetApi(24)
-                        public void onSuccess(byte[] bytes) {
-                            // Use the bytes to display the image
-                            Log.d("data123", "hola2");
-                            titulo = new String(bytes, StandardCharsets.UTF_8);
-                            a.setTitulo(titulo);
-
-                            filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                @TargetApi(24)
-                                public void onSuccess(byte[] bytes) {
-                                    // Use the bytes to display the image
-                                    Log.d("data123", "hola3");
-                                    descripcion = new String(bytes, StandardCharsets.UTF_8);
-                                    a.setDescripcion(descripcion);
-
-                                    filepathPrecio.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                        @TargetApi(24)
-                                        public void onSuccess(byte[] bytes) {
-                                            // Use the bytes to display the image
-                                            Log.d("data123", "hola4");
-                                            precio = new String(bytes, StandardCharsets.UTF_8);
-                                            a.setPrecio(precio);
-                                            a.setIma(paths[0],paths[1],paths[2],paths[3]);
-                                            list.add(a);
-                                            Log.d("data123", "tam "+ c[0]);
-                                            Log.d("data123","titulo:"+a.getTitulo());
-
-                                            if(c[0]+1 == dataSnapshot.getChildrenCount()){
-                                                Log.d("data123","holaaaaaaaaaaa");
-                                                Adapter = new MyAdapter(list, context);
-                                                rv.setAdapter(Adapter);
-                                                progress.dismiss();
-                                            }
-
-                                            c[0]++;
-
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception exception) {
-                                        }
-                                    });
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(context, "Error al descargar los anuncios", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-
                 }
 
+                Adapter = new MyAdapter(urls, context);
+                rv.setAdapter(Adapter);
+                hideProgressDialog();
             }
 
             @Override
