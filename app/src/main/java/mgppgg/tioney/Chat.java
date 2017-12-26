@@ -64,7 +64,7 @@ public class Chat extends AppCompatActivity{
                         .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
                         );*/
 
-               database.child("Chats").child(user.getEmail().replace(".","_") + "--" + Emailuser.replace(".","_")).push()
+               database.child("Chats").child(user.getEmail().replace(".","%") + "--" + Emailuser.replace(".","%")).push()
                        .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
                        );
                 Log.d("data123", "hola1");
@@ -78,7 +78,7 @@ public class Chat extends AppCompatActivity{
 
 
     public void mostrar_msgs(){
-        adapter = new FirebaseListAdapter<Mensaje_chat>(this, Mensaje_chat.class, R.layout.mensaje, FirebaseDatabase.getInstance().getReference().child("Chats").child(user.getEmail().replace(".","_") + "--" + Emailuser.replace(".","_"))) {
+        adapter = new FirebaseListAdapter<Mensaje_chat>(this, Mensaje_chat.class, R.layout.mensaje, FirebaseDatabase.getInstance().getReference().child("Chats").child(user.getEmail().replace(".","%") + "--" + Emailuser.replace(".","%"))) {
             @Override
             protected void populateView(View v, Mensaje_chat model, int position) {
                 // Get references to the views of message.xml

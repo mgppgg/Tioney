@@ -144,7 +144,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         } else if (id == R.id.nav_chat) {
 
-            Intent intent = new Intent(MainActivity.this, Chat.class);
+            Intent intent = new Intent(MainActivity.this, Conversaciones.class);
             startActivity(intent);
 
 

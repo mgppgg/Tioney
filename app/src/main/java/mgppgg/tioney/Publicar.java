@@ -53,7 +53,7 @@ public class Publicar extends BaseActivity {
     private ImageButton BtnIma2;
     private ImageButton BtnIma3;
     private ImageButton BtnIma4;
-    private int i,numAnun;
+    private int i;
     private Uri[] uris;
     private EditText ETdescripcion;
     private EditText ETtitulo;
@@ -209,22 +209,17 @@ public class Publicar extends BaseActivity {
     public void subir() {
 
         showProgressDialog(this);
-        final String descripcion, titulo,precio,ID,email,url;
+        final String descripcion, titulo,precio,ID,email,url,usuario;
         ID = UUID.randomUUID().toString();
         if (validar()) {
             descripcion = ETdescripcion.getText().toString();
             titulo = ETtitulo.getText().toString();
             precio = ETprecio.getText().toString();
             email = user.getEmail();
+            usuario = user.getDisplayName();
             url =  "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/";
             final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
-            final InputStream streamTitulo = new ByteArrayInputStream(titulo.getBytes());
-            final InputStream streamPrecio = new ByteArrayInputStream(precio.getBytes());
-            final InputStream streamEmail = new ByteArrayInputStream(email.getBytes());
             final StorageReference filepathDescripcion = storageRef.child("Anuncios/" + ID + "/" + "Descripcion");
-            final StorageReference filepathTitulo = storageRef.child("Anuncios/" + ID + "/" + "Titulo");
-            final StorageReference filepathPrecio = storageRef.child("Anuncios/" + ID + "/" + "Precio");
-            final StorageReference filepathEmail = storageRef.child("Anuncios/" + ID + "/" + "Email");
 
 
            /* String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
@@ -235,7 +230,7 @@ public class Publicar extends BaseActivity {
 
             String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
             Map<String, Object> map = new HashMap<>();
-            AnunDatabase anun = new AnunDatabase(titulo,precio,url,email);
+            AnunDatabase anun = new AnunDatabase(titulo,precio,url,email,usuario);
             map.put(key,anun);
             database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
             database.child("Anuncios1").updateChildren(map);

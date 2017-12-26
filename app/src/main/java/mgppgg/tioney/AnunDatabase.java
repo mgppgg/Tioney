@@ -9,13 +9,15 @@ public class AnunDatabase {
     private String precio;
     private String url;
     private String email;
+    private String usuario;
 
 
-    public  AnunDatabase(String t,String p,String u,String e){
+    public  AnunDatabase(String t,String p,String u,String e,String usu){
         this.titulo = t;
         this.precio = p;
         this.url = u;
         this.email = e;
+        this.usuario = usu;
 
     }
     public  AnunDatabase(){
@@ -56,5 +58,13 @@ public class AnunDatabase {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 }

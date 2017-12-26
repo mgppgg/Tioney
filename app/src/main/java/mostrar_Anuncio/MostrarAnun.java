@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import mgppgg.tioney.Chat;
+import mgppgg.tioney.Conver_listaConvers;
 import mgppgg.tioney.MainActivity;
 import mgppgg.tioney.Publicar;
 import mgppgg.tioney.R;
@@ -82,16 +83,13 @@ public class MostrarAnun extends AppCompatActivity {
         Adaptador_ViewPager adapterView = new Adaptador_ViewPager(this,anun,storage);
         mViewPager.setAdapter(adapterView);
 
-
-        String key =  database.child("Usuarios").child("Chats").push().getKey();
-        final Map<String, Object> map = new HashMap<>();
-        map.put(key,anun.getEmail());
+        final Conver_listaConvers c = new Conver_listaConvers(anun.getEmail(),anun.getUsuario());
 
 
         contactar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                database.child("Usuarios").child(user.getUid()).child("Chats").updateChildren(map);
+                database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c);
                 Intent intent = new Intent(getBaseContext(),Chat.class);
                 intent.putExtra("email",anun.getEmail());
                 startActivity(intent);
