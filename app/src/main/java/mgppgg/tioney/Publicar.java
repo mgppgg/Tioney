@@ -209,14 +209,14 @@ public class Publicar extends BaseActivity {
     public void subir() {
 
         showProgressDialog(this);
-        final String descripcion, titulo,precio,ID,email;
+        final String descripcion, titulo,precio,ID,email,url;
         ID = UUID.randomUUID().toString();
-        Log.d("uid", ID);
         if (validar()) {
             descripcion = ETdescripcion.getText().toString();
             titulo = ETtitulo.getText().toString();
             precio = ETprecio.getText().toString();
             email = user.getEmail();
+            url =  "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/";
             final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
             final InputStream streamTitulo = new ByteArrayInputStream(titulo.getBytes());
             final InputStream streamPrecio = new ByteArrayInputStream(precio.getBytes());
@@ -227,9 +227,16 @@ public class Publicar extends BaseActivity {
             final StorageReference filepathEmail = storageRef.child("Anuncios/" + ID + "/" + "Email");
 
 
-            String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
+           /* String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
             Map<String, Object> map = new HashMap<>();
             map.put(key, "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/");
+            database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
+            database.child("Anuncios1").updateChildren(map);*/
+
+            String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
+            Map<String, Object> map = new HashMap<>();
+            AnunDatabase anun = new AnunDatabase(titulo,precio,url,email);
+            map.put(key,anun);
             database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
             database.child("Anuncios1").updateChildren(map);
 
@@ -253,66 +260,24 @@ public class Publicar extends BaseActivity {
                 }
             }
 
-            filepathTitulo.putStream(streamTitulo).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    Toast.makeText(Publicar.this, "Error al subir titulo", Toast.LENGTH_SHORT).show();
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(Publicar.this, "Error al subir descripción", Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(Publicar.this, "Error al subir descripción", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                            filepathPrecio.putStream(streamPrecio).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    hideProgressDialog();
-                                    Toast.makeText(Publicar.this, "Error al subir precio", Toast.LENGTH_SHORT).show();
-                                }
-                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        hideProgressDialog();
 
+                        Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(Publicar.this, MainActivity.class);
+                        startActivity(intent);
 
-                                    filepathEmail.putStream(streamEmail).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception exception) {
-                                            hideProgressDialog();
-                                            Toast.makeText(Publicar.this, "Error al subir email", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                                            hideProgressDialog();
-
-                                            Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
-                                            Intent intent = new Intent(Publicar.this, MainActivity.class);
-                                            startActivity(intent);
-                                        }
-                                    });
-                                }
-                            });
-
-
-                        }
-                    });
-
-                }
-            });
-
-
-
-
-
+                    }
+                });
 
         }
 

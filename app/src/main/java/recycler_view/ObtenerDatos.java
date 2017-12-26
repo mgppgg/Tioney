@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import mgppgg.tioney.AnunDatabase;
 import mgppgg.tioney.BaseActivity;
 
 /**
@@ -40,7 +41,7 @@ import mgppgg.tioney.BaseActivity;
 
 public class ObtenerDatos extends BaseActivity {
 
-    private List<String> urls;
+    private List<AnunDatabase> urls;
     private Context context;
     private RecyclerView rv;
     private Anuncio a;
@@ -71,7 +72,7 @@ public class ObtenerDatos extends BaseActivity {
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     //Log.d("data123", postSnapshot.getValue().toString());
                     //Log.d("data123", "tam "+ c[0]);
-                    urls.add(postSnapshot.getValue().toString());
+                    urls.add(postSnapshot.getValue(AnunDatabase.class));
                 }
 
                 Adapter = new MyAdapter(urls, context,dialog);

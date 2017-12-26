@@ -5,6 +5,8 @@ package mostrar_Anuncio;
  */
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -13,34 +15,38 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Arrays;
+
 import recycler_view.Anuncio;
 
+import static android.R.attr.width;
+import static com.firebase.ui.storage.R.attr.height;
+
 public class Adaptador_ViewPager extends PagerAdapter {
-    Context Context;
-    Anuncio anun;
-    FirebaseStorage storage;
-    ImageView imagenes[];
+    private Context Context;
+    private Anuncio anun;
+    private FirebaseStorage storage;
 
 
     Adaptador_ViewPager(Context context, Anuncio anun,FirebaseStorage sto) {
         this.Context = context;
         this.anun = anun;
         this.storage = sto;
-        this.imagenes =new ImageView[4];
     }
 
     @Override
     public int getCount() {
-        int cont=0;
-        for(int b =0;b<4;b++){
-            if(anun.getIma(b)!=null)cont++;
-        }
+        return 2;
 
-        return cont;
     }
 
 

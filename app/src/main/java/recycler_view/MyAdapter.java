@@ -26,7 +26,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+import mgppgg.tioney.AnunDatabase;
 import mgppgg.tioney.BaseActivity;
+import mgppgg.tioney.Publicar;
 import mostrar_Anuncio.MostrarAnun;
 import mgppgg.tioney.R;
 
@@ -36,7 +38,7 @@ import mgppgg.tioney.R;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private static List<Anuncio> listaAnuncios;
-    private static List<String> urls;
+    private static List<AnunDatabase> urls;
     private Context context;
     private ProgressDialog dialog;
     private static Anuncio anun;
@@ -71,7 +73,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<String> url, Context context,ProgressDialog d) {
+    public MyAdapter(List<AnunDatabase> url, Context context,ProgressDialog d) {
         urls = url;
         listaAnuncios = new ArrayList<>();
         this.context = context;
@@ -101,55 +103,32 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         final String paths[] = new String[4];
         final StorageReference filepathTitulo,filepathDescripcion,filepathPrecio;
 
-        for(int i =0;i<4;i++)paths[i]=urls.get(position) + "Foto" + i;
+        for(int i =0;i<4;i++)paths[i]=urls.get(position).getUrl() + "Foto" + i;
 
         final StorageReference filepathFoto0 = storage.getReferenceFromUrl(paths[0]);
         listaAnuncios.add(a);
 
         filepathTitulo = storage.getReferenceFromUrl(urls.get(position) + "Titulo");
-        filepathDescripcion =  storage.getReferenceFromUrl(urls.get(position) + "Descripcion");
+        filepathDescripcion =  storage.getReferenceFromUrl(urls.get(position).getUrl() + "Descripcion");
         filepathPrecio =  storage.getReferenceFromUrl(urls.get(position) + "Precio");
 
-        filepathTitulo.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @TargetApi(24)
             public void onSuccess(byte[] bytes) {
                 // Use the bytes to display the image
-                String titulo = new String(bytes, StandardCharsets.UTF_8);
-                listaAnuncios.get(position).setTitulo(titulo);
+                String descripcion = new String(bytes, StandardCharsets.UTF_8);
+                listaAnuncios.get(position).setDescripcion(descripcion);
+                listaAnuncios.get(position).setTitulo(urls.get(position).getTitulo());
+                listaAnuncios.get(position).setPrecio(urls.get(position).getPrecio());
+                listaAnuncios.get(position).setEmail(urls.get(position).getEmail());
+                listaAnuncios.get(position).setIma(paths[0],paths[1],paths[2],paths[3]);
 
-                filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @TargetApi(24)
-                    public void onSuccess(byte[] bytes) {
-                        // Use the bytes to display the image
-                        String descripcion = new String(bytes, StandardCharsets.UTF_8);
-                        listaAnuncios.get(position).setDescripcion(descripcion);
+                holder.titulo.setText(a.getTitulo());
+                holder.descripcion.setText(a.getDescripcion());
+                holder.precio.setText(a.getPrecio());
 
-                        filepathPrecio.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                            @TargetApi(24)
-                            public void onSuccess(byte[] bytes) {
-                                // Use the bytes to display the image
-                                String precio = new String(bytes, StandardCharsets.UTF_8);
-                                listaAnuncios.get(position).setPrecio(precio);
-                                listaAnuncios.get(position).setIma(paths[0],paths[1],paths[2],paths[3]);
+                if(position == urls.size()/2)dialog.dismiss();
 
-                                holder.titulo.setText(a.getTitulo());
-                                holder.descripcion.setText(a.getDescripcion());
-                                holder.precio.setText(a.getPrecio());
-
-                                if(position == urls.size()-1)dialog.dismiss();
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                            }
-                        });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                    }
-                });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -157,7 +136,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 Toast.makeText(context, "Error al descargar los anuncios", Toast.LENGTH_SHORT).show();
             }
         });
-
         Glide.with(context).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true).into(holder.image);
 
@@ -167,6 +145,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
+        if(urls.size()==0)dialog.dismiss();
         return urls.size();
     }
 
