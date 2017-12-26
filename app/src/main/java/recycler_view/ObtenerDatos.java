@@ -72,7 +72,8 @@ public class ObtenerDatos extends BaseActivity {
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     //Log.d("data123", postSnapshot.getValue().toString());
                     //Log.d("data123", "tam "+ c[0]);
-                    urls.add(postSnapshot.getValue(AnunDatabase.class));
+                    AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
+                    urls.add(anun);
                 }
 
                 Adapter = new MyAdapter(urls, context,dialog);

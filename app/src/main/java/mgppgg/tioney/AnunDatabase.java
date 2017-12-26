@@ -18,6 +18,13 @@ public class AnunDatabase {
         this.email = e;
 
     }
+    public  AnunDatabase(){
+        this.titulo = "";
+        this.precio = "";
+        this.url = "";
+        this.email = "";
+
+    }
 
     public String getTitulo() {
         return titulo;
