@@ -25,7 +25,7 @@ public class Chat extends AppCompatActivity{
         private ListView listOfMessages;
         private DatabaseReference database;
         private FirebaseAuth mAuth;
-        private String IDuser;
+        private String Emailuser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class Chat extends AppCompatActivity{
         mAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = mAuth.getCurrentUser();
 
-        IDuser = getIntent().getStringExtra("Id");
+        Emailuser = getIntent().getStringExtra("email");
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_chat);
         listOfMessages = (ListView)findViewById(R.id.list_chat);
@@ -62,7 +62,7 @@ public class Chat extends AppCompatActivity{
                         .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
                         );*/
 
-                database.child(user.getUid()).child(IDuser).setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
+                database.child("Chats").child(user.getEmail() + "--" + Emailuser).setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
 
                 // Clear the input
                 input.setText("");

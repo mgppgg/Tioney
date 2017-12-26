@@ -20,8 +20,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import mgppgg.tioney.Chat;
 import mgppgg.tioney.MainActivity;
@@ -38,6 +43,7 @@ public class MostrarAnun extends AppCompatActivity {
 
     TextView titulo,descripcion,precio;
     private FirebaseStorage storage;
+    private DatabaseReference database;
     Button contactar;
     private FirebaseAuth mAuth;
 
@@ -52,8 +58,12 @@ public class MostrarAnun extends AppCompatActivity {
         }
 
         storage = FirebaseStorage.getInstance();
+        database = FirebaseDatabase.getInstance().getReference();
+
+
         mAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = mAuth.getCurrentUser();
+
 
         contactar = (Button)findViewById(R.id.BTNcontactar);
 
@@ -73,11 +83,17 @@ public class MostrarAnun extends AppCompatActivity {
         mViewPager.setAdapter(adapterView);
 
 
+        String key =  database.child("Usuarios").child("Chats").push().getKey();
+        final Map<String, Object> map = new HashMap<>();
+        map.put(key,anun.getEmail());
+
+
         contactar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                database.child("Usuarios").child(user.getUid()).child("Chats").updateChildren(map);
                 Intent intent = new Intent(getBaseContext(),Chat.class);
-                intent.putExtra("Id",user.getUid());
+                intent.putExtra("email",anun.getEmail());
                 startActivity(intent);
             }
         });

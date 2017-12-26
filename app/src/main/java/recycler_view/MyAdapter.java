@@ -108,9 +108,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         final StorageReference filepathFoto0 = storage.getReferenceFromUrl(paths[0]);
         listaAnuncios.add(a);
 
-        //filepathTitulo = storage.getReferenceFromUrl(urls.get(position) + "Titulo");
         filepathDescripcion =  storage.getReferenceFromUrl(urls.get(position).getUrl() + "Descripcion");
-        //filepathPrecio =  storage.getReferenceFromUrl(urls.get(position) + "Precio");
 
         filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @TargetApi(24)
