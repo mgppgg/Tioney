@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -25,6 +26,7 @@ public class Chat extends AppCompatActivity{
         private ListView listOfMessages;
         private DatabaseReference database;
         private FirebaseAuth mAuth;
+        private  FirebaseUser user;
         private String Emailuser;
 
     @Override
@@ -40,7 +42,7 @@ public class Chat extends AppCompatActivity{
 
         database = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
-        final FirebaseUser user = mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
 
         Emailuser = getIntent().getStringExtra("email");
 
@@ -56,14 +58,16 @@ public class Chat extends AppCompatActivity{
 
                 // Read the input field and push a new instance
                 // of ChatMessage to the Firebase database
-                /*FirebaseDatabase.getInstance()
+               /* FirebaseDatabase.getInstance()
                         .getReference()
                         .push()
                         .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
                         );*/
 
-                database.child("Chats").child(user.getEmail() + "--" + Emailuser).setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
-
+               database.child("Chats").child(user.getEmail().replace(".","_") + "--" + Emailuser.replace(".","_")).push()
+                       .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
+                       );
+                Log.d("data123", "hola1");
                 // Clear the input
                 input.setText("");
             }
@@ -74,13 +78,15 @@ public class Chat extends AppCompatActivity{
 
 
     public void mostrar_msgs(){
-        adapter = new FirebaseListAdapter<Mensaje_chat>(this, Mensaje_chat.class, R.layout.mensaje, FirebaseDatabase.getInstance().getReference()) {
+        adapter = new FirebaseListAdapter<Mensaje_chat>(this, Mensaje_chat.class, R.layout.mensaje, FirebaseDatabase.getInstance().getReference().child("Chats").child(user.getEmail().replace(".","_") + "--" + Emailuser.replace(".","_"))) {
             @Override
             protected void populateView(View v, Mensaje_chat model, int position) {
                 // Get references to the views of message.xml
                 TextView messageText = (TextView)v.findViewById(R.id.message_text);
                 TextView messageUser = (TextView)v.findViewById(R.id.message_user);
                 TextView messageTime = (TextView)v.findViewById(R.id.message_time);
+
+                Log.d("data123", "hola2");
 
                 // Set their text
                 messageText.setText(model.getMessageText());
