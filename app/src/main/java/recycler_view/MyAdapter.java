@@ -118,7 +118,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 listaAnuncios.get(position).setDescripcion(descripcion);
                 listaAnuncios.get(position).setTitulo(urls.get(position).getTitulo());
                 listaAnuncios.get(position).setPrecio(urls.get(position).getPrecio());
-                listaAnuncios.get(position).setEmail(urls.get(position).getEmail());
+                listaAnuncios.get(position).setUID(urls.get(position).getUID());
                 listaAnuncios.get(position).setUsuario(urls.get(position).getUsuario());
                 listaAnuncios.get(position).setIma(paths[0],paths[1],paths[2],paths[3]);
 

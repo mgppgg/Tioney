@@ -5,21 +5,13 @@ package mgppgg.tioney;
  */
 
 public class Conver_listaConvers {
-    private String email;
     private String user;
+    private String chatUrl;
 
     public Conver_listaConvers(){}
-    public Conver_listaConvers(String e,String u){
-        this.email = e;
+    public Conver_listaConvers(String u,String url){
         this.user = u;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+        this.chatUrl = url;
     }
 
     public String getUser() {
@@ -28,5 +20,13 @@ public class Conver_listaConvers {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getChatUrl() {
+        return chatUrl;
+    }
+
+    public void setChatUrl(String chatUrl) {
+        this.chatUrl = chatUrl;
     }
 }

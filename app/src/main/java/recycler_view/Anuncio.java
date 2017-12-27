@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class Anuncio implements Serializable {
 
     private String[] imagenes;
-    private String titulo,descripcion,precio,email,usuario;
+    private String titulo,descripcion,precio,UID,usuario;
 
     public Anuncio(){
         imagenes =new  String[4];
@@ -66,12 +66,12 @@ public class Anuncio implements Serializable {
         return precio;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUID() {
+        return UID;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUID(String UID) {
+        this.UID = UID;
     }
 
     public String getUsuario() {

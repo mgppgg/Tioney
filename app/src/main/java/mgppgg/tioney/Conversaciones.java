@@ -3,8 +3,6 @@ package mgppgg.tioney;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,6 +16,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+
+import mgppgg.tioney.Chat;
+import mgppgg.tioney.Conver_listaConvers;
+import mgppgg.tioney.R;
 
 public class Conversaciones extends AppCompatActivity {
 
@@ -66,8 +68,9 @@ public class Conversaciones extends AppCompatActivity {
         listOfConvers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getBaseContext(),Chat.class);
-                intent.putExtra("email",convers.get(position).getEmail());
+                Intent intent = new Intent(getBaseContext(), Chat.class);
+                intent.putExtra("conversaciones",true);
+                intent.putExtra("url",convers.get(position).getChatUrl());
                 startActivity(intent);
             }
         });

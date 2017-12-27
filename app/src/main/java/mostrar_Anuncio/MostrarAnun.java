@@ -1,39 +1,22 @@
 package mostrar_Anuncio;
 
-import android.app.ActionBar;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import mgppgg.tioney.Chat;
-import mgppgg.tioney.Conver_listaConvers;
-import mgppgg.tioney.MainActivity;
-import mgppgg.tioney.Publicar;
 import mgppgg.tioney.R;
-import mostrar_Anuncio.Adaptador_ViewPager;
 import recycler_view.Anuncio;
 
 /**
@@ -83,15 +66,12 @@ public class MostrarAnun extends AppCompatActivity {
         Adaptador_ViewPager adapterView = new Adaptador_ViewPager(this,anun,storage);
         mViewPager.setAdapter(adapterView);
 
-        final Conver_listaConvers c = new Conver_listaConvers(anun.getEmail(),anun.getUsuario());
-
 
         contactar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c);
                 Intent intent = new Intent(getBaseContext(),Chat.class);
-                intent.putExtra("email",anun.getEmail());
+                intent.putExtra("anuncio",anun);
                 startActivity(intent);
             }
         });

@@ -1,15 +1,11 @@
 package mgppgg.tioney;
 
-import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,14 +16,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class Chat extends AppCompatActivity{
+import recycler_view.Anuncio;
+
+public class Chat extends BaseActivity{
 
         private FirebaseListAdapter <Mensaje_chat> adapter;
         private ListView listOfMessages;
         private DatabaseReference database;
         private FirebaseAuth mAuth;
-        private  FirebaseUser user;
-        private String Emailuser;
+        private FirebaseUser user;
+        private Anuncio anun;
+        private String chatUrl;
+        private boolean conversaciones = false;
+        private boolean crear = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,10 @@ public class Chat extends AppCompatActivity{
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-        Emailuser = getIntent().getStringExtra("email");
+        anun = (Anuncio) getIntent().getSerializableExtra("anuncio");
+        conversaciones = getIntent().getExtras().getBoolean("conversaciones");
+        chatUrl = getIntent().getExtras().getString("url");
+        if(!conversaciones)chatUrl = user.getUid() + "--" + anun.getUID();
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_chat);
         listOfMessages = (ListView)findViewById(R.id.list_chat);
@@ -56,37 +60,47 @@ public class Chat extends AppCompatActivity{
             public void onClick(View view) {
                 EditText input = (EditText)findViewById(R.id.input);
 
-                // Read the input field and push a new instance
-                // of ChatMessage to the Firebase database
-               /* FirebaseDatabase.getInstance()
-                        .getReference()
-                        .push()
-                        .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
-                        );*/
+               if(!input.getText().toString().isEmpty()) {
 
-               database.child("Chats").child(user.getEmail().replace(".","%") + "--" + Emailuser.replace(".","%")).push()
-                       .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
-                       );
-                Log.d("data123", "hola1");
-                // Clear the input
+                   if (conversaciones) {
+
+                       database.child("Chats").child(chatUrl).push()
+                               .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
+                               );
+
+                   } else {
+
+                        if(crear) {
+                            final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), user.getUid() + "--" + anun.getUID());
+                            final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(), user.getUid() + "--" + anun.getUID());
+                            database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c1);
+                            database.child("Usuarios").child(anun.getUID()).child("Chats").push().setValue(c2);
+                            crear = false;
+                        }
+
+                       database.child("Chats").child(user.getUid() + "--" + anun.getUID()).push()
+                               .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
+                               );
+
+                   }
+               }
+
                 input.setText("");
             }
         });
 
-        mostrar_msgs();
+        mostrar_msgs(database.child("Chats").child(chatUrl));
     }
 
 
-    public void mostrar_msgs(){
-        adapter = new FirebaseListAdapter<Mensaje_chat>(this, Mensaje_chat.class, R.layout.mensaje, FirebaseDatabase.getInstance().getReference().child("Chats").child(user.getEmail().replace(".","%") + "--" + Emailuser.replace(".","%"))) {
+    public void mostrar_msgs(DatabaseReference ref){
+        adapter = new FirebaseListAdapter<Mensaje_chat>(this, Mensaje_chat.class, R.layout.mensaje, ref) {
             @Override
             protected void populateView(View v, Mensaje_chat model, int position) {
                 // Get references to the views of message.xml
                 TextView messageText = (TextView)v.findViewById(R.id.message_text);
                 TextView messageUser = (TextView)v.findViewById(R.id.message_user);
                 TextView messageTime = (TextView)v.findViewById(R.id.message_time);
-
-                Log.d("data123", "hola2");
 
                 // Set their text
                 messageText.setText(model.getMessageText());
