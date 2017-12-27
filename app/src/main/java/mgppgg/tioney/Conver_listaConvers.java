@@ -29,4 +29,5 @@ public class Conver_listaConvers {
     public void setChatUrl(String chatUrl) {
         this.chatUrl = chatUrl;
     }
+
 }

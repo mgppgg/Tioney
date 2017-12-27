@@ -209,13 +209,13 @@ public class Publicar extends BaseActivity {
     public void subir() {
 
         showProgressDialog(this);
-        final String descripcion, titulo,precio,ID,UID,url,usuario;
+        final String descripcion, titulo,precio,ID,email,url,usuario;
         ID = UUID.randomUUID().toString();
         if (validar()) {
             descripcion = ETdescripcion.getText().toString();
             titulo = ETtitulo.getText().toString();
             precio = ETprecio.getText().toString();
-            UID = user.getUid();
+            email = user.getEmail();
             usuario = user.getDisplayName();
             url =  "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/";
             final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
@@ -230,7 +230,7 @@ public class Publicar extends BaseActivity {
 
             String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
             Map<String, Object> map = new HashMap<>();
-            AnunDatabase anun = new AnunDatabase(titulo,precio,url,UID,usuario);
+            AnunDatabase anun = new AnunDatabase(titulo,precio,url,email,usuario);
             map.put(key,anun);
             database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
             database.child("Anuncios1").updateChildren(map);

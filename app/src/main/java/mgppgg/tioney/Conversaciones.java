@@ -3,17 +3,22 @@ package mgppgg.tioney;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -28,6 +33,9 @@ public class Conversaciones extends AppCompatActivity {
     private ListView listOfConvers;
     private FirebaseUser user;
     private ArrayList<Conver_listaConvers> convers;
+    private ArrayList<String> keys;
+    private Button borrar;
+    private DataSnapshot data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +45,7 @@ public class Conversaciones extends AppCompatActivity {
         database = FirebaseDatabase.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
         convers = new ArrayList<>();
+        keys = new ArrayList<>();
 
         listOfConvers = (ListView)findViewById(R.id.list_conver);
         listOfConvers.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
@@ -54,9 +63,33 @@ public class Conversaciones extends AppCompatActivity {
                 // Get references to the views of message.xml
                 TextView Usuario = (TextView)v.findViewById(R.id.TVusuario);
                 Usuario.setText(conver.getUser());
-
                 convers.add(conver);
+                keys.add(adapter.getRef(position).getKey());
+                borrar = (Button)v.findViewById(R.id.BTNborrarConver);
+                borrar.setTag(1,position);
+                borrar.setTag(2,conver.getChatUrl());
 
+                borrar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+                        database.child("Usuarios").child(user.getUid()).child("Chats").child(keys.get((int)v.getTag(1))).removeValue();
+
+                        database.child("Chats").child((String)v.getTag(2)).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if((int)dataSnapshot.getValue()==1){
+                                    database.child("Chats").child((String)v.getTag(2)).removeValue();
+                                }else
+                                    database.child("Chats").child((String)v.getTag(2)).child("Estado").setValue(1);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {}
+                        });
+
+
+                    }
+                });
             }
 
 
@@ -74,6 +107,8 @@ public class Conversaciones extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
 
     }
 
