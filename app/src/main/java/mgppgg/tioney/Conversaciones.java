@@ -35,7 +35,6 @@ public class Conversaciones extends AppCompatActivity {
     private ArrayList<Conver_listaConvers> convers;
     private ArrayList<String> keys;
     private Button borrar;
-    private DataSnapshot data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,32 +58,30 @@ public class Conversaciones extends AppCompatActivity {
 
         adapter = new FirebaseListAdapter<Conver_listaConvers>(this, Conver_listaConvers.class, R.layout.conversacion, database.child("Usuarios").child(user.getUid()).child("Chats")) {
             @Override
-            protected void populateView(View v, Conver_listaConvers conver, int position) {
+            protected void populateView(View v, final Conver_listaConvers conver, final int position) {
                 // Get references to the views of message.xml
                 TextView Usuario = (TextView)v.findViewById(R.id.TVusuario);
                 Usuario.setText(conver.getUser());
                 convers.add(conver);
                 keys.add(adapter.getRef(position).getKey());
                 borrar = (Button)v.findViewById(R.id.BTNborrarConver);
-                borrar.setTag(1,position);
-                borrar.setTag(2,conver.getChatUrl());
 
                 borrar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
-                        database.child("Usuarios").child(user.getUid()).child("Chats").child(keys.get((int)v.getTag(1))).removeValue();
-
-                        database.child("Chats").child((String)v.getTag(2)).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
+                        database.child("Usuarios").child(user.getUid()).child("Chats").child(keys.get(position)).removeValue();
+                        database.child("Chats").child(conver.getChatUrl()).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                if((int)dataSnapshot.getValue()==1){
-                                    database.child("Chats").child((String)v.getTag(2)).removeValue();
+                                if((long)dataSnapshot.getValue()==1){
+                                    database.child("Chats").child(conver.getChatUrl()).removeValue();
                                 }else
-                                    database.child("Chats").child((String)v.getTag(2)).child("Estado").setValue(1);
+                                    database.child("Chats").child(conver.getChatUrl()).child("Estado").setValue(1);
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {}
+
                         });
 
 

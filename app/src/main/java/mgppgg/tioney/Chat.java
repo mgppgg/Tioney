@@ -4,6 +4,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -60,16 +61,18 @@ public class Chat extends BaseActivity{
         listOfMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
         listOfMessages.setStackFromBottom(true);
 
+        if(conversaciones) {
+            database.child("Chats").child(chatUrl).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if ((long) dataSnapshot.getValue() == 1) crear2 = true;
+                }
 
-        database.child("Chats").child(chatUrl).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if((int)dataSnapshot.getValue()==1)crear2 = true;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,7 +117,7 @@ public class Chat extends BaseActivity{
             }
         });
 
-        mostrar_msgs(database.child("Chats").child(chatUrl));
+        mostrar_msgs(database.child("Chats").child(chatUrl).child("Mensajes"));
     }
 
 
