@@ -101,7 +101,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         final Anuncio a = new Anuncio();
         final String paths[] = new String[4];
-        final StorageReference filepathTitulo,filepathDescripcion,filepathPrecio;
+        final StorageReference filepathDescripcion;
 
         for(int i =0;i<4;i++)paths[i]=urls.get(position).getUrl() + "Foto" + i;
 

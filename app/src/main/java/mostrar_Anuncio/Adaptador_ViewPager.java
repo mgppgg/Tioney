@@ -45,7 +45,7 @@ public class Adaptador_ViewPager extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 1;
 
     }
 
