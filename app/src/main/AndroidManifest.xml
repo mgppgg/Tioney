@@ -42,7 +42,8 @@
         <activity
             android:name=".Chat"
             android:screenOrientation="portrait" />
-        <activity android:name=".Conversaciones"></activity>
+        <activity android:name=".Conversaciones" />
+        <activity android:name=".MisAnuncios"></activity>
     </application>
 
 </manifest>
