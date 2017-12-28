@@ -30,10 +30,12 @@ public class Chat extends BaseActivity{
         private FirebaseAuth mAuth;
         private FirebaseUser user;
         private Anuncio anun;
+        private Conver_listaConvers conver;
         private String chatUrl;
         private boolean conversaciones = false;
         private boolean crear = true;
         private boolean crear2 = false;
+        private boolean existe = true;
         private int n;
 
     @Override
@@ -53,30 +55,36 @@ public class Chat extends BaseActivity{
 
         anun = (Anuncio) getIntent().getSerializableExtra("anuncio");
         conversaciones = getIntent().getExtras().getBoolean("conversaciones");
-        chatUrl = getIntent().getExtras().getString("url");
-        if(!conversaciones)chatUrl = user.getUid() + "--" + anun.getUID();
+        conver =(Conver_listaConvers) getIntent().getSerializableExtra("conver");
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_chat);
         listOfMessages = (ListView)findViewById(R.id.list_chat);
         listOfMessages.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
         listOfMessages.setStackFromBottom(true);
 
-        if(conversaciones) {
-            database.child("Chats").child(chatUrl).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if ((long) dataSnapshot.getValue() == 1) crear2 = true;
-                }
+        if(conversaciones)chatUrl = conver.getChatUrl();
+        else
+            chatUrl = user.getUid() + "--" + anun.getUID();
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            });
-        }
+        database.child("Chats").child(chatUrl).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue()!=null) {
+                    if ((long)dataSnapshot.getValue() == 1) crear2 = true;
+                }else
+                    existe = false;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 EditText input = (EditText)findViewById(R.id.input);
 
                if(!input.getText().toString().isEmpty()) {
@@ -84,13 +92,10 @@ public class Chat extends BaseActivity{
                    if (conversaciones) {
 
                        if(crear2){
-                           final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), chatUrl);
-                           final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(), chatUrl);
-                           database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c1);
-                           database.child("Usuarios").child(anun.getUID()).child("Chats").push().setValue(c2);
+                           final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(),chatUrl,user.getUid());
+                           database.child("Usuarios").child(conver.getUID()).child("Chats").push().setValue(c2);
                            database.child("Chats").child(chatUrl).child("Estado").setValue(0);
                            crear2 = false;
-
                        }
                        database.child("Chats").child(chatUrl).child("Mensajes").push()
                                .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
@@ -99,10 +104,10 @@ public class Chat extends BaseActivity{
                    } else {
 
                         if(crear) {
-                            final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), chatUrl);
-                            final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(), chatUrl);
+                            final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), chatUrl,anun.getUID());
+                            final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(), chatUrl,user.getUid());
                             database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c1);
-                            database.child("Usuarios").child(anun.getUID()).child("Chats").push().setValue(c2);
+                            if(!existe)database.child("Usuarios").child(anun.getUID()).child("Chats").push().setValue(c2);
                             database.child("Chats").child(chatUrl).child("Estado").setValue(0);
                             crear = false;
                         }
