@@ -34,7 +34,7 @@ public class Chat extends BaseActivity{
         private String chatUrl;
         private boolean conversaciones = false;
         private boolean crear = true;
-        private boolean crear2 = false;
+        private boolean borrada = false;
         private boolean existe = true;
         private int n;
 
@@ -66,11 +66,11 @@ public class Chat extends BaseActivity{
         else
             chatUrl = user.getUid() + "--" + anun.getUID();
 
-        database.child("Chats").child(chatUrl).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
+        database.child("Chats").child(chatUrl).child("Estado").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue()!=null) {
-                    if ((long)dataSnapshot.getValue() == 1) crear2 = true;
+                    if ((long)dataSnapshot.getValue() == 1) borrada = true;
                 }else
                     existe = false;
             }
@@ -89,13 +89,13 @@ public class Chat extends BaseActivity{
 
                if(!input.getText().toString().isEmpty()) {
 
-                   if (conversaciones) {
+                   /*if (conversaciones) {
 
-                       if(crear2){
+                       if(borrada){
                            final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(),chatUrl,user.getUid());
                            database.child("Usuarios").child(conver.getUID()).child("Chats").push().setValue(c2);
                            database.child("Chats").child(chatUrl).child("Estado").setValue(0);
-                           crear2 = false;
+                           borrada = false;
                        }
                        database.child("Chats").child(chatUrl).child("Mensajes").push()
                                .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
@@ -115,7 +115,50 @@ public class Chat extends BaseActivity{
                        database.child("Chats").child(chatUrl).child("Mensajes").push()
                                .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
 
-                   }
+                   }*/
+
+                    if(!existe){
+                        final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), chatUrl,anun.getUID());
+                        final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(), chatUrl,user.getUid());
+                        database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c1);
+                        database.child("Usuarios").child(anun.getUID()).child("Chats").push().setValue(c2);
+                        database.child("Chats").child(chatUrl).child("Estado").setValue(0);
+                        existe = true;
+                    }
+                    else{
+
+                        if(borrada && conversaciones){
+                            final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(),chatUrl,user.getUid());
+                            database.child("Usuarios").child(conver.getUID()).child("Chats").push().setValue(c2);
+                            database.child("Chats").child(chatUrl).child("Estado").setValue(0);
+                            borrada = false;
+                        }
+
+                        if(borrada && !conversaciones){
+                            final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), chatUrl,anun.getUID());
+                            database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c1);
+                            database.child("Chats").child(chatUrl).child("Estado").setValue(0);
+                            borrada = false;
+                        }
+
+                    }
+
+
+                   database.child("Chats").child(chatUrl).child("Mensajes").push()
+                           .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
+
+
+
+
+
+
+
+
+
+
+
+
+
                }
 
                 input.setText("");

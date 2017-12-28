@@ -98,7 +98,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-
         final Anuncio a = new Anuncio();
         final String paths[] = new String[4];
         final StorageReference filepathDescripcion;
