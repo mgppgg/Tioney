@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class Anuncio implements Serializable {
 
     private String[] imagenes;
-    private String titulo,descripcion,precio,UID,usuario;
+    private String titulo,descripcion,precio,UID,usuario,url;
 
     public Anuncio(){
         imagenes =new  String[4];
@@ -80,5 +80,13 @@ public class Anuncio implements Serializable {
 
     public void setUsuario(String usuario) {
         this.usuario = usuario;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

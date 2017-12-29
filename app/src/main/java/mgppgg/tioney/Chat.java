@@ -33,10 +33,8 @@ public class Chat extends BaseActivity{
         private Conver_listaConvers conver;
         private String chatUrl;
         private boolean conversaciones = false;
-        private boolean crear = true;
         private boolean borrada = false;
         private boolean existe = true;
-        private int n;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,34 +87,6 @@ public class Chat extends BaseActivity{
 
                if(!input.getText().toString().isEmpty()) {
 
-                   /*if (conversaciones) {
-
-                       if(borrada){
-                           final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(),chatUrl,user.getUid());
-                           database.child("Usuarios").child(conver.getUID()).child("Chats").push().setValue(c2);
-                           database.child("Chats").child(chatUrl).child("Estado").setValue(0);
-                           borrada = false;
-                       }
-                       database.child("Chats").child(chatUrl).child("Mensajes").push()
-                               .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName())
-                               );
-
-                   } else {
-
-                        if(crear) {
-                            final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), chatUrl,anun.getUID());
-                            final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(), chatUrl,user.getUid());
-                            database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c1);
-                            if(!existe)database.child("Usuarios").child(anun.getUID()).child("Chats").push().setValue(c2);
-                            database.child("Chats").child(chatUrl).child("Estado").setValue(0);
-                            crear = false;
-                        }
-
-                       database.child("Chats").child(chatUrl).child("Mensajes").push()
-                               .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
-
-                   }*/
-
                     if(!existe){
                         final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), chatUrl,anun.getUID());
                         final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(), chatUrl,user.getUid());
@@ -146,16 +116,6 @@ public class Chat extends BaseActivity{
 
                    database.child("Chats").child(chatUrl).child("Mensajes").push()
                            .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
-
-
-
-
-
-
-
-
-
-
 
 
 

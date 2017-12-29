@@ -12,10 +12,11 @@ public class AnunDatabase {
     private String usuario;
 
 
-    public  AnunDatabase(String t,String p,String id,String e,String usu){
+
+    public  AnunDatabase(String t,String p,String url,String e,String usu){
         this.titulo = t;
         this.precio = p;
-        this.url = id;
+        this.url = url;
         this.UID = e;
         this.usuario = usu;
 
@@ -67,4 +68,6 @@ public class AnunDatabase {
     public void setUsuario(String usuario) {
         this.usuario = usuario;
     }
+
+
 }

@@ -43,6 +43,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private ProgressDialog dialog;
     private static Anuncio anun;
     private FirebaseStorage  storage;
+    private static boolean mios=false;
 
 
     // Provide a reference to the views for each data item
@@ -63,20 +64,26 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             v.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     anun = listaAnuncios.get(getAdapterPosition());
-                    Intent intent = new Intent(v.getContext(), MostrarAnun.class);
-                    intent.putExtra("Anuncio", anun);
-                    v.getContext().startActivity(intent);
-
+                    if(!mios){
+                        Intent intent = new Intent(v.getContext(), MostrarAnun.class);
+                        intent.putExtra("Anuncio", anun);
+                        v.getContext().startActivity(intent);
+                    }else{
+                        Intent intent = new Intent(v.getContext(), Publicar.class);
+                        intent.putExtra("Anuncio", anun);
+                        v.getContext().startActivity(intent);
+                    }
                 }
             });
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<AnunDatabase> url, Context context,ProgressDialog d) {
+    public MyAdapter(List<AnunDatabase> url, Context context,ProgressDialog d,boolean m) {
         urls = url;
         listaAnuncios = new ArrayList<>();
         this.context = context;
+        this.mios = m;
         anun = new Anuncio();
         storage = FirebaseStorage.getInstance();
         dialog = d;
@@ -119,6 +126,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 listaAnuncios.get(position).setPrecio(urls.get(position).getPrecio());
                 listaAnuncios.get(position).setUID(urls.get(position).getUID());
                 listaAnuncios.get(position).setUsuario(urls.get(position).getUsuario());
+                listaAnuncios.get(position).setUrl(urls.get(position).getUrl());
                 listaAnuncios.get(position).setIma(paths[0],paths[1],paths[2],paths[3]);
 
                 holder.titulo.setText(a.getTitulo());

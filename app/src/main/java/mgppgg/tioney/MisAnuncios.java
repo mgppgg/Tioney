@@ -52,7 +52,7 @@ public class MisAnuncios extends BaseActivity {
         rv.setLayoutManager(LayoutManager);
         ob = new ObtenerDatos(this,rv);
         query = database.child("Usuarios").child(user.getUid()).child("Anuncios");
-        ob.obtener(true,query);
+        ob.obtener(true,query,true);
 
     }
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
@@ -20,6 +21,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -42,22 +47,28 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
+import recycler_view.Anuncio;
+import recycler_view.MyAdapter;
 
 
 public class Publicar extends BaseActivity {
 
-    private Button BtnSubir;
+    private Button BtnSubir,BtnBorrar;
     private ImageButton BtnIma1;
     private ImageButton BtnIma2;
     private ImageButton BtnIma3;
     private ImageButton BtnIma4;
     private int i;
+    private String key;
     private Uri[] uris;
     private EditText ETdescripcion;
     private EditText ETtitulo;
     private EditText ETprecio;
+    private Anuncio anun2;
+    private FirebaseStorage  storage;
     private StorageReference storageRef;
     private DatabaseReference database;
     private FirebaseUser user;
@@ -75,8 +86,11 @@ public class Publicar extends BaseActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        anun2 = null;
+        anun2 = (Anuncio) getIntent().getSerializableExtra("Anuncio");
 
         BtnSubir = (Button)findViewById(R.id.BtnSubir);
+        BtnBorrar= (Button)findViewById(R.id.BtnBorrarAnun);
         BtnIma1 = (ImageButton)findViewById(R.id.imageButton1);
         BtnIma2 = (ImageButton)findViewById(R.id.imageButton2);
         BtnIma3 = (ImageButton)findViewById(R.id.imageButton3);
@@ -88,16 +102,80 @@ public class Publicar extends BaseActivity {
         uris = new Uri[4];
         for(int b=0;b<4;b++)uris[b]=null;
 
+        storage = FirebaseStorage.getInstance();
         database = FirebaseDatabase.getInstance().getReference();
         storageRef = FirebaseStorage.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
+        if(anun2!=null){
+            BtnBorrar.setVisibility(View.VISIBLE);
+            BtnSubir.setText("Editar");
+            ETtitulo.setText(anun2.getTitulo());
+            ETdescripcion.setText(anun2.getDescripcion());
+            ETprecio.setText(anun2.getPrecio());
+            StorageReference filepathFoto = storage.getReferenceFromUrl(anun2.getIma(0));
+            Glide.with(this).using(new FirebaseImageLoader()).load(filepathFoto).diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true).into(BtnIma1);
+
+            database.child("Usuarios").child(user.getUid()).child("Anuncios").addListenerForSingleValueEvent(new ValueEventListener() {
+                @TargetApi(Build.VERSION_CODES.KITKAT)
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        AnunDatabase a = postSnapshot.getValue(AnunDatabase.class);
+                        if(Objects.equals(a.getTitulo(), anun2.getTitulo())) key =postSnapshot.getKey();
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
         BtnSubir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(isOnlineNet()) subir();
                 else snackBar("Sin conexión a internet");
+
+            }
+        });
+
+        BtnBorrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isOnlineNet()) {
+                    storage.getReferenceFromUrl(anun2.getUrl()+"Foto0").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            storage.getReferenceFromUrl(anun2.getUrl()+"Descripcion").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+
+                                    database.child("Usuarios").child(user.getUid()).child("Anuncios").child(key).removeValue();
+                                    database.child("Anuncios1").child(key).removeValue();
+                                    Toast.makeText(Publicar.this, "Anuncio eliminado con éxito", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+                else snackBar("Sin conexión a internet");
+
 
             }
         });
@@ -151,6 +229,7 @@ public class Publicar extends BaseActivity {
 
         if(resultCode==RESULT_OK){
             uris[i] = imageReturnedIntent.getData();
+
             switch(i){
                 case 0: BtnIma1.setImageURI(uris[i]);
                         break;
@@ -164,8 +243,6 @@ public class Publicar extends BaseActivity {
         }
 
     }
-
-
 
     @TargetApi(24)
     private void checkPermission() {
@@ -216,50 +293,44 @@ public class Publicar extends BaseActivity {
             titulo = ETtitulo.getText().toString();
             precio = ETprecio.getText().toString();
             UID = user.getUid();
-            usuario = user.getDisplayName();
-            url =  "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/";
-            final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
-            final StorageReference filepathDescripcion = storageRef.child("Anuncios/" + ID + "/" + "Descripcion");
 
+            if(anun2==null) {
 
-           /* String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
-            Map<String, Object> map = new HashMap<>();
-            map.put(key, "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/");
-            database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
-            database.child("Anuncios1").updateChildren(map);*/
+                usuario = user.getDisplayName();
+                url =  "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/";
+                final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
+                final StorageReference filepathDescripcion = storageRef.child("Anuncios/" + ID + "/" + "Descripcion");
 
-            String key =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
-            Map<String, Object> map = new HashMap<>();
-            AnunDatabase anun = new AnunDatabase(titulo,precio,url,UID,usuario);
-            map.put(key,anun);
-            database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
-            database.child("Anuncios1").updateChildren(map);
+                String key1 =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
+                Map<String, Object> map = new HashMap<>();
+                AnunDatabase anun = new AnunDatabase(titulo,precio,url,UID,usuario);
+                map.put(key1,anun);
+                database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
+                database.child("Anuncios1").updateChildren(map);
 
+                for (int b = 0; b < 4; b++) {
 
-            for (int b = 0; b < 4; b++) {
+                    if (uris[b] != null) {
+                        StorageReference filepathFotos = storageRef.child("Anuncios/" + ID + "/" + "Foto" + b);
 
-                if (uris[b] != null) {
-                    StorageReference filepathFotos = storageRef.child("Anuncios/" + ID + "/" + "Foto" + b);
+                        filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
-            }
 
-
-            filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
+                filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(Publicar.this, "Error al subir descripción", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Publicar.this, "Error al subir anuncio", Toast.LENGTH_SHORT).show();
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -270,9 +341,37 @@ public class Publicar extends BaseActivity {
                         Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(Publicar.this, MainActivity.class);
                         startActivity(intent);
+                    }
+                });
+
+            } else{
+
+                database.child("Usuarios").child(UID).child("Anuncios").child(key).child("titulo").setValue(titulo);
+                database.child("Usuarios").child(UID).child("Anuncios").child(key).child("precio").setValue(precio);
+                database.child("Anuncios1").child(key).child("titulo").setValue(titulo);
+                database.child("Anuncios1").child(key).child("precio").setValue(precio);
+
+                final StorageReference filepathDescripcion = storage.getReferenceFromUrl(anun2.getUrl()+"Descripcion");
+                final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
+
+                filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(Publicar.this, "Error al actualizar", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        hideProgressDialog();
+
+                        Toast.makeText(Publicar.this, "Anuncio actualizado correctamente", Toast.LENGTH_SHORT).show();
+                        finish();
 
                     }
                 });
+
+            }
 
         }
 

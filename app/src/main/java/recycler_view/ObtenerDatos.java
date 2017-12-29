@@ -48,8 +48,7 @@ public class ObtenerDatos extends BaseActivity {
     private List<AnunDatabase> urls;
     private Context context;
     private RecyclerView rv;
-    private Anuncio a;
-    private DatabaseReference database;
+    private String uid;
     private RecyclerView.Adapter Adapter;
     private FirebaseUser user;
 
@@ -57,12 +56,12 @@ public class ObtenerDatos extends BaseActivity {
         urls = new ArrayList<>();
         this.context = context;
         this.rv = rv;
-        database = FirebaseDatabase.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
+        uid = user.getUid();
     }
 
 
-    public void obtener(boolean dia,Query query){
+    public void obtener(boolean dia, Query query, final boolean mios){
 
         final ProgressDialog dialog = new ProgressDialog(context);
         dialog.setMessage("Cargando anuncios..");
@@ -78,10 +77,11 @@ public class ObtenerDatos extends BaseActivity {
 
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
-                    if(!Objects.equals(anun.getUID(), user.getUid()))urls.add(anun);
+                    if(mios)urls.add(anun);
+                    else if(!Objects.equals(anun.getUID(), uid))urls.add(anun);
                 }
 
-                Adapter = new MyAdapter(urls, context,dialog);
+                Adapter = new MyAdapter(urls, context,dialog,mios);
                 rv.setAdapter(Adapter);
 
             }
