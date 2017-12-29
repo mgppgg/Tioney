@@ -21,6 +21,9 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 import recycler_view.ObtenerDatos;
 
@@ -28,11 +31,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private FirebaseAuth mAuth;
     private RecyclerView rv;
-    private RecyclerView.Adapter Adapter;
+    private DatabaseReference database;
     private RecyclerView.LayoutManager LayoutManager;
     private ObtenerDatos ob;
     private SwipeRefreshLayout refreshLayout;
-    private Snackbar snackbar;
+    private Query query;
 
 
 
@@ -43,6 +46,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
+        database = FirebaseDatabase.getInstance().getReference();
+        query = database.child("Anuncios1");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -55,7 +60,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         rv.setLayoutManager(LayoutManager);
 
         ob = new ObtenerDatos(this,rv);
-        if(isOnlineNet()) ob.obtener(true);
+        if(isOnlineNet())ob.obtener(true,query);
         else  Snack1();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -80,7 +85,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        ob.obtener(false);
+                        ob.obtener(false,query);
                         ( new Handler()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -140,6 +145,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         } else if (id == R.id.nav_misAnuncios) {
 
+            Intent intent = new Intent(MainActivity.this, MisAnuncios.class);
+            startActivity(intent);
+
         } else if (id == R.id.nav_chat) {
 
             Intent intent = new Intent(MainActivity.this, Conversaciones.class);
@@ -172,7 +180,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isOnlineNet())ob.obtener(true);
+                if(isOnlineNet())ob.obtener(true,query);
                 else Snack2();
             }
         });
@@ -188,7 +196,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isOnlineNet())ob.obtener(true);
+                if(isOnlineNet())ob.obtener(true,query);
                 else Snack1();
             }
         });

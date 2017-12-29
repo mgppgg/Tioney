@@ -52,7 +52,6 @@ public class ObtenerDatos extends BaseActivity {
     private DatabaseReference database;
     private RecyclerView.Adapter Adapter;
     private FirebaseUser user;
-    private ValueEventListener listener;
 
     public ObtenerDatos(Context context,RecyclerView rv){
         urls = new ArrayList<>();
@@ -63,23 +62,21 @@ public class ObtenerDatos extends BaseActivity {
     }
 
 
-    public void obtener(boolean b){
+    public void obtener(boolean dia,Query query){
 
         final ProgressDialog dialog = new ProgressDialog(context);
         dialog.setMessage("Cargando anuncios..");
 
-        if(b) dialog.show();
+        if(dia) dialog.show();
 
         urls.clear();
 
-        final Query query = database.child("Anuncios1");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @TargetApi(Build.VERSION_CODES.KITKAT)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
                     if(!Objects.equals(anun.getUID(), user.getUid()))urls.add(anun);
                 }
