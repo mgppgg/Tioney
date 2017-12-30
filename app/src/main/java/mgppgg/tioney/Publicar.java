@@ -69,6 +69,7 @@ public class Publicar extends BaseActivity {
     private EditText ETtitulo;
     private EditText ETprecio;
     private Anuncio anun2;
+    private MisAnuncios mis;
     private FirebaseStorage  storage;
     private StorageReference storageRef;
     private DatabaseReference database;
@@ -101,6 +102,7 @@ public class Publicar extends BaseActivity {
         ETprecio = (EditText)findViewById(R.id.ETprecio);
         i = -1;
         arrayUris = new ArrayList<>();
+        mis = new MisAnuncios();
 
         storage = FirebaseStorage.getInstance();
         database = FirebaseDatabase.getInstance().getReference();
@@ -162,17 +164,6 @@ public class Publicar extends BaseActivity {
                         storage.getReferenceFromUrl(anun2.getUrl() + "Foto" + m).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                storage.getReferenceFromUrl(anun2.getUrl() + "Descripcion").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -182,9 +173,20 @@ public class Publicar extends BaseActivity {
                         });
                     }
 
+                    storage.getReferenceFromUrl(anun2.getUrl() + "Descripcion").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(Publicar.this, "Borrado. Desliza abajo para comprobar", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                     database.child("Usuarios").child(user.getUid()).child("Anuncios").child(key).removeValue();
                     database.child("Anuncios1").child(key).removeValue();
-                    Toast.makeText(Publicar.this, "Anuncio eliminado con éxito", Toast.LENGTH_SHORT).show();
                     finish();
 
                 }
@@ -424,8 +426,7 @@ public class Publicar extends BaseActivity {
                         database.child("Anuncios1").child(key).child("precio").setValue(precio);
 
                         hideProgressDialog();
-
-                        Toast.makeText(Publicar.this, "Anuncio actualizado correctamente", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Publicar.this, "Actualizado. Desliza abajo para comprobar", Toast.LENGTH_SHORT).show();
                         finish();
 
                     }

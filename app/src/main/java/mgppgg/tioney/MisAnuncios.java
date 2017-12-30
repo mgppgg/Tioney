@@ -3,7 +3,9 @@ package mgppgg.tioney;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -52,6 +54,7 @@ public class MisAnuncios extends BaseActivity {
     private ArrayList<Anuncio> anuncios;
     private FirebaseListAdapter <Anuncio> adapter;
     private FirebaseUser user;
+    private SwipeRefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class MisAnuncios extends BaseActivity {
         storage = FirebaseStorage.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
         listOfAnun= (ListView)findViewById(R.id.list_anun);
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_listaAnun);
         anuncios = new ArrayList<>();
 
         mostrar_anun(database.child("Usuarios").child(user.getUid()).child("Anuncios"));
@@ -80,6 +84,22 @@ public class MisAnuncios extends BaseActivity {
                 startActivity(intent);
             }
         });
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                   @Override
+                   public void onRefresh() {
+                        anuncios.clear();
+                        mostrar_anun(database.child("Usuarios").child(user.getUid()).child("Anuncios"));
+                        adapter.notifyDataSetChanged();
+                       ( new Handler()).postDelayed(new Runnable() {
+                           @Override
+                           public void run() {
+                               refreshLayout.setRefreshing(false);
+                           }
+                       }, 2500);
+                   }
+               }
+        );
 
     }
 
@@ -137,4 +157,5 @@ public class MisAnuncios extends BaseActivity {
         if(item.getItemId()==android.R.id.home)finish();
         return super.onOptionsItemSelected(item);
     }
+
 }
