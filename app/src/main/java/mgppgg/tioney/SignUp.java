@@ -98,7 +98,7 @@ public class SignUp extends LoginActivity {
             return;
         }
 
-        showProgressDialog(this);
+        showProgressDialog(this,"Creando cuenta..");
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

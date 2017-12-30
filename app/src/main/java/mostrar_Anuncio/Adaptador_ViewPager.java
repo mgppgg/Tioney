@@ -45,7 +45,7 @@ public class Adaptador_ViewPager extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 1;
+        return anun.getFotos();
 
     }
 
@@ -60,7 +60,7 @@ public class Adaptador_ViewPager extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int i) {
         ImageView image = new ImageView(Context);
         image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        StorageReference filepathFoto = storage.getReferenceFromUrl(anun.getIma(i));
+        StorageReference filepathFoto = storage.getReferenceFromUrl(anun.getUrl()+"Foto"+i);
         Glide.with(Context).using(new FirebaseImageLoader()).load(filepathFoto).diskCacheStrategy(DiskCacheStrategy.NONE).into(image);
         container.addView(image, 0);
         return image;

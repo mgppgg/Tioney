@@ -63,7 +63,8 @@ public class Publicar extends BaseActivity {
     private ImageButton BtnIma4;
     private int i;
     private String key;
-    private Uri[] uris;
+    private ArrayList<ArrrayUri> arrayUris;
+    private ArrayList<ImageButton> imageButtons;
     private EditText ETdescripcion;
     private EditText ETtitulo;
     private EditText ETprecio;
@@ -98,9 +99,8 @@ public class Publicar extends BaseActivity {
         ETdescripcion = (EditText)findViewById(R.id.ETdescripcion);
         ETtitulo = (EditText)findViewById(R.id.ETtitulo);
         ETprecio = (EditText)findViewById(R.id.ETprecio);
-        i = 0;
-        uris = new Uri[4];
-        for(int b=0;b<4;b++)uris[b]=null;
+        i = -1;
+        arrayUris = new ArrayList<>();
 
         storage = FirebaseStorage.getInstance();
         database = FirebaseDatabase.getInstance().getReference();
@@ -108,14 +108,25 @@ public class Publicar extends BaseActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(anun2!=null){
+            imageButtons = new ArrayList<>();
+            imageButtons.add(BtnIma1);
+            imageButtons.add(BtnIma2);
+            imageButtons.add(BtnIma3);
+            imageButtons.add(BtnIma4);
+
             BtnBorrar.setVisibility(View.VISIBLE);
             BtnSubir.setText("Editar");
+
             ETtitulo.setText(anun2.getTitulo());
             ETdescripcion.setText(anun2.getDescripcion());
             ETprecio.setText(anun2.getPrecio());
-            StorageReference filepathFoto = storage.getReferenceFromUrl(anun2.getIma(0));
-            Glide.with(this).using(new FirebaseImageLoader()).load(filepathFoto).diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true).into(BtnIma1);
+            if(anun2.getFotos()>0) {
+                for(int n=0;n<anun2.getFotos();n++) {
+                    StorageReference filepathFoto = storage.getReferenceFromUrl(anun2.getUrl() + "Foto" + n);
+                    Glide.with(this).using(new FirebaseImageLoader()).load(filepathFoto).diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true).into(imageButtons.get(n));
+                }
+            }
 
             database.child("Usuarios").child(user.getUid()).child("Anuncios").addListenerForSingleValueEvent(new ValueEventListener() {
                 @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -226,18 +237,27 @@ public class Publicar extends BaseActivity {
     @TargetApi(24)
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        boolean seguir = true;
 
         if(resultCode==RESULT_OK){
-            uris[i] = imageReturnedIntent.getData();
+            ArrrayUri a = new ArrrayUri(i,imageReturnedIntent.getData());
+
+            for(int c=arrayUris.size()-1;c>=0 && seguir;c--){
+                if(arrayUris.get(c).getId()==a.getId()){
+                    arrayUris.set(c,a);
+                    seguir = false;
+                }
+            }
+            if(seguir)arrayUris.add(a);
 
             switch(i){
-                case 0: BtnIma1.setImageURI(uris[i]);
+                case 0: BtnIma1.setImageURI(imageReturnedIntent.getData());
                         break;
-                case 1: BtnIma2.setImageURI(uris[i]);
+                case 1: BtnIma2.setImageURI(imageReturnedIntent.getData());
                         break;
-                case 2: BtnIma3.setImageURI(uris[i]);
+                case 2: BtnIma3.setImageURI(imageReturnedIntent.getData());
                         break;
-                case 3: BtnIma4.setImageURI(uris[i]);
+                case 3: BtnIma4.setImageURI(imageReturnedIntent.getData());
                         break;
             }
         }
@@ -285,7 +305,7 @@ public class Publicar extends BaseActivity {
 
     public void subir() {
 
-        showProgressDialog(this);
+        showProgressDialog(this,"Creando anuncio..");
         final String descripcion, titulo,precio,ID,UID,url,usuario;
         ID = UUID.randomUUID().toString();
         if (validar()) {
@@ -302,21 +322,22 @@ public class Publicar extends BaseActivity {
                 final StorageReference filepathDescripcion = storageRef.child("Anuncios/" + ID + "/" + "Descripcion");
 
                 String key1 =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
-                Map<String, Object> map = new HashMap<>();
-                AnunDatabase anun = new AnunDatabase(titulo,precio,url,UID,usuario);
+                final Map<String, Object> map = new HashMap<>();
+                AnunDatabase anun = new AnunDatabase(titulo,precio,url,UID,usuario,arrayUris.size());
                 map.put(key1,anun);
-                database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
-                database.child("Anuncios1").updateChildren(map);
 
-                for (int b = 0; b < 4; b++) {
+                if(i>-1) {
 
-                    if (uris[b] != null) {
+                    for (int b = 0; b < arrayUris.size(); b++) {
+
+                        arrayUris.get(b).setId(b);
+
                         StorageReference filepathFotos = storageRef.child("Anuncios/" + ID + "/" + "Foto" + b);
 
-                        filepathFotos.putFile(uris[b]).addOnFailureListener(new OnFailureListener() {
+                        filepathFotos.putFile(arrayUris.get(b).getUri()).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
-                                Toast.makeText(Publicar.this, "Error al subir foto", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(Publicar.this, "Error al subir fotos", Toast.LENGTH_SHORT).show();
                             }
                         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -324,6 +345,7 @@ public class Publicar extends BaseActivity {
 
                             }
                         });
+
                     }
                 }
 
@@ -336,6 +358,9 @@ public class Publicar extends BaseActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
+                        database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
+                        database.child("Anuncios1").updateChildren(map);
+
                         hideProgressDialog();
 
                         Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
@@ -345,14 +370,38 @@ public class Publicar extends BaseActivity {
                 });
 
             } else{
-
-                database.child("Usuarios").child(UID).child("Anuncios").child(key).child("titulo").setValue(titulo);
-                database.child("Usuarios").child(UID).child("Anuncios").child(key).child("precio").setValue(precio);
-                database.child("Anuncios1").child(key).child("titulo").setValue(titulo);
-                database.child("Anuncios1").child(key).child("precio").setValue(precio);
-
+                Log.d("a",key);
+                int cont = 0;
                 final StorageReference filepathDescripcion = storage.getReferenceFromUrl(anun2.getUrl()+"Descripcion");
                 final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
+
+                for(int c=0;c<arrayUris.size();c++){
+                    if(arrayUris.get(c).getId()>anun2.getFotos()-1)cont++;
+                }
+                final int finalCont = cont;
+                Log.d("q",":"+cont);
+
+                if(i > -1){
+
+                    for (int b = 0; b < arrayUris.size(); b++) {
+
+                        StorageReference filepathFotos = storage.getReferenceFromUrl(anun2.getUrl()+"Foto"+arrayUris.get(b).getId());
+
+                        filepathFotos.putFile(arrayUris.get(b).getUri()).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Toast.makeText(Publicar.this, "Error al subir fotos", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            }
+                        });
+
+                    }
+
+                }
 
                 filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -362,6 +411,14 @@ public class Publicar extends BaseActivity {
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        if(finalCont >0){
+                            database.child("Usuarios").child(UID).child("Anuncios").child(key).child("fotos").setValue(anun2.getFotos()+finalCont);
+                            database.child("Anuncios1").child(key).child("fotos").setValue(anun2.getFotos()+finalCont);
+                        }
+                        database.child("Usuarios").child(UID).child("Anuncios").child(key).child("titulo").setValue(titulo);
+                        database.child("Usuarios").child(UID).child("Anuncios").child(key).child("precio").setValue(precio);
+                        database.child("Anuncios1").child(key).child("titulo").setValue(titulo);
+                        database.child("Anuncios1").child(key).child("precio").setValue(precio);
 
                         hideProgressDialog();
 
@@ -370,6 +427,7 @@ public class Publicar extends BaseActivity {
 
                     }
                 });
+
 
             }
 

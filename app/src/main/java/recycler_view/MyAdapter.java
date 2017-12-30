@@ -106,14 +106,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         final Anuncio a = new Anuncio();
-        final String paths[] = new String[4];
         final StorageReference filepathDescripcion;
 
-        for(int i =0;i<4;i++)paths[i]=urls.get(position).getUrl() + "Foto" + i;
+        if(urls.get(position).getFotos()>0){
+            final StorageReference filepathFoto0 = storage.getReferenceFromUrl(urls.get(position).getUrl()+"Foto0");
+            Glide.with(context).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true).into(holder.image);
+        }
 
-        final StorageReference filepathFoto0 = storage.getReferenceFromUrl(paths[0]);
         listaAnuncios.add(a);
-
         filepathDescripcion =  storage.getReferenceFromUrl(urls.get(position).getUrl() + "Descripcion");
 
         filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -127,7 +128,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 listaAnuncios.get(position).setUID(urls.get(position).getUID());
                 listaAnuncios.get(position).setUsuario(urls.get(position).getUsuario());
                 listaAnuncios.get(position).setUrl(urls.get(position).getUrl());
-                listaAnuncios.get(position).setIma(paths[0],paths[1],paths[2],paths[3]);
+                listaAnuncios.get(position).setFotos(urls.get(position).getFotos());
 
                 holder.titulo.setText(a.getTitulo());
                 holder.descripcion.setText(a.getDescripcion());
@@ -142,10 +143,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 Toast.makeText(context, "Error al descargar los anuncios", Toast.LENGTH_SHORT).show();
             }
         });
-
-
-        Glide.with(context).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true).into(holder.image);
 
 
     }

@@ -15,31 +15,17 @@ import java.io.Serializable;
 
 public class Anuncio implements Serializable {
 
-    private String[] imagenes;
     private String titulo,descripcion,precio,UID,usuario,url;
+    private int fotos;
 
     public Anuncio(){
-        imagenes =new  String[4];
-        for(int i =0;i<4;i++){
-            imagenes[i] = null;
-        }
-    }
-
-
-    public void setIma(String url1, String url2, String url3, String url4){
-        imagenes[0] = url1;
-        imagenes[1] = url2;
-        imagenes[2] = url3;
-        imagenes[3] = url4;
-
-    }
-
-    public void setNull(int n){
-        imagenes[n] = null;
-    }
-
-    public String getIma(int i){
-        return imagenes[i];
+        titulo="";
+        descripcion="";
+        precio="";
+        UID="";
+        usuario="";
+        url="";
+        fotos=0;
     }
 
     public void setTitulo(String str){
@@ -88,5 +74,13 @@ public class Anuncio implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public int getFotos() {
+        return fotos;
+    }
+
+    public void setFotos(int fotos) {
+        this.fotos = fotos;
     }
 }

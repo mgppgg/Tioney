@@ -10,15 +10,17 @@ public class AnunDatabase {
     private String url;
     private String UID;
     private String usuario;
+    private int fotos;
 
 
 
-    public  AnunDatabase(String t,String p,String url,String e,String usu){
+    public  AnunDatabase(String t,String p,String url,String e,String usu,int foto){
         this.titulo = t;
         this.precio = p;
         this.url = url;
         this.UID = e;
         this.usuario = usu;
+        this.fotos = foto;
 
     }
     public  AnunDatabase(){
@@ -26,6 +28,8 @@ public class AnunDatabase {
         this.precio = "";
         this.url = "";
         this.UID = "";
+        this.usuario="";
+        this.fotos=0;
 
     }
 
@@ -69,5 +73,11 @@ public class AnunDatabase {
         this.usuario = usuario;
     }
 
+    public int getFotos() {
+        return fotos;
+    }
 
+    public void setFotos(int fotos) {
+        this.fotos = fotos;
+    }
 }

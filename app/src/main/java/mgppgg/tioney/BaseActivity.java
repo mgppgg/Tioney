@@ -15,10 +15,10 @@ import android.view.View;
 public class BaseActivity extends AppCompatActivity {
     public ProgressDialog mProgressDialog;
 
-    public void showProgressDialog(Context context) {
+    public void showProgressDialog(Context context,String texto) {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(context);
-            mProgressDialog.setMessage("Cargando...");
+            mProgressDialog.setMessage(texto);
             mProgressDialog.setIndeterminate(true);
         }
 
