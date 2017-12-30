@@ -158,31 +158,34 @@ public class Publicar extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if(isOnlineNet()) {
-                    storage.getReferenceFromUrl(anun2.getUrl()+"Foto0").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            storage.getReferenceFromUrl(anun2.getUrl()+"Descripcion").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
+                    for(int m=0;m<anun2.getFotos();m++) {
+                        storage.getReferenceFromUrl(anun2.getUrl() + "Foto" + m).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                storage.getReferenceFromUrl(anun2.getUrl() + "Descripcion").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
 
-                                    database.child("Usuarios").child(user.getUid()).child("Anuncios").child(key).removeValue();
-                                    database.child("Anuncios1").child(key).removeValue();
-                                    Toast.makeText(Publicar.this, "Anuncio eliminado con éxito", Toast.LENGTH_SHORT).show();
-                                    finish();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    database.child("Usuarios").child(user.getUid()).child("Anuncios").child(key).removeValue();
+                    database.child("Anuncios1").child(key).removeValue();
+                    Toast.makeText(Publicar.this, "Anuncio eliminado con éxito", Toast.LENGTH_SHORT).show();
+                    finish();
 
                 }
                 else snackBar("Sin conexión a internet");
@@ -458,6 +461,7 @@ public class Publicar extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         if(item.getItemId()==android.R.id.home)finish();
         return super.onOptionsItemSelected(item);
     }

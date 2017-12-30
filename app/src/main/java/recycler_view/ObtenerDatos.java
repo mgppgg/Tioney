@@ -61,7 +61,7 @@ public class ObtenerDatos extends BaseActivity {
     }
 
 
-    public void obtener(boolean dia, Query query, final boolean mios){
+    public void obtener(boolean dia, Query query){
 
         final ProgressDialog dialog = new ProgressDialog(context);
         dialog.setMessage("Cargando anuncios..");
@@ -77,11 +77,10 @@ public class ObtenerDatos extends BaseActivity {
 
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
-                    if(mios)urls.add(anun);
-                    else if(!Objects.equals(anun.getUID(), uid))urls.add(anun);
+                    if(!Objects.equals(anun.getUID(), uid))urls.add(anun);
                 }
 
-                Adapter = new MyAdapter(urls, context,dialog,mios);
+                Adapter = new MyAdapter(urls, context,dialog);
                 rv.setAdapter(Adapter);
 
             }

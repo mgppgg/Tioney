@@ -43,7 +43,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private ProgressDialog dialog;
     private static Anuncio anun;
     private FirebaseStorage  storage;
-    private static boolean mios=false;
 
 
     // Provide a reference to the views for each data item
@@ -64,26 +63,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             v.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
                     anun = listaAnuncios.get(getAdapterPosition());
-                    if(!mios){
-                        Intent intent = new Intent(v.getContext(), MostrarAnun.class);
-                        intent.putExtra("Anuncio", anun);
-                        v.getContext().startActivity(intent);
-                    }else{
-                        Intent intent = new Intent(v.getContext(), Publicar.class);
-                        intent.putExtra("Anuncio", anun);
-                        v.getContext().startActivity(intent);
-                    }
+                    Intent intent = new Intent(v.getContext(), MostrarAnun.class);
+                    intent.putExtra("Anuncio", anun);
+                    v.getContext().startActivity(intent);
+
                 }
             });
         }
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MyAdapter(List<AnunDatabase> url, Context context,ProgressDialog d,boolean m) {
+    public MyAdapter(List<AnunDatabase> url, Context context,ProgressDialog d) {
         urls = url;
         listaAnuncios = new ArrayList<>();
         this.context = context;
-        this.mios = m;
         anun = new Anuncio();
         storage = FirebaseStorage.getInstance();
         dialog = d;
