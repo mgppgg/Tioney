@@ -384,7 +384,6 @@ public class Publicar extends BaseActivity {
                     if(arrayUris.get(c).getId()>anun2.getFotos()-1)cont++;
                 }
                 final int finalCont = cont;
-                Log.d("q",":"+cont);
 
                 if(i > -1){
 

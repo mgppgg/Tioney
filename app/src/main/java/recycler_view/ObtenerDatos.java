@@ -8,8 +8,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -38,6 +41,9 @@ import java.util.Objects;
 
 import mgppgg.tioney.AnunDatabase;
 import mgppgg.tioney.BaseActivity;
+import mgppgg.tioney.R;
+
+import static android.support.constraint.R.id.parent;
 
 /**
  * Created by pablich on 25/11/2017.
@@ -49,15 +55,19 @@ public class ObtenerDatos extends BaseActivity {
     private Context context;
     private RecyclerView rv;
     private String uid;
+    private RecyclerView.LayoutManager LayoutManager;
     private RecyclerView.Adapter Adapter;
     private FirebaseUser user;
 
-    public ObtenerDatos(Context context,RecyclerView rv){
+    public ObtenerDatos(Context context,RecyclerView recycler){
         urls = new ArrayList<>();
         this.context = context;
-        this.rv = rv;
         user = FirebaseAuth.getInstance().getCurrentUser();
         uid = user.getUid();
+        rv = recycler;
+
+       // LayoutInflater inflater = LayoutInflater.from(context);
+       // View v = inflater.inflate(R.layout.content_main,null);
     }
 
 
@@ -78,6 +88,7 @@ public class ObtenerDatos extends BaseActivity {
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
                     if(!Objects.equals(anun.getUID(), uid))urls.add(anun);
+
                 }
 
                 Adapter = new MyAdapter(urls, context,dialog);

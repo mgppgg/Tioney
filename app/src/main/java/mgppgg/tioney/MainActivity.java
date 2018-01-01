@@ -1,5 +1,7 @@
 package mgppgg.tioney;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -36,6 +39,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private ObtenerDatos ob;
     private SwipeRefreshLayout refreshLayout;
     private Query query;
+    private Context context;
 
 
 
@@ -44,6 +48,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        context = this;
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance().getReference();
@@ -54,12 +59,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
-        rv = (RecyclerView)findViewById(R.id.recycler_view);
+        rv  =(RecyclerView)findViewById(R.id.recycler_view);
         rv.setHasFixedSize(true);
         LayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(LayoutManager);
 
-        ob = new ObtenerDatos(this,rv);
+        ob = new ObtenerDatos(context,rv);
         if(isOnlineNet())ob.obtener(true,query);
         else  Snack1();
 
@@ -115,10 +120,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.buscar).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
         return true;
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -126,12 +137,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.buscar) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
