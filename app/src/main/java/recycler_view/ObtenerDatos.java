@@ -41,6 +41,7 @@ import java.util.Objects;
 
 import mgppgg.tioney.AnunDatabase;
 import mgppgg.tioney.BaseActivity;
+import mgppgg.tioney.MainActivity;
 import mgppgg.tioney.R;
 
 import static android.support.constraint.R.id.parent;
@@ -51,7 +52,7 @@ import static android.support.constraint.R.id.parent;
 
 public class ObtenerDatos extends BaseActivity {
 
-    private List<AnunDatabase> urls;
+    private ArrayList<AnunDatabase> urls;
     private Context context;
     private RecyclerView rv;
     private String uid;
@@ -68,6 +69,7 @@ public class ObtenerDatos extends BaseActivity {
 
        // LayoutInflater inflater = LayoutInflater.from(context);
        // View v = inflater.inflate(R.layout.content_main,null);
+
     }
 
 
@@ -93,12 +95,11 @@ public class ObtenerDatos extends BaseActivity {
 
                 Adapter = new MyAdapter(urls, context,dialog);
                 rv.setAdapter(Adapter);
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Toast.makeText(context, "Error al descargar los anuncios", Toast.LENGTH_SHORT).show();
             }
         });
 

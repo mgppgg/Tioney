@@ -1,9 +1,12 @@
 package mgppgg.tioney;
 
+import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -21,13 +24,22 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Objects;
+
+import recycler_view.MyAdapter;
 import recycler_view.ObtenerDatos;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,10 +48,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private RecyclerView rv;
     private DatabaseReference database;
     private RecyclerView.LayoutManager LayoutManager;
-    private ObtenerDatos ob;
+    private ArrayList<AnunDatabase> urls;
+    private FirebaseUser user;
+    private RecyclerView.Adapter Adapter;
     private SwipeRefreshLayout refreshLayout;
     private Query query;
     private Context context;
+    private String busqueda;
 
 
 
@@ -49,10 +64,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setContentView(R.layout.activity_main);
 
         context = this;
+        urls = new ArrayList<>();
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance().getReference();
         query = database.child("Anuncios1");
+        busqueda ="";
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,8 +81,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         LayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(LayoutManager);
 
-        ob = new ObtenerDatos(context,rv);
-        if(isOnlineNet())ob.obtener(true,query);
+        if(isOnlineNet())obtener(true,query);
         else  Snack1();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -90,7 +106,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        ob.obtener(false,query);
+                        obtener(false,query);
                         ( new Handler()).postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -122,12 +138,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         getMenuInflater().inflate(R.menu.main, menu);
 
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+       // SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.buscar).getActionView();
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        buscar(searchView);
 
         return true;
     }
+
+    /*@Override
+    public boolean onSearchRequested() {
+        Bundle appData = new Bundle();
+        //appData.putSerializable("rv", (Serializable) rv);
+        appData.putString("hola","hola");
+        startSearch(null, false, appData, false);
+        return true;
+    }*/
 
     /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -183,6 +209,69 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
+
+
+
+    public void obtener(boolean dia, Query query){
+
+        final ProgressDialog dialog = new ProgressDialog(context);
+        dialog.setMessage("Cargando anuncios..");
+
+        if(dia) dialog.show();
+
+        urls.clear();
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @TargetApi(Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
+                    if(!Objects.equals(anun.getUID(), user.getUid()) && anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))urls.add(anun);
+
+                }
+
+                Adapter = new MyAdapter(urls, context,dialog);
+                rv.setAdapter(Adapter);
+                busqueda = "";
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(context, "Error al descargar los anuncios", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+    }
+
+    public void buscar(SearchView search){
+
+
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String text) {
+                busqueda = text;
+                query = database.child("Anuncios1").orderByChild("titulo");
+                obtener(true,query);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                return false;
+            }
+        });
+
+    }
+
+
+
+
     public void Snack1(){
         Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Sin conexión a internet",  Snackbar.LENGTH_INDEFINITE).setAction("Action", null);
         View sbView = snackbar.getView();
@@ -191,7 +280,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isOnlineNet())ob.obtener(true,query);
+                if(isOnlineNet())obtener(true,query);
                 else Snack2();
             }
         });
@@ -207,15 +296,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isOnlineNet())ob.obtener(true,query);
+                if(isOnlineNet())obtener(true,query);
                 else Snack1();
             }
         });
 
         snackbar.show();
     }
-
-
 
 
 }
