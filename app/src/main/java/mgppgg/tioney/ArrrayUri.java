@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 public class ArrrayUri {
 
     private int id;
-    private Uri uri;
     private String ima;
 
     public ArrrayUri(int i,String ima){
@@ -26,14 +25,6 @@ public class ArrrayUri {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Uri getUri() {
-        return uri;
-    }
-
-    public void setUri(Uri uri) {
-        this.uri = uri;
     }
 
     public String getIma() {
