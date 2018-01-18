@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 /**
  * Created by manug on 04/10/2017.
@@ -113,7 +114,9 @@ public class SignUp extends LoginActivity {
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(nombre).build();
                             user.updateProfile(profileUpdates);
 
-                            database.child("Usuarios").child(user.getUid()).setValue(new Usuario(nombre,user.getEmail(),0));
+                            String token = FirebaseInstanceId.getInstance().getToken();
+
+                            database.child("Usuarios").child(user.getUid()).setValue(new Usuario(nombre,user.getEmail(),token));
 
 
                             Intent intent = new Intent(SignUp.this, MainActivity.class);

@@ -7,11 +7,11 @@ package mgppgg.tioney;
 public class Usuario {
     private String nombre;
     private String correo;
-    private int numAnun;
+    private String token;
 
-    public Usuario(String nom,String cor, int n){
+    public Usuario(String nom,String cor, String t){
         this.nombre = nom;
-        this.numAnun = n;
+        this.token = t;
         this.correo = cor;
     }
 
@@ -19,8 +19,8 @@ public class Usuario {
         return nombre;
     }
 
-    public int getNumAnun(){
-        return numAnun;
+    public String getToken(){
+        return token;
     }
 
     public String getCorreo(){

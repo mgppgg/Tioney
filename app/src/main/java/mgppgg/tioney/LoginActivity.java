@@ -18,6 +18,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class LoginActivity extends BaseActivity {
 
@@ -42,7 +45,6 @@ public class LoginActivity extends BaseActivity {
         ETemail = (EditText)findViewById(R.id.ETuser);
 
         mAuth = FirebaseAuth.getInstance();
-
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -86,6 +88,7 @@ public class LoginActivity extends BaseActivity {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if(currentUser!=null){
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra("login",false);
                 startActivity(intent);
         }
 
@@ -108,7 +111,9 @@ public class LoginActivity extends BaseActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("login",true);
                             startActivity(intent);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());

@@ -35,6 +35,7 @@ public class Chat extends BaseActivity{
         private boolean conversaciones = false;
         private boolean borrada = false;
         private boolean existe = true;
+        private boolean notificaciones = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,8 +114,16 @@ public class Chat extends BaseActivity{
 
                     }
 
+                    if(notificaciones && conversaciones){
+                        database.child("Notificaciones").child(conver.getUID()).push().child("from").setValue(user.getUid());
+                        notificaciones = false;
+                    }
+                    if(notificaciones && !conversaciones){
+                       database.child("Notificaciones").child(anun.getUID()).push().child("from").setValue(user.getUid());
+                       notificaciones = false;
+                    }
 
-                   database.child("Chats").child(chatUrl).child("Mensajes").push()
+                    database.child("Chats").child(chatUrl).child("Mensajes").push()
                            .setValue(new Mensaje_chat(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
 
 

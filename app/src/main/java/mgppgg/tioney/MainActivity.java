@@ -34,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Query query;
     private Context context;
     private String busqueda;
+    private boolean login = false;
 
 
 
@@ -70,6 +72,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         database = FirebaseDatabase.getInstance().getReference();
         query = database.child("Anuncios1");
         busqueda ="";
+        login = getIntent().getExtras().getBoolean("login");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -101,6 +104,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+       if(login){
+           String token = FirebaseInstanceId.getInstance().getToken();
+           database.child("Usuarios").child(user.getUid()).child("token").setValue(token);
+       }
 
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -146,29 +154,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
-    /*@Override
-    public boolean onSearchRequested() {
-        Bundle appData = new Bundle();
-        //appData.putSerializable("rv", (Serializable) rv);
-        appData.putString("hola","hola");
-        startSearch(null, false, appData, false);
-        return true;
-    }*/
-
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.buscar) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
