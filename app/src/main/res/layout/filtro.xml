@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/filtro_dialog"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+
+    <TextView
+        android:id="@+id/TV_fil_precio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:text="Precio"
+        android:textAlignment="center" />
+
+    <SeekBar
+        android:id="@+id/SBprecio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TV_fil_precio"
+        android:padding="10dp" />
+
+    <TextView
+        android:id="@+id/TV_fil_distancia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/SBprecio"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:text="Distancia"
+        android:textAlignment="center" />
+
+    <SeekBar
+        android:id="@+id/SBdistancia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TV_fil_distancia"
+        android:padding="10dp" />
+
+    <TextView
+        android:id="@+id/TV_fil_categoria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/SBdistancia"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:text="Categoria"
+        android:textAlignment="center" />
+
+    <SeekBar
+        android:id="@+id/SBcategoria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TV_fil_categoria"
+        android:padding="10dp" />
+
+    <Button
+        android:id="@+id/BTNaplicar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+
+        android:layout_below="@+id/SBcategoria"
+        android:text="Aplicar" />
+
+    <Button
+        android:id="@+id/BTNcancelar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/SBcategoria"
+        android:text="Cancelar" />
+
+</RelativeLayout>

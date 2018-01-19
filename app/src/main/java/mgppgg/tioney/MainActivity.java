@@ -1,9 +1,12 @@
 package mgppgg.tioney;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -16,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +28,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +56,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private FirebaseAuth mAuth;
     private RecyclerView rv;
+    private TextView filtro;
     private DatabaseReference database;
     private RecyclerView.LayoutManager LayoutManager;
     private ArrayList<AnunDatabase> urls;
@@ -74,8 +84,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         busqueda ="";
         login = getIntent().getExtras().getBoolean("login");
 
+        filtro = (TextView)findViewById(R.id.TVfiltro);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
@@ -93,6 +105,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, Publicar.class);
                 startActivity(intent);
+            }
+        });
+
+        filtro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filtro();
             }
         });
 
@@ -242,6 +261,34 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 return false;
             }
         });
+
+    }
+
+    public void filtro(){
+
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.filtro);
+        Button BTNaplicar = (Button)dialog.findViewById(R.id.BTNaplicar);
+        Button BTNcancelar = (Button)dialog.findViewById(R.id.BTNcancelar);
+
+
+
+        BTNaplicar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        BTNcancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
 
     }
 
