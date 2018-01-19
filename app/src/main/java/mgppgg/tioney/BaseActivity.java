@@ -1,7 +1,9 @@
 package mgppgg.tioney;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.Snackbar;
@@ -60,4 +62,6 @@ public class BaseActivity extends AppCompatActivity {
         sbView.setBackgroundColor(Color.RED);
         snackbar.show();
     }
+
+
 }

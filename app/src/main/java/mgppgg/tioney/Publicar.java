@@ -3,6 +3,9 @@ package mgppgg.tioney;
 import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -77,7 +80,6 @@ public class Publicar extends BaseActivity {
     private ImageButton BtnIma4;
     private int i;
     private String key;
-    private byte[] data;
     private ArrayList<ArrrayUri> arrayUris;
     private ArrayList<ImageButton> imageButtons;
     private EditText ETdescripcion;
@@ -163,7 +165,10 @@ public class Publicar extends BaseActivity {
         BtnSubir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isOnlineNet()) subir();
+                if(isOnlineNet()){
+                    if(anun2==null)confirmacion("¿Esta seguro de subir el anuncio?",0);
+                    else confirmacion("¿Esta seguro de editar el anuncio?",0);
+                }
                 else snackBar("Sin conexión a internet");
 
             }
@@ -172,40 +177,8 @@ public class Publicar extends BaseActivity {
         BtnBorrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isOnlineNet()) {
-                    for(int m=0;m<anun2.getFotos();m++) {
-                        storage.getReferenceFromUrl(anun2.getUrl() + "Foto" + m).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    storage.getReferenceFromUrl(anun2.getUrl() + "Descripcion").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(Publicar.this, "Borrado. Desliza abajo para comprobar", Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    database.child("Usuarios").child(user.getUid()).child("Anuncios").child(key).removeValue();
-                    database.child("Anuncios1").child(key).removeValue();
-                    finish();
-
-                }
+                if(isOnlineNet())confirmacion("¿Esta seguro de borrar el anuncio?",1);
                 else snackBar("Sin conexión a internet");
-
-
             }
         });
 
@@ -384,13 +357,11 @@ public class Publicar extends BaseActivity {
                         hideProgressDialog();
 
                         Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(Publicar.this, MainActivity.class);
-                        startActivity(intent);
+                        finish();
                     }
                 });
 
             } else{
-                Log.d("a",key);
                 int cont = 0;
                 final StorageReference filepathDescripcion = storage.getReferenceFromUrl(anun2.getUrl()+"Descripcion");
                 final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
@@ -400,30 +371,6 @@ public class Publicar extends BaseActivity {
                 }
                 final int finalCont = cont;
 
-                if(i > -1){
-
-                    for (int b = 0; b < arrayUris.size(); b++) {
-
-                        StorageReference filepathFotos = storage.getReferenceFromUrl(anun2.getUrl()+"Foto"+arrayUris.get(b).getId());
-                        Uri file = Uri.fromFile(new File(arrayUris.get(b).getIma()));
-
-                        filepathFotos.putFile(file).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Toast.makeText(Publicar.this, "Error al subir fotos", Toast.LENGTH_SHORT).show();
-                            }
-                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                            }
-                        });
-
-                    }
-
-
-
-                }
 
                 filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -433,6 +380,30 @@ public class Publicar extends BaseActivity {
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        if(i > -1){
+
+                            for (int b = 0; b < arrayUris.size(); b++) {
+
+                                StorageReference filepathFotos = storage.getReferenceFromUrl(anun2.getUrl()+"Foto"+arrayUris.get(b).getId());
+                                Uri file = Uri.fromFile(new File(arrayUris.get(b).getIma()));
+
+                                filepathFotos.putFile(file).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        Toast.makeText(Publicar.this, "Error al subir fotos", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                    }
+                                });
+
+                            }
+
+                        }
+
                         if(finalCont >0){
                             database.child("Usuarios").child(UID).child("Anuncios").child(key).child("fotos").setValue(anun2.getFotos()+finalCont);
                             database.child("Anuncios1").child(key).child("fotos").setValue(anun2.getFotos()+finalCont);
@@ -474,6 +445,65 @@ public class Publicar extends BaseActivity {
         }
         if(!v)hideProgressDialog();
         return v;
+    }
+
+    public void borrrarAnun(){
+
+        storage.getReferenceFromUrl(anun2.getUrl() + "Descripcion").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+                for(int m=0;m<anun2.getFotos();m++) {
+                    storage.getReferenceFromUrl(anun2.getUrl() + "Foto" + m).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                database.child("Usuarios").child(user.getUid()).child("Anuncios").child(key).removeValue();
+                database.child("Anuncios1").child(key).removeValue();
+
+                Toast.makeText(Publicar.this, "Borrado. Desliza hacia abajo para comprobar", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        finish();
+    }
+
+
+    public void confirmacion(String msg, final int opcion){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(msg);
+        builder.setPositiveButton("Aceptar",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(opcion==0)subir();
+                        if(opcion==1)borrrarAnun();
+                    }
+                });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 

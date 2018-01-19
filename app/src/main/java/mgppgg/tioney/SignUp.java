@@ -120,6 +120,7 @@ public class SignUp extends LoginActivity {
 
 
                             Intent intent = new Intent(SignUp.this, MainActivity.class);
+                            intent.putExtra("login",false);
                             startActivity(intent);
 
                         } else {

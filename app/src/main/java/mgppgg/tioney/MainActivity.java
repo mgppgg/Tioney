@@ -115,12 +115,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     @Override
                     public void onRefresh() {
                         obtener(false,query);
-                        ( new Handler()).postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                refreshLayout.setRefreshing(false);
-                            }
-                        }, 3500);
                     }
                 }
         );
@@ -142,13 +136,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
 
-        // Associate searchable configuration with the SearchView
-       // SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        getMenuInflater().inflate(R.menu.main, menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.buscar).getActionView();
-        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         buscar(searchView);
 
         return true;
@@ -217,6 +207,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 }
 
+                refreshLayout.setRefreshing(false);
                 Adapter = new MyAdapter(urls, context,dialog);
                 rv.setAdapter(Adapter);
                 busqueda = "";

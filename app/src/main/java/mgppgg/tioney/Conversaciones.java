@@ -1,5 +1,7 @@
 package mgppgg.tioney;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
@@ -70,22 +72,7 @@ public class Conversaciones extends BaseActivity {
                 borrar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
-                        database.child("Usuarios").child(user.getUid()).child("Chats").child(adapter.getRef(position).getKey()).removeValue();
-                        Log.d("pos",":"+adapter.getRef(position).getKey());
-                        database.child("Chats").child(conver.getChatUrl()).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                if((long)dataSnapshot.getValue()==1){
-                                    database.child("Chats").child(conver.getChatUrl()).removeValue();
-                                }else
-                                    database.child("Chats").child(conver.getChatUrl()).child("Estado").setValue(1);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {}
-
-                        });
-
+                        confirmacion(conver,position);
                     }
                 });
             }
@@ -117,6 +104,48 @@ public class Conversaciones extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==android.R.id.home)finish();
         return super.onOptionsItemSelected(item);
+    }
+
+    public void borrarChat(final Conver_listaConvers conver,final int position){
+
+        database.child("Usuarios").child(user.getUid()).child("Chats").child(adapter.getRef(position).getKey()).removeValue();
+        Log.d("pos",":"+adapter.getRef(position).getKey());
+        database.child("Chats").child(conver.getChatUrl()).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if((long)dataSnapshot.getValue()==1){
+                    database.child("Chats").child(conver.getChatUrl()).removeValue();
+                }else
+                    database.child("Chats").child(conver.getChatUrl()).child("Estado").setValue(1);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+
+        });
+
+    }
+
+    public void confirmacion(final Conver_listaConvers conver,final int position){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle("¿Esta seguro de borrar la conversación?");
+        builder.setPositiveButton("Aceptar",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        borrarChat(conver,position);
+                    }
+                });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 
