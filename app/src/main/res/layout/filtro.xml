@@ -5,57 +5,119 @@
     android:layout_height="wrap_content"
     android:padding="10dp">
 
-
-    <TextView
-        android:id="@+id/TV_fil_precio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:padding="10dp"
-        android:text="Precio"
-        android:textAlignment="center" />
-
-    <SeekBar
-        android:id="@+id/SBprecio"
+    <LinearLayout
+        android:id="@+id/linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/TV_fil_precio"
-        android:padding="10dp" />
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/TV_fil_distancia"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/SBprecio"
-        android:layout_centerHorizontal="true"
-        android:padding="10dp"
-        android:text="Distancia"
-        android:textAlignment="center" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
 
-    <SeekBar
-        android:id="@+id/SBdistancia"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TV_fil_distancia"
-        android:padding="10dp" />
 
-    <TextView
-        android:id="@+id/TV_fil_categoria"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/SBdistancia"
-        android:layout_centerHorizontal="true"
-        android:padding="10dp"
-        android:text="Categoria"
-        android:textAlignment="center" />
+            <TextView
+                android:id="@+id/TVdesde"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:text="Desde"
+                android:textAlignment="center" />
 
-    <SeekBar
-        android:id="@+id/SBcategoria"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TV_fil_categoria"
-        android:padding="10dp" />
+            <EditText
+                android:id="@+id/ETdesde"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:hint="0 €"
+                android:inputType="number"
+                android:maxLength="4"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/TVhasta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:text="Hasta"
+                android:textAlignment="center"
+                android:layout_marginEnd="20dp" />
+
+            <EditText
+                android:id="@+id/EThasta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="5000 €"
+                android:inputType="number"
+                android:maxLength="4"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/TV_fil_distancia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="Distancia:   &lt;"
+                android:textAlignment="center"
+                android:layout_marginEnd="10dp" />
+
+
+            <TextView
+                android:id="@+id/TV_fil_numdis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:text="5"
+                android:layout_marginEnd="10dp" />
+
+            <TextView
+                android:id="@+id/km"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Km" />
+
+        </LinearLayout>
+
+
+
+        <SeekBar
+            android:id="@+id/SBdistancia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/TV_fil_categoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="Categoria"
+            android:textAlignment="center" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 
     <Button
         android:id="@+id/BTNaplicar"
@@ -63,8 +125,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-
-        android:layout_below="@+id/SBcategoria"
+        android:layout_below="@+id/linear"
         android:text="Aplicar" />
 
     <Button
@@ -73,7 +134,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/SBcategoria"
+        android:layout_below="@+id/linear"
         android:text="Cancelar" />
 
 </RelativeLayout>
