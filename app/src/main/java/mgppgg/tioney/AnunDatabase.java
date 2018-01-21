@@ -1,5 +1,7 @@
 package mgppgg.tioney;
 
+import android.location.Location;
+
 /**
  * Created by pablich on 26/12/2017.
  */
@@ -11,16 +13,18 @@ public class AnunDatabase {
     private String UID;
     private String usuario;
     private int fotos;
+    private Location local;
 
 
 
-    public  AnunDatabase(String t,String p,String url,String e,String usu,int foto){
+    public  AnunDatabase(String t,String p,String url,String e,String usu,int foto,Location l){
         this.titulo = t;
         this.precio = p;
         this.url = url;
         this.UID = e;
         this.usuario = usu;
         this.fotos = foto;
+        this.local=l;
 
     }
     public  AnunDatabase(){
@@ -79,5 +83,13 @@ public class AnunDatabase {
 
     public void setFotos(int fotos) {
         this.fotos = fotos;
+    }
+
+    public Location getLocal() {
+        return local;
+    }
+
+    public void setLocal(Location local) {
+        this.local = local;
     }
 }

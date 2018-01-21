@@ -22,6 +22,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -78,10 +81,12 @@ public class Publicar extends BaseActivity {
     private EditText ETtitulo;
     private EditText ETprecio;
     private Anuncio anun2;
+    private Location local;
     private FirebaseStorage storage;
     private StorageReference storageRef;
     private DatabaseReference database;
     private FirebaseUser user;
+    private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
     @Override
@@ -115,6 +120,7 @@ public class Publicar extends BaseActivity {
         database = FirebaseDatabase.getInstance().getReference();
         storageRef = FirebaseStorage.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if (anun2 != null) {
             imageButtons = new ArrayList<>();
@@ -159,10 +165,10 @@ public class Publicar extends BaseActivity {
         BtnSubir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isOnlineNet()) {
+                if (isOnlineNet() && localizacion()) {
                     if (anun2 == null) confirmacion("¿Esta seguro de subir el anuncio?", 0);
                     else confirmacion("¿Esta seguro de editar el anuncio?", 0);
-                } else snackBar("Sin conexión a internet");
+                } else if(!isOnlineNet())snackBar("Sin conexión a internet");
 
             }
         });
@@ -312,7 +318,7 @@ public class Publicar extends BaseActivity {
 
                 String key1 = database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
                 final Map<String, Object> map = new HashMap<>();
-                AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario, arrayUris.size());
+                AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario, arrayUris.size(),local);
                 map.put(key1, anun);
 
                 if (i > -1) {
@@ -501,6 +507,27 @@ public class Publicar extends BaseActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+
+    public boolean localizacion() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(Publicar.this, "Debe habilitar el permiso de localización para subir anuncios", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                local = location;
+                            }
+                        }
+                    });
+            return true;
+        }
     }
 
 

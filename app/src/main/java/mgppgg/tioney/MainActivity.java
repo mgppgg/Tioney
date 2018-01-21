@@ -337,6 +337,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onClick(View v) {
 
+                query = database.child("Anuncios1").orderByChild("titulo");
+                obtener(true, query);
+
             }
         });
 
