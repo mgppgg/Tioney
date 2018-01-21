@@ -1,25 +1,25 @@
 package mgppgg.tioney;
 
+import android.*;
+import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,9 +28,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +36,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,12 +50,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
 import recycler_view.MyAdapter;
-import recycler_view.ObtenerDatos;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -70,8 +69,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Query query;
     private Context context;
     private String busqueda;
+    private Location local;
     private boolean login = false;
-
+    private FusedLocationProviderClient mFusedLocationClient;
+    private static final int REQUEST_CODE_ASK_PERMISSIONS2 = 456;
 
 
     @Override
@@ -79,29 +80,33 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         context = this;
         urls = new ArrayList<>();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance().getReference();
         query = database.child("Anuncios1");
-        busqueda ="";
+        busqueda = "";
         login = getIntent().getExtras().getBoolean("login");
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        filtro = (TextView)findViewById(R.id.TVfiltro);
+        filtro = (TextView) findViewById(R.id.TVfiltro);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
 
-        rv  =(RecyclerView)findViewById(R.id.recycler_view);
+        rv = (RecyclerView) findViewById(R.id.recycler_view);
         rv.setHasFixedSize(true);
         LayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(LayoutManager);
 
-        if(isOnlineNet())obtener(true,query);
-        else  Snack1();
+        if (isOnlineNet()) obtener(true, query);
+        else Snack1();
+
+        permiso();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -128,20 +133,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-       if(login){
-           String token = FirebaseInstanceId.getInstance().getToken();
-           database.child("Usuarios").child(user.getUid()).child("token").setValue(token);
-       }
+        if (login) {
+            String token = FirebaseInstanceId.getInstance().getToken();
+            database.child("Usuarios").child(user.getUid()).child("token").setValue(token);
+        }
 
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        obtener(false,query);
-                    }
-                }
+                                               @Override
+                                               public void onRefresh() {
+                                                   obtener(false, query);
+                                               }
+                                           }
         );
-
 
 
     }
@@ -193,7 +197,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         } else if (id == R.id.nav_send) {
 
-        }else if (id == R.id.nav_Sesion) {
+        } else if (id == R.id.nav_Sesion) {
 
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -208,14 +212,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
 
-
-
-    public void obtener(boolean dia, Query query){
+    public void obtener(boolean dia, Query query) {
 
         final ProgressDialog dialog = new ProgressDialog(context);
         dialog.setMessage("Cargando anuncios..");
 
-        if(dia) dialog.show();
+        if (dia) dialog.show();
 
         urls.clear();
 
@@ -226,12 +228,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
-                    if(!Objects.equals(anun.getUID(), user.getUid()) && anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))urls.add(anun);
+                    if (!Objects.equals(anun.getUID(), user.getUid()) && anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
+                        urls.add(anun);
 
                 }
 
                 refreshLayout.setRefreshing(false);
-                Adapter = new MyAdapter(urls, context,dialog);
+                Adapter = new MyAdapter(urls, context, dialog);
                 rv.setAdapter(Adapter);
                 busqueda = "";
             }
@@ -243,10 +246,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
 
 
-
     }
 
-    public void buscar(SearchView search){
+    public void buscar(SearchView search) {
 
 
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -254,7 +256,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             public boolean onQueryTextSubmit(String text) {
                 busqueda = text;
                 query = database.child("Anuncios1").orderByChild("titulo");
-                obtener(true,query);
+                obtener(true, query);
 
                 return true;
             }
@@ -268,37 +270,39 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
-    public void filtro(){
+    public void filtro() {
 
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.filtro);
-        int desde,hasta;
-        Button BTNaplicar = (Button)dialog.findViewById(R.id.BTNaplicar);
-        Button BTNcancelar = (Button)dialog.findViewById(R.id.BTNcancelar);
-        final EditText ETdesde = (EditText)dialog.findViewById(R.id.ETdesde);
-        final EditText EThasta = (EditText)dialog.findViewById(R.id.EThasta);
-        final TextView TVdistancia = (TextView)dialog.findViewById(R.id.TV_fil_numdis);
-        final TextView mm = (TextView)dialog.findViewById(R.id.TV_fil_distancia);
-        final SeekBar distancia = (SeekBar)dialog.findViewById(R.id.SBdistancia);
-        Spinner spinner = (Spinner)dialog.findViewById(R.id.spinner);
+        int desde, hasta;
+        Button BTNaplicar = (Button) dialog.findViewById(R.id.BTNaplicar);
+        Button BTNcancelar = (Button) dialog.findViewById(R.id.BTNcancelar);
+        final EditText ETdesde = (EditText) dialog.findViewById(R.id.ETdesde);
+        final EditText EThasta = (EditText) dialog.findViewById(R.id.EThasta);
+        final TextView TVdistancia = (TextView) dialog.findViewById(R.id.TV_fil_numdis);
+        final TextView mm = (TextView) dialog.findViewById(R.id.TV_fil_distancia);
+        final SeekBar distancia = (SeekBar) dialog.findViewById(R.id.SBdistancia);
+        Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
 
         distancia.setMax(3);
         distancia.setProgress(1);
-        if(!ETdesde.getText().toString().isEmpty())desde = Integer.parseInt(ETdesde.getText().toString());
-        if(!EThasta.getText().toString().isEmpty())hasta = Integer.parseInt(EThasta.getText().toString());
+        if (!ETdesde.getText().toString().isEmpty())
+            desde = Integer.parseInt(ETdesde.getText().toString());
+        if (!EThasta.getText().toString().isEmpty())
+            hasta = Integer.parseInt(EThasta.getText().toString());
 
-        distancia.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+        distancia.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mm.setText("Distancia:   <");
-                if(progress==0)progress=1;
-                else if(progress==1)progress=5;
-                     else if(progress==2 )progress=10;
-                          else if(progress==3 ){
-                                progress=10;
-                                mm.setText("Distancia:   >");
-                          }
+                if (progress == 0) progress = 1;
+                else if (progress == 1) progress = 5;
+                else if (progress == 2) progress = 10;
+                else if (progress == 3) {
+                    progress = 10;
+                    mm.setText("Distancia:   >");
+                }
                 TVdistancia.setText(String.valueOf(progress));
             }
 
@@ -318,10 +322,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
+
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 if (pos == 0) {
-                }else {
+                } else {
                     // Your code to process the selection
                 }
             }
@@ -347,7 +352,59 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
+    @TargetApi(24)
+    public void permiso() {
+        int hasWriteContactsPermission = checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
 
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS2);
+
+        } else if (hasWriteContactsPermission == PackageManager.PERMISSION_GRANTED) {
+
+            localizacion();
+
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS2: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    localizacion();
+
+                } else {
+
+                    Toast.makeText(context, "Para un buen funcionamiento debe aceptar", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+
+        }
+    }
+
+    public void localizacion() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        }
+        else {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                local = location;
+                                Log.d("local",location.toString());
+                            }
+                        }
+                    });
+        }
+    }
 
 
     public void Snack1(){

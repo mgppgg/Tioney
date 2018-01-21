@@ -14,6 +14,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -25,7 +26,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -42,25 +42,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,12 +60,12 @@ import java.util.Objects;
 import java.util.UUID;
 
 import recycler_view.Anuncio;
-import recycler_view.MyAdapter;
+
 
 
 public class Publicar extends BaseActivity {
 
-    private Button BtnSubir,BtnBorrar;
+    private Button BtnSubir, BtnBorrar;
     private ImageButton BtnIma1;
     private ImageButton BtnIma2;
     private ImageButton BtnIma3;
@@ -86,7 +78,7 @@ public class Publicar extends BaseActivity {
     private EditText ETtitulo;
     private EditText ETprecio;
     private Anuncio anun2;
-    private FirebaseStorage  storage;
+    private FirebaseStorage storage;
     private StorageReference storageRef;
     private DatabaseReference database;
     private FirebaseUser user;
@@ -99,7 +91,7 @@ public class Publicar extends BaseActivity {
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
-        if(getSupportActionBar()!=null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -107,15 +99,15 @@ public class Publicar extends BaseActivity {
         anun2 = null;
         anun2 = (Anuncio) getIntent().getSerializableExtra("Anuncio");
 
-        BtnSubir = (Button)findViewById(R.id.BtnSubir);
-        BtnBorrar= (Button)findViewById(R.id.BtnBorrarAnun);
-        BtnIma1 = (ImageButton)findViewById(R.id.imageButton1);
-        BtnIma2 = (ImageButton)findViewById(R.id.imageButton2);
-        BtnIma3 = (ImageButton)findViewById(R.id.imageButton3);
-        BtnIma4 = (ImageButton)findViewById(R.id.imageButton4);
-        ETdescripcion = (EditText)findViewById(R.id.ETdescripcion);
-        ETtitulo = (EditText)findViewById(R.id.ETtitulo);
-        ETprecio = (EditText)findViewById(R.id.ETprecio);
+        BtnSubir = (Button) findViewById(R.id.BtnSubir);
+        BtnBorrar = (Button) findViewById(R.id.BtnBorrarAnun);
+        BtnIma1 = (ImageButton) findViewById(R.id.imageButton1);
+        BtnIma2 = (ImageButton) findViewById(R.id.imageButton2);
+        BtnIma3 = (ImageButton) findViewById(R.id.imageButton3);
+        BtnIma4 = (ImageButton) findViewById(R.id.imageButton4);
+        ETdescripcion = (EditText) findViewById(R.id.ETdescripcion);
+        ETtitulo = (EditText) findViewById(R.id.ETtitulo);
+        ETprecio = (EditText) findViewById(R.id.ETprecio);
         i = -1;
         arrayUris = new ArrayList<>();
 
@@ -124,7 +116,7 @@ public class Publicar extends BaseActivity {
         storageRef = FirebaseStorage.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        if(anun2!=null){
+        if (anun2 != null) {
             imageButtons = new ArrayList<>();
             imageButtons.add(BtnIma1);
             imageButtons.add(BtnIma2);
@@ -137,8 +129,8 @@ public class Publicar extends BaseActivity {
             ETtitulo.setText(anun2.getTitulo());
             ETdescripcion.setText(anun2.getDescripcion());
             ETprecio.setText(anun2.getPrecio());
-            if(anun2.getFotos()>0) {
-                for(int n=0;n<anun2.getFotos();n++) {
+            if (anun2.getFotos() > 0) {
+                for (int n = 0; n < anun2.getFotos(); n++) {
                     StorageReference filepathFoto = storage.getReferenceFromUrl(anun2.getUrl() + "Foto" + n);
                     Glide.with(this).using(new FirebaseImageLoader()).load(filepathFoto).diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(true).into(imageButtons.get(n));
@@ -151,9 +143,11 @@ public class Publicar extends BaseActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         AnunDatabase a = postSnapshot.getValue(AnunDatabase.class);
-                        if(Objects.equals(a.getTitulo(), anun2.getTitulo())) key =postSnapshot.getKey();
+                        if (Objects.equals(a.getTitulo(), anun2.getTitulo()))
+                            key = postSnapshot.getKey();
                     }
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -165,11 +159,10 @@ public class Publicar extends BaseActivity {
         BtnSubir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isOnlineNet()){
-                    if(anun2==null)confirmacion("¿Esta seguro de subir el anuncio?",0);
-                    else confirmacion("¿Esta seguro de editar el anuncio?",0);
-                }
-                else snackBar("Sin conexión a internet");
+                if (isOnlineNet()) {
+                    if (anun2 == null) confirmacion("¿Esta seguro de subir el anuncio?", 0);
+                    else confirmacion("¿Esta seguro de editar el anuncio?", 0);
+                } else snackBar("Sin conexión a internet");
 
             }
         });
@@ -177,7 +170,7 @@ public class Publicar extends BaseActivity {
         BtnBorrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isOnlineNet())confirmacion("¿Esta seguro de borrar el anuncio?",1);
+                if (isOnlineNet()) confirmacion("¿Esta seguro de borrar el anuncio?", 1);
                 else snackBar("Sin conexión a internet");
             }
         });
@@ -218,10 +211,10 @@ public class Publicar extends BaseActivity {
     }
 
     @TargetApi(24)
-    public void abrirGaleria(){
+    public void abrirGaleria() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Seleccione imagen"),1);
+        startActivityForResult(Intent.createChooser(intent, "Seleccione imagen"), 1);
     }
 
 
@@ -230,27 +223,31 @@ public class Publicar extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         boolean seguir = true;
 
-        if(resultCode==RESULT_OK){
+        if (resultCode == RESULT_OK) {
             String ima = compressImage(imageReturnedIntent.getData());
-            ArrrayUri a = new ArrrayUri(i,ima);
+            ArrrayUri a = new ArrrayUri(i, ima);
 
-            for(int c=arrayUris.size()-1;c>=0 && seguir;c--){
-                if(arrayUris.get(c).getId()==a.getId()){
-                    arrayUris.set(c,a);
+            for (int c = arrayUris.size() - 1; c >= 0 && seguir; c--) {
+                if (arrayUris.get(c).getId() == a.getId()) {
+                    arrayUris.set(c, a);
                     seguir = false;
                 }
             }
-            if(seguir)arrayUris.add(a);
+            if (seguir) arrayUris.add(a);
 
-            switch(i){
-                case 0: BtnIma1.setImageURI(imageReturnedIntent.getData());
-                        break;
-                case 1: BtnIma2.setImageURI(imageReturnedIntent.getData());
-                        break;
-                case 2: BtnIma3.setImageURI(imageReturnedIntent.getData());
-                        break;
-                case 3: BtnIma4.setImageURI(imageReturnedIntent.getData());
-                        break;
+            switch (i) {
+                case 0:
+                    BtnIma1.setImageURI(imageReturnedIntent.getData());
+                    break;
+                case 1:
+                    BtnIma2.setImageURI(imageReturnedIntent.getData());
+                    break;
+                case 2:
+                    BtnIma3.setImageURI(imageReturnedIntent.getData());
+                    break;
+                case 3:
+                    BtnIma4.setImageURI(imageReturnedIntent.getData());
+                    break;
             }
         }
 
@@ -259,17 +256,17 @@ public class Publicar extends BaseActivity {
     @TargetApi(24)
     private void checkPermission() {
 
-            int hasWriteContactsPermission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int hasWriteContactsPermission = checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-            if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
+        if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
 
-                requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_ASK_PERMISSIONS);
 
-            }else if (hasWriteContactsPermission == PackageManager.PERMISSION_GRANTED){
+        } else if (hasWriteContactsPermission == PackageManager.PERMISSION_GRANTED) {
 
-                abrirGaleria();
+            abrirGaleria();
 
-            }
+        }
     }
 
     @Override
@@ -288,8 +285,8 @@ public class Publicar extends BaseActivity {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
-            }
 
+            }
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -297,8 +294,8 @@ public class Publicar extends BaseActivity {
 
     public void subir() {
 
-        showProgressDialog(this,"Creando anuncio..");
-        final String descripcion, titulo,precio,ID,UID,url,usuario;
+        showProgressDialog(this, "Creando anuncio..");
+        final String descripcion, titulo, precio, ID, UID, url, usuario;
         ID = UUID.randomUUID().toString();
         if (validar()) {
             descripcion = ETdescripcion.getText().toString();
@@ -306,19 +303,19 @@ public class Publicar extends BaseActivity {
             precio = ETprecio.getText().toString();
             UID = user.getUid();
 
-            if(anun2==null) {
+            if (anun2 == null) {
 
                 usuario = user.getDisplayName();
-                url =  "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/";
+                url = "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/";
                 final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
                 final StorageReference filepathDescripcion = storageRef.child("Anuncios/" + ID + "/" + "Descripcion");
 
-                String key1 =  database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
+                String key1 = database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
                 final Map<String, Object> map = new HashMap<>();
-                AnunDatabase anun = new AnunDatabase(titulo,precio,url,UID,usuario,arrayUris.size());
-                map.put(key1,anun);
+                AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario, arrayUris.size());
+                map.put(key1, anun);
 
-                if(i>-1) {
+                if (i > -1) {
 
                     for (int b = 0; b < arrayUris.size(); b++) {
 
@@ -361,13 +358,13 @@ public class Publicar extends BaseActivity {
                     }
                 });
 
-            } else{
+            } else {
                 int cont = 0;
-                final StorageReference filepathDescripcion = storage.getReferenceFromUrl(anun2.getUrl()+"Descripcion");
+                final StorageReference filepathDescripcion = storage.getReferenceFromUrl(anun2.getUrl() + "Descripcion");
                 final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
 
-                for(int c=0;c<arrayUris.size();c++){
-                    if(arrayUris.get(c).getId()>anun2.getFotos()-1)cont++;
+                for (int c = 0; c < arrayUris.size(); c++) {
+                    if (arrayUris.get(c).getId() > anun2.getFotos() - 1) cont++;
                 }
                 final int finalCont = cont;
 
@@ -381,11 +378,11 @@ public class Publicar extends BaseActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                        if(i > -1){
+                        if (i > -1) {
 
                             for (int b = 0; b < arrayUris.size(); b++) {
 
-                                StorageReference filepathFotos = storage.getReferenceFromUrl(anun2.getUrl()+"Foto"+arrayUris.get(b).getId());
+                                StorageReference filepathFotos = storage.getReferenceFromUrl(anun2.getUrl() + "Foto" + arrayUris.get(b).getId());
                                 Uri file = Uri.fromFile(new File(arrayUris.get(b).getIma()));
 
                                 filepathFotos.putFile(file).addOnFailureListener(new OnFailureListener() {
@@ -404,9 +401,9 @@ public class Publicar extends BaseActivity {
 
                         }
 
-                        if(finalCont >0){
-                            database.child("Usuarios").child(UID).child("Anuncios").child(key).child("fotos").setValue(anun2.getFotos()+finalCont);
-                            database.child("Anuncios1").child(key).child("fotos").setValue(anun2.getFotos()+finalCont);
+                        if (finalCont > 0) {
+                            database.child("Usuarios").child(UID).child("Anuncios").child(key).child("fotos").setValue(anun2.getFotos() + finalCont);
+                            database.child("Anuncios1").child(key).child("fotos").setValue(anun2.getFotos() + finalCont);
                         }
                         database.child("Usuarios").child(UID).child("Anuncios").child(key).child("titulo").setValue(titulo);
                         database.child("Usuarios").child(UID).child("Anuncios").child(key).child("precio").setValue(precio);
@@ -429,7 +426,7 @@ public class Publicar extends BaseActivity {
     }
 
 
-    public boolean validar(){
+    public boolean validar() {
         boolean v = true;
         if (ETdescripcion.getText().toString().isEmpty()) {
             ETdescripcion.setError("Obligatorio");
@@ -443,17 +440,17 @@ public class Publicar extends BaseActivity {
             ETprecio.setError("Obligatorio");
             v = false;
         }
-        if(!v)hideProgressDialog();
+        if (!v) hideProgressDialog();
         return v;
     }
 
-    public void borrrarAnun(){
+    public void borrrarAnun() {
 
         storage.getReferenceFromUrl(anun2.getUrl() + "Descripcion").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
 
-                for(int m=0;m<anun2.getFotos();m++) {
+                for (int m = 0; m < anun2.getFotos(); m++) {
                     storage.getReferenceFromUrl(anun2.getUrl() + "Foto" + m).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -483,7 +480,7 @@ public class Publicar extends BaseActivity {
     }
 
 
-    public void confirmacion(String msg, final int opcion){
+    public void confirmacion(String msg, final int opcion) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
@@ -492,8 +489,8 @@ public class Publicar extends BaseActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(opcion==0)subir();
-                        if(opcion==1)borrrarAnun();
+                        if (opcion == 0) subir();
+                        if (opcion == 1) borrrarAnun();
                     }
                 });
         builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -505,6 +502,8 @@ public class Publicar extends BaseActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+
 
 
     @Override

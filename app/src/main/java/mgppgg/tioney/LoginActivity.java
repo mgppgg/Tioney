@@ -15,6 +15,7 @@ import android.support.annotation.VisibleForTesting;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,6 +44,7 @@ public class LoginActivity extends BaseActivity {
         BtnLogin = (Button)findViewById(R.id.BtnLogin);
         ETpass = (EditText)findViewById(R.id.ETpass);
         ETemail = (EditText)findViewById(R.id.ETuser);
+
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
