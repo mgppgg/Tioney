@@ -91,7 +91,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         database = FirebaseDatabase.getInstance().getReference();
         query = database.child("Anuncios1");
         busqueda = "";
-        categoria = "todas";
+        categoria = "Todas las categorías";
         login = getIntent().getExtras().getBoolean("login");
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         radio2 = 0;
@@ -240,7 +240,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     localb.setLatitude(anun.getLatitud());
                     localb.setLongitude(anun.getLongitud());
                     if (!Objects.equals(anun.getUID(), user.getUid()) && anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
-                        if(categoria.equals("todas") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
+                        if(categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
                         else if(radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())) urls.add(anun);
 
                 }

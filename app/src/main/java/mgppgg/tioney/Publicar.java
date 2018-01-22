@@ -79,6 +79,7 @@ public class Publicar extends BaseActivity {
     private int i;
     private boolean seleccionar_cat;
     private String key,categoria;
+    private String cats[];
     private ArrayList<ArrrayUri> arrayUris;
     private ArrayList<ImageButton> imageButtons;
     private EditText ETdescripcion;
@@ -118,9 +119,11 @@ public class Publicar extends BaseActivity {
         ETdescripcion = (EditText) findViewById(R.id.ETdescripcion);
         ETtitulo = (EditText) findViewById(R.id.ETtitulo);
         ETprecio = (EditText) findViewById(R.id.ETprecio);
+        spinner = (Spinner) findViewById(R.id.spinner_publicar);
         i = -1;
         seleccionar_cat = false;
         arrayUris = new ArrayList<>();
+        cats = getResources().getStringArray(R.array.categorias_publicar);
         local = new Location("localizacion");
 
         storage = FirebaseStorage.getInstance();
@@ -129,9 +132,9 @@ public class Publicar extends BaseActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        spinner = (Spinner) findViewById(R.id.spinner_publicar);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.categorias_publicar, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setPrompt("Seleccione categoría");
         spinner.setAdapter(adapter);
 
 
@@ -148,6 +151,8 @@ public class Publicar extends BaseActivity {
             ETtitulo.setText(anun2.getTitulo());
             ETdescripcion.setText(anun2.getDescripcion());
             ETprecio.setText(anun2.getPrecio());
+            spinner.setSelection(obCategoria(anun2));
+
             if (anun2.getFotos() > 0) {
                 for (int n = 0; n < anun2.getFotos(); n++) {
                     StorageReference filepathFoto = storage.getReferenceFromUrl(anun2.getUrl() + "Foto" + n);
@@ -178,7 +183,7 @@ public class Publicar extends BaseActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 categoria = parent.getItemAtPosition(position).toString();
-                seleccionar_cat = true;
+                seleccionar_cat = !categoria.equals("Seleccione categoría:");
             }
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -432,14 +437,20 @@ public class Publicar extends BaseActivity {
 
                         }
 
+                        /*final Map<String, Object> map = new HashMap<>();
+                        AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario,categoria, arrayUris.size(),local.getLongitude(),local.getLatitude());
+                        map.put(key, anun);*/
+
                         if (finalCont > 0) {
                             database.child("Usuarios").child(UID).child("Anuncios").child(key).child("fotos").setValue(anun2.getFotos() + finalCont);
                             database.child("Anuncios1").child(key).child("fotos").setValue(anun2.getFotos() + finalCont);
                         }
                         database.child("Usuarios").child(UID).child("Anuncios").child(key).child("titulo").setValue(titulo);
                         database.child("Usuarios").child(UID).child("Anuncios").child(key).child("precio").setValue(precio);
+                        database.child("Usuarios").child(UID).child("Anuncios").child(key).child("categoria").setValue(categoria);
                         database.child("Anuncios1").child(key).child("titulo").setValue(titulo);
                         database.child("Anuncios1").child(key).child("precio").setValue(precio);
+                        database.child("Anuncios1").child(key).child("categoria").setValue(categoria);
 
 
                         hideProgressDialog();
@@ -474,8 +485,10 @@ public class Publicar extends BaseActivity {
         }
         if(!seleccionar_cat){
             v = false;
-            Toast.makeText(Publicar.this, "Debe seleccionar una categoria", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Publicar.this, "Categoria seleccionada no válida", Toast.LENGTH_SHORT).show();
         }
+
+        Log.d("qqq", String.valueOf(seleccionar_cat));
 
         if (!v) hideProgressDialog();
         return v;
@@ -559,6 +572,16 @@ public class Publicar extends BaseActivity {
                     });
             return true;
         }
+    }
+
+    public int obCategoria(Anuncio anun){
+        int num=0;
+        for(int a = 0;a<cats.length;a++){
+            if(anun.getCategoria().equals(cats[a]))num=a;
+        }
+
+        return num;
+
     }
 
 

@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 public class Anuncio implements Serializable {
 
-    private String titulo,descripcion,precio,UID,usuario,url;
+    private String titulo,descripcion,precio,UID,usuario,url,categoria;
     private int fotos;
     private double longitud,latitud;
 
@@ -26,6 +26,7 @@ public class Anuncio implements Serializable {
         UID="";
         usuario="";
         url="";
+        categoria="";
         fotos=0;
         longitud=0;
         latitud=0;
@@ -77,6 +78,14 @@ public class Anuncio implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public int getFotos() {

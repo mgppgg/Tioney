@@ -122,6 +122,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 listaAnuncios.get(position).setUID(urls.get(position).getUID());
                 listaAnuncios.get(position).setUsuario(urls.get(position).getUsuario());
                 listaAnuncios.get(position).setUrl(urls.get(position).getUrl());
+                listaAnuncios.get(position).setCategoria(urls.get(position).getCategoria());
                 listaAnuncios.get(position).setFotos(urls.get(position).getFotos());
                 listaAnuncios.get(position).setLongitud(urls.get(position).getLongitud());
                 listaAnuncios.get(position).setLatitud(urls.get(position).getLatitud());

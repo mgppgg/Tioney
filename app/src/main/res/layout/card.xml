@@ -44,7 +44,7 @@
                 android:id="@+id/TVdescripcionCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="3"
+                android:maxLines="2"
                 android:paddingLeft="10dp"
                 android:text="Descripcion"
                 android:textSize="15sp" />

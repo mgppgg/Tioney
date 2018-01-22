@@ -7,40 +7,39 @@
     <string name="action_settings">Settings</string>
     <string name="buscar">Buscar...</string>
     <string-array name="categorias">
-        <item>Seleccione categoria </item>
-        <item>Cualquiera</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+        <item>Todas las categorías</item>
+        <item>Social</item>
+        <item>Reparaciones</item>
+        <item>Entretenimiento/Ocio</item>
+        <item>Transporte</item>
+        <item>Deporte</item>
+        <item>Hogar</item>
+        <item>Estilo de vida</item>
+        <item>Educación</item>
+        <item>Moda</item>
+        <item>Automóvil</item>
+        <item>Electrónica</item>
+        <item>Comida</item>
+        <item>Bricolaje</item>
+        <item>Otros</item>
     </string-array>
 
     <string-array name="categorias_publicar">
-        <item>Seleccione categoria </item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
-        <item>Mercury</item>
-        <item>Venus</item>
-        <item>Earth</item>
-        <item>Mars</item>
-        <item>Jupiter</item>
-        <item>Saturn</item>
-        <item>Uranus</item>
-        <item>Neptune</item>
+        <item>Seleccione categoría:</item>
+        <item>Social</item>
+        <item>Reparaciones</item>
+        <item>Entretenimiento/Ocio</item>
+        <item>Transporte</item>
+        <item>Deporte</item>
+        <item>Hogar</item>
+        <item>Estilo de vida</item>
+        <item>Educación</item>
+        <item>Moda</item>
+        <item>Automóvil</item>
+        <item>Electrónica</item>
+        <item>Comida</item>
+        <item>Bricolaje</item>
+        <item>Otros</item>
     </string-array>
 
 </resources>
