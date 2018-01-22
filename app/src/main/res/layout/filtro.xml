@@ -10,57 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:layout_marginBottom="20dp"
-            android:orientation="horizontal">
-
-
-            <TextView
-                android:id="@+id/TVdesde"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:text="Desde"
-                android:textAlignment="center" />
-
-            <EditText
-                android:id="@+id/ETdesde"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_weight="1"
-                android:hint="0 €"
-                android:inputType="number"
-                android:maxLength="4"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/TVhasta"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:text="Hasta"
-                android:textAlignment="center"
-                android:layout_marginEnd="20dp" />
-
-            <EditText
-                android:id="@+id/EThasta"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="9999 €"
-                android:inputType="number"
-                android:maxLength="4"
-                android:textAlignment="center" />
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,28 +25,33 @@
                 android:id="@+id/TV_fil_distancia"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:text="Distancia:   &lt;"
                 android:textAlignment="center"
-                android:layout_marginEnd="10dp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
 
             <TextView
                 android:id="@+id/TV_fil_numdis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:text="5"
-                android:layout_marginEnd="10dp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/km"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Km" />
+                android:text="Km"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
-
 
 
         <SeekBar
@@ -109,12 +66,16 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:text="Categoria"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <Spinner
             android:id="@+id/spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:spinnerMode="dialog" />
+
 
     </LinearLayout>
 
@@ -135,6 +96,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/linear"
-        android:text="Cancelar" />
+        android:text="Cerrar" />
 
 </RelativeLayout>

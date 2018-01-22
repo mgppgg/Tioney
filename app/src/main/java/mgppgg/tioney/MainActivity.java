@@ -29,6 +29,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
@@ -68,11 +69,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private SwipeRefreshLayout refreshLayout;
     private Query query;
     private Context context;
-    private String busqueda;
-    private Location local;
+    private String busqueda,categoria;
+    private Location local,localb;
     private boolean login = false;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_CODE_ASK_PERMISSIONS2 = 456;
+    private int radio2,radio,desde,hasta;
+    private double km;
 
 
     @Override
@@ -88,8 +91,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         database = FirebaseDatabase.getInstance().getReference();
         query = database.child("Anuncios1");
         busqueda = "";
+        categoria = "todas";
         login = getIntent().getExtras().getBoolean("login");
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        radio2 = 0;
+        radio = 10;
+        local = new Location("LocationA");
+        localb = new Location("LocationB");
 
         filtro = (TextView) findViewById(R.id.TVfiltro);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -142,6 +150,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                                                @Override
                                                public void onRefresh() {
+                                                   busqueda = "";
                                                    obtener(false, query);
                                                }
                                            }
@@ -228,15 +237,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
+                    localb.setLatitude(anun.getLatitud());
+                    localb.setLongitude(anun.getLongitud());
                     if (!Objects.equals(anun.getUID(), user.getUid()) && anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
-                        urls.add(anun);
+                        if(categoria.equals("todas") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
+                        else if(radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())) urls.add(anun);
 
                 }
 
                 refreshLayout.setRefreshing(false);
                 Adapter = new MyAdapter(urls, context, dialog);
                 rv.setAdapter(Adapter);
-                busqueda = "";
             }
 
             @Override
@@ -274,35 +285,42 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.filtro);
-        int desde, hasta;
         Button BTNaplicar = (Button) dialog.findViewById(R.id.BTNaplicar);
         Button BTNcancelar = (Button) dialog.findViewById(R.id.BTNcancelar);
-        final EditText ETdesde = (EditText) dialog.findViewById(R.id.ETdesde);
-        final EditText EThasta = (EditText) dialog.findViewById(R.id.EThasta);
         final TextView TVdistancia = (TextView) dialog.findViewById(R.id.TV_fil_numdis);
         final TextView mm = (TextView) dialog.findViewById(R.id.TV_fil_distancia);
         final SeekBar distancia = (SeekBar) dialog.findViewById(R.id.SBdistancia);
         Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
 
         distancia.setMax(3);
-        distancia.setProgress(1);
-        if (!ETdesde.getText().toString().isEmpty())
-            desde = Integer.parseInt(ETdesde.getText().toString());
-        if (!EThasta.getText().toString().isEmpty())
-            hasta = Integer.parseInt(EThasta.getText().toString());
+        distancia.setProgress(2);
 
         distancia.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
                 mm.setText("Distancia:   <");
-                if (progress == 0) progress = 1;
-                else if (progress == 1) progress = 5;
-                else if (progress == 2) progress = 10;
-                else if (progress == 3) {
-                    progress = 10;
-                    mm.setText("Distancia:   >");
+                switch (progress){
+                    case 0:
+                        progress = 1;
+                        radio2 = 1;
+                        break;
+                    case 1:
+                        progress = 5;
+                        radio2 = 5;
+                        break;
+                    case 2:
+                        progress = 10;
+                        radio2 = 10;
+                        break;
+                    case 3:
+                        progress = 10;
+                        mm.setText("Distancia:   >");
+                        radio2 = 1000;
+                        break;
                 }
+
                 TVdistancia.setText(String.valueOf(progress));
             }
 
@@ -317,28 +335,28 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.categorias, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                categoria = parent.getItemAtPosition(position).toString();
             }
+            public void onNothingSelected(AdapterView<?> parent) {
 
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                if (pos == 0) {
-                } else {
-                    // Your code to process the selection
-                }
             }
         });
-
 
         BTNaplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(radio2!=0)radio = radio2;
 
-                query = database.child("Anuncios1").orderByChild("titulo");
+                query = database.child("Anuncios1");
                 obtener(true, query);
+                dialog.dismiss();
 
             }
         });
@@ -402,7 +420,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 local = location;
-                                Log.d("local",location.toString());
                             }
                         }
                     });

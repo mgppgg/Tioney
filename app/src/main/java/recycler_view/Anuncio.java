@@ -17,6 +17,7 @@ public class Anuncio implements Serializable {
 
     private String titulo,descripcion,precio,UID,usuario,url;
     private int fotos;
+    private double longitud,latitud;
 
     public Anuncio(){
         titulo="";
@@ -26,6 +27,8 @@ public class Anuncio implements Serializable {
         usuario="";
         url="";
         fotos=0;
+        longitud=0;
+        latitud=0;
     }
 
     public void setTitulo(String str){
@@ -82,5 +85,21 @@ public class Anuncio implements Serializable {
 
     public void setFotos(int fotos) {
         this.fotos = fotos;
+    }
+
+    public double getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(double longitud) {
+        this.longitud = longitud;
+    }
+
+    public double getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(double latitud) {
+        this.latitud = latitud;
     }
 }

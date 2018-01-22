@@ -12,19 +12,21 @@ public class AnunDatabase {
     private String url;
     private String UID;
     private String usuario;
+    private String categoria;
     private int fotos;
-    private Location local;
+    private double longitud;
+    private double latitud;
 
-
-
-    public  AnunDatabase(String t,String p,String url,String e,String usu,int foto,Location l){
+    public  AnunDatabase(String t,String p,String url,String e,String usu,String cat,int foto,double longi,double lat){
         this.titulo = t;
         this.precio = p;
         this.url = url;
         this.UID = e;
         this.usuario = usu;
+        this.categoria = cat;
         this.fotos = foto;
-        this.local=l;
+        this.longitud=longi;
+        this.latitud=lat;
 
     }
     public  AnunDatabase(){
@@ -33,7 +35,10 @@ public class AnunDatabase {
         this.url = "";
         this.UID = "";
         this.usuario="";
+        this.categoria="";
         this.fotos=0;
+        this.latitud=0;
+        this.longitud=0;
 
     }
 
@@ -85,11 +90,27 @@ public class AnunDatabase {
         this.fotos = fotos;
     }
 
-    public Location getLocal() {
-        return local;
+    public double getLongitud() {
+        return longitud;
     }
 
-    public void setLocal(Location local) {
-        this.local = local;
+    public void setLongitud(float longitud) {
+        this.longitud = longitud;
+    }
+
+    public double getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(float latitud) {
+        this.latitud = latitud;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 }

@@ -27,9 +27,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -74,7 +77,8 @@ public class Publicar extends BaseActivity {
     private ImageButton BtnIma3;
     private ImageButton BtnIma4;
     private int i;
-    private String key;
+    private boolean seleccionar_cat;
+    private String key,categoria;
     private ArrayList<ArrrayUri> arrayUris;
     private ArrayList<ImageButton> imageButtons;
     private EditText ETdescripcion;
@@ -82,6 +86,7 @@ public class Publicar extends BaseActivity {
     private EditText ETprecio;
     private Anuncio anun2;
     private Location local;
+    private Spinner spinner;
     private FirebaseStorage storage;
     private StorageReference storageRef;
     private DatabaseReference database;
@@ -114,13 +119,21 @@ public class Publicar extends BaseActivity {
         ETtitulo = (EditText) findViewById(R.id.ETtitulo);
         ETprecio = (EditText) findViewById(R.id.ETprecio);
         i = -1;
+        seleccionar_cat = false;
         arrayUris = new ArrayList<>();
+        local = new Location("localizacion");
 
         storage = FirebaseStorage.getInstance();
         database = FirebaseDatabase.getInstance().getReference();
         storageRef = FirebaseStorage.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        spinner = (Spinner) findViewById(R.id.spinner_publicar);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.categorias_publicar, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
 
         if (anun2 != null) {
             imageButtons = new ArrayList<>();
@@ -161,6 +174,16 @@ public class Publicar extends BaseActivity {
             });
 
         }
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                categoria = parent.getItemAtPosition(position).toString();
+                seleccionar_cat = true;
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         BtnSubir.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -318,7 +341,7 @@ public class Publicar extends BaseActivity {
 
                 String key1 = database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
                 final Map<String, Object> map = new HashMap<>();
-                AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario, arrayUris.size(),local);
+                AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario,categoria, arrayUris.size(),local.getLongitude(),local.getLatitude());
                 map.put(key1, anun);
 
                 if (i > -1) {
@@ -379,6 +402,8 @@ public class Publicar extends BaseActivity {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         Toast.makeText(Publicar.this, "Error al actualizar", Toast.LENGTH_SHORT).show();
+                        hideProgressDialog();
+
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -416,6 +441,7 @@ public class Publicar extends BaseActivity {
                         database.child("Anuncios1").child(key).child("titulo").setValue(titulo);
                         database.child("Anuncios1").child(key).child("precio").setValue(precio);
 
+
                         hideProgressDialog();
                         Toast.makeText(Publicar.this, "Actualizado. Desliza abajo para comprobar", Toast.LENGTH_SHORT).show();
                         finish();
@@ -446,6 +472,11 @@ public class Publicar extends BaseActivity {
             ETprecio.setError("Obligatorio");
             v = false;
         }
+        if(!seleccionar_cat){
+            v = false;
+            Toast.makeText(Publicar.this, "Debe seleccionar una categoria", Toast.LENGTH_SHORT).show();
+        }
+
         if (!v) hideProgressDialog();
         return v;
     }
