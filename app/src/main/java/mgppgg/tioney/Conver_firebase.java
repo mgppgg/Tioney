@@ -6,16 +6,16 @@ import java.io.Serializable;
  * Created by pablich on 26/12/2017.
  */
 
-public class Conver_listaConvers implements Serializable {
+public class Conver_firebase implements Serializable {
     private String user;
-    private String UID;
     private String chatUrl;
+    private int nuevo_msg;
 
-    public Conver_listaConvers(){}
-    public Conver_listaConvers(String u,String url,String id){
+    public Conver_firebase(){}
+    public Conver_firebase(String u, String url, int nuevo){
         this.user = u;
         this.chatUrl = url;
-        this.UID = id;
+        this.nuevo_msg = nuevo;
     }
 
     public String getUser() {
@@ -34,11 +34,11 @@ public class Conver_listaConvers implements Serializable {
         this.chatUrl = chatUrl;
     }
 
-    public String getUID() {
-        return UID;
+    public int getNuevo_msg() {
+        return nuevo_msg;
     }
 
-    public void setUID(String UID) {
-        this.UID = UID;
+    public void setNuevo_msg(int nuevo_msg) {
+        this.nuevo_msg = nuevo_msg;
     }
 }

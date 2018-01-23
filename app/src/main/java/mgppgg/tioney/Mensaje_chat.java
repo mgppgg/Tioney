@@ -48,4 +48,5 @@ public class Mensaje_chat {
     public void setMessageTime(long messageTime) {
         this.messageTime = messageTime;
     }
+
 }

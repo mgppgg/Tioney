@@ -1,10 +1,8 @@
 package mgppgg.tioney;
 
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -30,8 +28,8 @@ public class Chat extends BaseActivity{
         private FirebaseAuth mAuth;
         private FirebaseUser user;
         private Anuncio anun;
-        private Conver_listaConvers conver;
-        private String chatUrl;
+        private Conver_firebase conver;
+        private String chatUrl, key_chat;
         private boolean conversaciones = false;
         private boolean borrada = false;
         private boolean existe = true;
@@ -54,7 +52,8 @@ public class Chat extends BaseActivity{
 
         anun = (Anuncio) getIntent().getSerializableExtra("anuncio");
         conversaciones = getIntent().getExtras().getBoolean("conversaciones");
-        conver =(Conver_listaConvers) getIntent().getSerializableExtra("conver");
+        conver =(Conver_firebase) getIntent().getSerializableExtra("conver");
+        key_chat = getIntent().getExtras().getString("key_chat");
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_chat);
         listOfMessages = (ListView)findViewById(R.id.list_chat);
@@ -89,24 +88,24 @@ public class Chat extends BaseActivity{
                if(!input.getText().toString().isEmpty()) {
 
                     if(!existe){
-                        final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), chatUrl,anun.getUID());
-                        final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(), chatUrl,user.getUid());
-                        database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c1);
-                        database.child("Usuarios").child(anun.getUID()).child("Chats").push().setValue(c2);
+                        final Conver_firebase c1 = new Conver_firebase(anun.getUsuario(), chatUrl,0);
+                        final Conver_firebase c2 = new Conver_firebase(user.getDisplayName(), chatUrl,1);
+                        database.child("Usuarios").child(user.getUid()).child("Chats").child(anun.getUID()).setValue(c1);
+                        database.child("Usuarios").child(anun.getUID()).child("Chats").child(user.getUid()).setValue(c2);
                         database.child("Chats").child(chatUrl).child("Estado").setValue(0);
                         existe = true;
                     }
                     else{
 
                         if(borrada && conversaciones){
-                            final Conver_listaConvers c2 = new Conver_listaConvers(user.getDisplayName(),chatUrl,user.getUid());
-                            database.child("Usuarios").child(conver.getUID()).child("Chats").push().setValue(c2);
+                            final Conver_firebase c2 = new Conver_firebase(user.getDisplayName(),chatUrl,1);
+                            database.child("Usuarios").child(key_chat).child("Chats").push().setValue(c2);
                             database.child("Chats").child(chatUrl).child("Estado").setValue(0);
                             borrada = false;
                         }
 
                         if(borrada && !conversaciones){
-                            final Conver_listaConvers c1 = new Conver_listaConvers(anun.getUsuario(), chatUrl,anun.getUID());
+                            final Conver_firebase c1 = new Conver_firebase(anun.getUsuario(), chatUrl,1);
                             database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c1);
                             database.child("Chats").child(chatUrl).child("Estado").setValue(0);
                             borrada = false;
@@ -115,11 +114,13 @@ public class Chat extends BaseActivity{
                     }
 
                     if(notificaciones && conversaciones){
-                        database.child("Notificaciones").child(conver.getUID()).push().child("from").setValue(user.getUid());
+                        database.child("Notificaciones").child(key_chat).push().child("from").setValue(user.getUid());
+                        database.child("Usuarios").child(key_chat).child("Chats").child(user.getUid()).child("nuevo_msg").setValue(1);
                         notificaciones = false;
                     }
                     if(notificaciones && !conversaciones){
                        database.child("Notificaciones").child(anun.getUID()).push().child("from").setValue(user.getUid());
+                       database.child("Usuarios").child(anun.getUID()).child("Chats").child(user.getUid()).child("nuevo_msg").setValue(1);
                        notificaciones = false;
                     }
 

@@ -239,7 +239,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
                     localb.setLatitude(anun.getLatitud());
                     localb.setLongitude(anun.getLongitud());
-                    if (!Objects.equals(anun.getUID(), user.getUid()) && anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
+                    if (anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
                         if(categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
                         else if(radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())) urls.add(anun);
 

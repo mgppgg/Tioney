@@ -5,13 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,21 +23,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-
-import mgppgg.tioney.Chat;
-import mgppgg.tioney.Conver_listaConvers;
-import mgppgg.tioney.R;
 
 public class Conversaciones extends BaseActivity {
 
     private DatabaseReference database;
-    private FirebaseListAdapter<Conver_listaConvers> adapter;
+    private FirebaseListAdapter<Conver_firebase> adapter;
     private ListView listOfConvers;
     private FirebaseUser user;
-    private ArrayList<Conver_listaConvers> convers;
-    private Button borrar;
+    private ArrayList<Conver_firebase> convers;
+    private ImageButton borrar;
+    private String key_chat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +46,6 @@ public class Conversaciones extends BaseActivity {
 
         listOfConvers = (ListView)findViewById(R.id.list_conver);
         listOfConvers.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-        //listOfConvers.setStackFromBottom(true);
 
         if(getSupportActionBar()!=null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -59,15 +53,16 @@ public class Conversaciones extends BaseActivity {
         }
 
 
-
-        adapter = new FirebaseListAdapter<Conver_listaConvers>(this, Conver_listaConvers.class, R.layout.conversacion, database.child("Usuarios").child(user.getUid()).child("Chats")) {
+        adapter = new FirebaseListAdapter<Conver_firebase>(this, Conver_firebase.class, R.layout.conversacion, database.child("Usuarios").child(user.getUid()).child("Chats")) {
             @Override
-            protected void populateView(View v, final Conver_listaConvers conver, final int position) {
-                // Get references to the views of message.xml
+            protected void populateView(View v, final Conver_firebase conver, final int position) {
                 TextView Usuario = (TextView)v.findViewById(R.id.TVusuario);
+                ImageView nuevo_msg = (ImageView)v.findViewById(R.id.IVnuevo_msg);
+                if(conver.getNuevo_msg()==0)nuevo_msg.setVisibility(View.GONE);
                 Usuario.setText(conver.getUser());
                 convers.add(conver);
-                borrar = (Button)v.findViewById(R.id.BTNborrarConver);
+                borrar = (ImageButton)v.findViewById(R.id.BTNborrarConver);
+                key_chat = adapter.getRef(position).getKey();
 
                 borrar.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -88,9 +83,11 @@ public class Conversaciones extends BaseActivity {
         listOfConvers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                database.child("Usuarios").child(user.getUid()).child("Chats").child(key_chat).child("nuevo_msg").setValue(0);
                 Intent intent = new Intent(getBaseContext(), Chat.class);
                 intent.putExtra("conversaciones",true);
                 intent.putExtra("conver", convers.get(position));
+                intent.putExtra("key_chat", key_chat);
                 startActivity(intent);
             }
         });
@@ -106,10 +103,9 @@ public class Conversaciones extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void borrarChat(final Conver_listaConvers conver,final int position){
+    public void borrarChat(final Conver_firebase conver, final int position){
 
-        database.child("Usuarios").child(user.getUid()).child("Chats").child(adapter.getRef(position).getKey()).removeValue();
-        Log.d("pos",":"+adapter.getRef(position).getKey());
+        database.child("Usuarios").child(user.getUid()).child("Chats").child(key_chat).removeValue();
         database.child("Chats").child(conver.getChatUrl()).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -126,7 +122,7 @@ public class Conversaciones extends BaseActivity {
 
     }
 
-    public void confirmacion(final Conver_listaConvers conver,final int position){
+    public void confirmacion(final Conver_firebase conver, final int position){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);

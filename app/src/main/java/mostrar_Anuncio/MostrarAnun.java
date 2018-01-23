@@ -15,6 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.util.Objects;
+
 import mgppgg.tioney.Chat;
 import mgppgg.tioney.R;
 import recycler_view.Anuncio;
@@ -28,6 +30,7 @@ public class MostrarAnun extends AppCompatActivity {
     TextView titulo,descripcion,precio;
     private FirebaseStorage storage;
     private DatabaseReference database;
+    private FirebaseUser user;
     Button contactar;
     private FirebaseAuth mAuth;
 
@@ -46,6 +49,7 @@ public class MostrarAnun extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
         final FirebaseUser user = mAuth.getCurrentUser();
 
 
@@ -60,6 +64,8 @@ public class MostrarAnun extends AppCompatActivity {
         titulo.setText(anun.getTitulo());
         descripcion.setText(anun.getDescripcion());
         precio.setText(anun.getPrecio());
+
+        if (user != null && user.getUid().equals(anun.getUID())) contactar.setEnabled(false);
 
 
         ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
