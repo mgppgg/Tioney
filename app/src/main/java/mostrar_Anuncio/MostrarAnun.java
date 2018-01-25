@@ -2,6 +2,7 @@ package mostrar_Anuncio;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -71,6 +72,9 @@ public class MostrarAnun extends AppCompatActivity {
         ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);
         Adaptador_ViewPager adapterView = new Adaptador_ViewPager(this,anun,storage);
         mViewPager.setAdapter(adapterView);
+
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_dots);
+        tabLayout.setupWithViewPager(mViewPager, true);
 
 
         contactar.setOnClickListener(new View.OnClickListener() {
