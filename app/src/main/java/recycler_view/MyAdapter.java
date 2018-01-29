@@ -133,7 +133,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 holder.descripcion.setText(a.getDescripcion());
                 holder.precio.setText(a.getPrecio());
 
-                if(position > anunciosDatabase.size()/2)dialog.dismiss();
+                if(position >= anunciosDatabase.size()/2)dialog.dismiss();
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -166,6 +166,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         anunciosDatabase.addAll(anuns);
         if(anunciosDatabase.size()==0) this.notifyItemRangeInserted(0,anuns.size());
         else this.notifyItemRangeInserted(anunciosDatabase.size()-1,anuns.size());
+    }
+    public int getUltimo(){
+        return anunciosDatabase.size();
     }
 
 

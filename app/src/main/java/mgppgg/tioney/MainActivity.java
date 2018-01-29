@@ -115,7 +115,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         permiso();
 
         rv.setAdapter(Adapter);
-       rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -123,11 +123,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 lastCompletelyVisibleItemPosition = LayoutManager.findLastCompletelyVisibleItemPosition();
 
-                if (lastCompletelyVisibleItemPosition == urls.size()-1) {
+                if (lastCompletelyVisibleItemPosition == Adapter.getUltimo()-1 && dy>0) {
                     if (!loading) {
                         loading = true;
-                        numeroCargas++;
-                       // cargarMas();
+                        cargarMas();
                        Log.d("cargarrrrrrrr","massssssssssssss");
                     }
                 }
@@ -178,8 +177,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                                    query = database.child("Anuncios1").orderByKey();
                                                    busqueda = "";
                                                    Adapter.limpiar();
-                                                  // Adapter = new MyAdapter(urls, context,dialog);
-                                                   //rv.setAdapter(Adapter);
                                                    cargar(false);
                                                }
                                            }
@@ -251,6 +248,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private void cargarMas(){
         query = database.child("Anuncios1").orderByKey().startAt(ultimaKey);
+        urls.clear();
         numeroCargas++;
         cargar(false);
     }
@@ -277,21 +275,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         localb.setLatitude(anun.getLatitud());
                         localb.setLongitude(anun.getLongitud());
                         if (anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
-                            if (categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) {
-                                urls.add(anun);
-                                //Adapter.notifyItemInserted(urls.size()-1);
-                            }
-                            else if (radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())){
-                                urls.add(anun);
-                                //Adapter.notifyItemInserted(urls.size()-1);
-                            }
+                            if (categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
+                            else if (radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())) urls.add(anun);
 
                         if (urls.size() == NUMERO_ANUNCIOS * numeroCargas) break;
 
                     }
-                    Log.d("wwwwwww","main:"+urls.size());
+                    if(loading){
+                        urls.remove(0);
+                        loading = false;
+                    }
                     Adapter.actualizar(urls);
-                    //Adapter.notifyItemRangeInserted(NUMERO_ANUNCIOS * (numeroCargas-1),NUMERO_ANUNCIOS);
+
 
 
                 }
@@ -317,6 +312,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 busqueda = text;
                 query = database.child("Anuncios1").orderByChild("titulo");
                 urls.clear();
+                Adapter.limpiar();
                 cargar(true);
 
                 return true;
@@ -333,14 +329,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     public void filtro() {
 
-        final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.filtro);
-        Button BTNaplicar = (Button) dialog.findViewById(R.id.BTNaplicar);
-        Button BTNcancelar = (Button) dialog.findViewById(R.id.BTNcancelar);
-        final TextView TVdistancia = (TextView) dialog.findViewById(R.id.TV_fil_numdis);
-        final TextView mm = (TextView) dialog.findViewById(R.id.TV_fil_distancia);
-        final SeekBar distancia = (SeekBar) dialog.findViewById(R.id.SBdistancia);
-        Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
+        final Dialog Dfiltro = new Dialog(context);
+        Dfiltro.setContentView(R.layout.filtro);
+        Button BTNaplicar = (Button) Dfiltro.findViewById(R.id.BTNaplicar);
+        Button BTNcancelar = (Button) Dfiltro.findViewById(R.id.BTNcancelar);
+        final TextView TVdistancia = (TextView) Dfiltro.findViewById(R.id.TV_fil_numdis);
+        final TextView mm = (TextView) Dfiltro.findViewById(R.id.TV_fil_distancia);
+        final SeekBar distancia = (SeekBar) Dfiltro.findViewById(R.id.SBdistancia);
+        Spinner spinner = (Spinner) Dfiltro.findViewById(R.id.spinner);
 
         distancia.setMax(3);
         distancia.setProgress(2);
@@ -401,12 +397,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         BTNaplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                urls.clear();
                 numeroCargas = 1;
                 if(radio2!=0)radio = radio2;
                 query = database.child("Anuncios1").orderByKey();
+                urls.clear();
+                Adapter.limpiar();
                 cargar(true);
-                dialog.dismiss();
+                Dfiltro.dismiss();
 
             }
         });
@@ -414,11 +411,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         BTNcancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                Dfiltro.dismiss();
             }
         });
 
-        dialog.show();
+        Dfiltro.show();
 
 
     }
