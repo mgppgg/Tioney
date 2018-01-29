@@ -1,6 +1,5 @@
 package mgppgg.tioney;
 
-import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Dialog;
@@ -31,7 +30,6 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -40,7 +38,6 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -52,7 +49,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import recycler_view.MyAdapter;
 
@@ -62,20 +58,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private RecyclerView rv;
     private TextView filtro;
     private DatabaseReference database;
-    private RecyclerView.LayoutManager LayoutManager;
+    private LinearLayoutManager LayoutManager;
     private ArrayList<AnunDatabase> urls;
     private FirebaseUser user;
-    private RecyclerView.Adapter Adapter;
+    private MyAdapter Adapter;
     private SwipeRefreshLayout refreshLayout;
     private Query query;
     private Context context;
-    private String busqueda,categoria;
+    private String busqueda,categoria,ultimaKey;
     private Location local,localb;
-    private boolean login = false;
+    private boolean login = false,loading = false;
+    private ProgressDialog dialog;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_CODE_ASK_PERMISSIONS2 = 456;
-    private int radio2,radio,desde,hasta;
-    private double km;
+    private static final int NUMERO_ANUNCIOS = 6;
+    private int radio2,radio, numeroCargas;
 
 
     @Override
@@ -89,15 +86,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance().getReference();
-        query = database.child("Anuncios1");
+        numeroCargas = 1;
         busqueda = "";
         categoria = "Todas las categorías";
+        dialog = new ProgressDialog(context);
+        dialog.setMessage("Cargando anuncios..");
         login = getIntent().getExtras().getBoolean("login");
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         radio2 = 0;
         radio = 10;
         local = new Location("LocationA");
         localb = new Location("LocationB");
+        query = database.child("Anuncios1").orderByKey();
 
         filtro = (TextView) findViewById(R.id.TVfiltro);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -110,11 +110,34 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         rv.setHasFixedSize(true);
         LayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(LayoutManager);
-
-        if (isOnlineNet()) obtener(true, query);
-        else Snack1();
+        Adapter = new MyAdapter(urls,context,dialog);
 
         permiso();
+
+        rv.setAdapter(Adapter);
+       rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int lastCompletelyVisibleItemPosition = 0;
+
+                lastCompletelyVisibleItemPosition = LayoutManager.findLastCompletelyVisibleItemPosition();
+
+                if (lastCompletelyVisibleItemPosition == urls.size()-1) {
+                    if (!loading) {
+                        loading = true;
+                        numeroCargas++;
+                       // cargarMas();
+                       Log.d("cargarrrrrrrr","massssssssssssss");
+                    }
+                }
+
+            }
+        });
+
+        if (isOnlineNet()) cargar(true);
+        else Snack1();
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -150,8 +173,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                                                @Override
                                                public void onRefresh() {
+                                                   numeroCargas = 1;
+                                                   urls.clear();
+                                                   query = database.child("Anuncios1").orderByKey();
                                                    busqueda = "";
-                                                   obtener(false, query);
+                                                   Adapter.limpiar();
+                                                  // Adapter = new MyAdapter(urls, context,dialog);
+                                                   //rv.setAdapter(Adapter);
+                                                   cargar(false);
                                                }
                                            }
         );
@@ -220,34 +249,54 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
+    private void cargarMas(){
+        query = database.child("Anuncios1").orderByKey().startAt(ultimaKey);
+        numeroCargas++;
+        cargar(false);
+    }
 
-    public void obtener(boolean dia, Query query) {
 
-        final ProgressDialog dialog = new ProgressDialog(context);
-        dialog.setMessage("Cargando anuncios..");
+    public void cargar(boolean mostrarDia) {
 
-        if (dia) dialog.show();
-
-        urls.clear();
+        if (mostrarDia) dialog.show();
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @TargetApi(Build.VERSION_CODES.KITKAT)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
-                    localb.setLatitude(anun.getLatitud());
-                    localb.setLongitude(anun.getLongitud());
-                    if (anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
-                        if(categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
-                        else if(radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())) urls.add(anun);
+                if(!dataSnapshot.hasChildren()){
+                    Toast.makeText(MainActivity.this, "No hay más anuncios disponibles", Toast.LENGTH_SHORT).show();
+                    numeroCargas--;
+                    dialog.dismiss();
+
+                }else {
+                    for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
+                        ultimaKey = postSnapshot.getKey();
+                        localb.setLatitude(anun.getLatitud());
+                        localb.setLongitude(anun.getLongitud());
+                        if (anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
+                            if (categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) {
+                                urls.add(anun);
+                                //Adapter.notifyItemInserted(urls.size()-1);
+                            }
+                            else if (radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())){
+                                urls.add(anun);
+                                //Adapter.notifyItemInserted(urls.size()-1);
+                            }
+
+                        if (urls.size() == NUMERO_ANUNCIOS * numeroCargas) break;
+
+                    }
+                    Log.d("wwwwwww","main:"+urls.size());
+                    Adapter.actualizar(urls);
+                    //Adapter.notifyItemRangeInserted(NUMERO_ANUNCIOS * (numeroCargas-1),NUMERO_ANUNCIOS);
+
 
                 }
-
                 refreshLayout.setRefreshing(false);
-                Adapter = new MyAdapter(urls, context, dialog);
-                rv.setAdapter(Adapter);
+
             }
 
             @Override
@@ -261,13 +310,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     public void buscar(SearchView search) {
 
-
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String text) {
+                numeroCargas = 1;
                 busqueda = text;
                 query = database.child("Anuncios1").orderByChild("titulo");
-                obtener(true, query);
+                urls.clear();
+                cargar(true);
 
                 return true;
             }
@@ -335,10 +385,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.categorias, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
+        ArrayAdapter<CharSequence> adapterSpinner = ArrayAdapter.createFromResource(this, R.array.categorias, android.R.layout.simple_spinner_item);
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapterSpinner);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -352,10 +401,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         BTNaplicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                urls.clear();
+                numeroCargas = 1;
                 if(radio2!=0)radio = radio2;
-
-                query = database.child("Anuncios1");
-                obtener(true, query);
+                query = database.child("Anuncios1").orderByKey();
+                cargar(true);
                 dialog.dismiss();
 
             }
@@ -372,6 +422,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     }
+
 
     @TargetApi(24)
     public void permiso() {
@@ -435,7 +486,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isOnlineNet())obtener(true,query);
+                if(isOnlineNet())cargar(true);
                 else Snack2();
             }
         });
@@ -451,7 +502,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isOnlineNet())obtener(true,query);
+                if(isOnlineNet())cargar(true);
                 else Snack1();
             }
         });

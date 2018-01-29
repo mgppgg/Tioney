@@ -12,12 +12,13 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="#be6e00"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:orientation="vertical">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/swipeRefresh"

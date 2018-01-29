@@ -43,7 +43,6 @@ import java.util.Objects;
 
 import recycler_view.Anuncio;
 import recycler_view.MyAdapter;
-import recycler_view.ObtenerDatos;
 
 public class MisAnuncios extends BaseActivity {
 
