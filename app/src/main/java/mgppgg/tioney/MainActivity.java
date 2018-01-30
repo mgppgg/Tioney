@@ -75,7 +75,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_CODE_ASK_PERMISSIONS2 = 456;
     private static final int NUMERO_ANUNCIOS = 6;
-    private int radio2,radio, numeroCargas;
+    private int radio, numeroCargas,posSpinner,posBar;
 
 
     @Override
@@ -90,6 +90,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         user = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance().getReference();
         numeroCargas = 1;
+        posSpinner = 0;
+        posBar = 2;
         busqueda = "";
         categoria = "Todas las categorías";
         PBcargar_mas = (ProgressBar)findViewById(R.id.PBcargar_mas);
@@ -97,7 +99,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         dialog.setMessage("Cargando anuncios..");
         login = getIntent().getExtras().getBoolean("login");
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        radio2 = 0;
         radio = 10;
         local = new Location("LocationA");
         localb = new Location("LocationB");
@@ -338,7 +339,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         Spinner spinner = (Spinner) Dfiltro.findViewById(R.id.spinner);
 
         distancia.setMax(3);
-        distancia.setProgress(1);
+        distancia.setProgress(posBar);
+        if(radio==10000)TVdistancia.setText("10");
+        else TVdistancia.setText(""+radio);
 
         distancia.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -346,26 +349,26 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
                 mm.setText("Distancia:   <");
+                posBar= progress;
                 switch (progress){
                     case 0:
                         progress = 1;
-                        radio2 = 1;
+                        radio = 1;
                         break;
                     case 1:
                         progress = 5;
-                        radio2 = 5;
+                        radio = 5;
                         break;
                     case 2:
                         progress = 10;
-                        radio2 = 10;
+                        radio = 10;
                         break;
                     case 3:
                         progress = 10;
                         mm.setText("Distancia:   >");
-                        radio2 = 1000;
+                        radio= 10000;
                         break;
                 }
-
                 TVdistancia.setText(String.valueOf(progress));
             }
 
@@ -383,10 +386,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         ArrayAdapter<CharSequence> adapterSpinner = ArrayAdapter.createFromResource(this, R.array.categorias, android.R.layout.simple_spinner_item);
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapterSpinner);
+        spinner.setSelection(posSpinner);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 categoria = parent.getItemAtPosition(position).toString();
+                posSpinner = position;
             }
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -397,7 +402,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onClick(View v) {
                 numeroCargas = 1;
-                if(radio2!=0)radio = radio2;
                 query = database.child("Anuncios1").orderByKey();
                 urls.clear();
                 Adapter.limpiar();

@@ -4,6 +4,8 @@ import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -45,14 +47,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private static ArrayList<String> descripciones;
     private Context context;
     private ProgressDialog dialog;
-    private static AnunDatabase anun;
     private FirebaseStorage  storage;
 
     public MyAdapter(ArrayList<AnunDatabase> url, Context context,ProgressDialog d) {
         anunciosDatabase = new ArrayList<>();
         descripciones = new ArrayList<>();
         this.context = context;
-        anun = new AnunDatabase();
         storage = FirebaseStorage.getInstance();
         dialog = d;
 
@@ -96,25 +96,27 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
         final StorageReference filepathDescripcion;
 
-        if(anunciosDatabase.get(position).getFotos()>0){
-            final StorageReference filepathFoto0 = storage.getReferenceFromUrl(anunciosDatabase.get(position).getUrl()+"Foto0");
-            Glide.with(context).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true).into(holder.image);
-        }
+        if(anunciosDatabase.get(holder.getAdapterPosition()).getFotos()>0){
+            final StorageReference filepathFoto0 = storage.getReferenceFromUrl(anunciosDatabase.get(holder.getAdapterPosition()).getUrl()+"Foto0");
+            Glide.with(context).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.image);
+        }else holder.image.setImageResource(R.mipmap.ic_launcher);
 
         descripciones.add("...");
-        filepathDescripcion =  storage.getReferenceFromUrl(anunciosDatabase.get(position).getUrl() + "Descripcion");
+        filepathDescripcion =  storage.getReferenceFromUrl(anunciosDatabase.get(holder.getAdapterPosition()).getUrl() + "Descripcion");
 
         filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @TargetApi(24)
             public void onSuccess(byte[] bytes) {
                 String descripcion = new String(bytes, StandardCharsets.UTF_8);
-                descripciones.set(position,descripcion);
-                holder.titulo.setText(anunciosDatabase.get(position).getTitulo());
-                holder.descripcion.setText(descripcion);
-                holder.precio.setText(anunciosDatabase.get(position).getPrecio());
+                if(holder.getAdapterPosition()>=0){
+                    descripciones.set(holder.getAdapterPosition(),descripcion);
+                    holder.titulo.setText(anunciosDatabase.get(holder.getAdapterPosition()).getTitulo());
+                    holder.descripcion.setText(descripcion);
+                    holder.precio.setText(anunciosDatabase.get(holder.getAdapterPosition()).getPrecio());
+                }
 
-                if(position >= anunciosDatabase.size()/2)dialog.dismiss();
+
+                if(holder.getAdapterPosition() >= anunciosDatabase.size()/2)dialog.dismiss();
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -134,6 +136,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     public void limpiar(){
         anunciosDatabase.clear();
+        descripciones.clear();
         this.notifyDataSetChanged();
 
     }

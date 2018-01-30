@@ -27,7 +27,7 @@ public class Chat extends BaseActivity{
         private DatabaseReference database;
         private FirebaseAuth mAuth;
         private FirebaseUser user;
-        private Anuncio anun;
+        private AnunDatabase anun;
         private Conver_firebase conver;
         private String chatUrl, key_chat;
         private boolean conversaciones = false;
@@ -50,7 +50,7 @@ public class Chat extends BaseActivity{
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
 
-        anun = (Anuncio) getIntent().getSerializableExtra("anuncio");
+        anun = (AnunDatabase) getIntent().getSerializableExtra("anuncio");
         conversaciones = getIntent().getExtras().getBoolean("conversaciones");
         conver =(Conver_firebase) getIntent().getSerializableExtra("conver");
         key_chat = getIntent().getExtras().getString("key_chat");
