@@ -27,9 +27,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -69,6 +71,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Location local,localb;
     private boolean login = false,loading = false;
     private ProgressDialog dialog;
+    private ProgressBar PBcargar_mas;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_CODE_ASK_PERMISSIONS2 = 456;
     private static final int NUMERO_ANUNCIOS = 6;
@@ -89,6 +92,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         numeroCargas = 1;
         busqueda = "";
         categoria = "Todas las categorías";
+        PBcargar_mas = (ProgressBar)findViewById(R.id.PBcargar_mas);
         dialog = new ProgressDialog(context);
         dialog.setMessage("Cargando anuncios..");
         login = getIntent().getExtras().getBoolean("login");
@@ -126,6 +130,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 if (lastCompletelyVisibleItemPosition == Adapter.getUltimo()-1 && dy>0) {
                     if (!loading) {
                         loading = true;
+                        PBcargar_mas.setVisibility(View.VISIBLE);
                         cargarMas();
                        Log.d("cargarrrrrrrr","massssssssssssss");
                     }
@@ -263,33 +268,25 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(!dataSnapshot.hasChildren()){
-                    Toast.makeText(MainActivity.this, "No hay más anuncios disponibles", Toast.LENGTH_SHORT).show();
-                    numeroCargas--;
-                    dialog.dismiss();
+                for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
+                    ultimaKey = postSnapshot.getKey();
+                    localb.setLatitude(anun.getLatitud());
+                    localb.setLongitude(anun.getLongitud());
+                    if (anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
+                        if (categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
+                        else if (radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())) urls.add(anun);
 
-                }else {
-                    for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
-                        ultimaKey = postSnapshot.getKey();
-                        localb.setLatitude(anun.getLatitud());
-                        localb.setLongitude(anun.getLongitud());
-                        if (anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
-                            if (categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
-                            else if (radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())) urls.add(anun);
-
-                        if (urls.size() == NUMERO_ANUNCIOS * numeroCargas) break;
-
-                    }
-                    if(loading){
-                        urls.remove(0);
-                        loading = false;
-                    }
-                    Adapter.actualizar(urls);
-
-
+                    if (urls.size() == NUMERO_ANUNCIOS * numeroCargas) break;
 
                 }
+                if(loading){
+                    urls.remove(0);
+                    loading = false;
+                    PBcargar_mas.setVisibility(View.GONE);
+                }
+
+                Adapter.actualizar(urls);
                 refreshLayout.setRefreshing(false);
 
             }
@@ -315,6 +312,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 Adapter.limpiar();
                 cargar(true);
 
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
                 return true;
             }
 
@@ -339,7 +338,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         Spinner spinner = (Spinner) Dfiltro.findViewById(R.id.spinner);
 
         distancia.setMax(3);
-        distancia.setProgress(2);
+        distancia.setProgress(1);
 
         distancia.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 

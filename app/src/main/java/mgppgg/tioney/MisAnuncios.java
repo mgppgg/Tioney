@@ -116,8 +116,7 @@ public class MisAnuncios extends BaseActivity {
                 filepathFoto0 = storage.getReferenceFromUrl(anun.getUrl()+"Foto0");
                 filepathDescripcion =  storage.getReferenceFromUrl(anun.getUrl() + "Descripcion");
 
-                Glide.with(getBaseContext()).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true).into(foto);
+                if(anun.getFotos()>0)Glide.with(getBaseContext()).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(foto);
 
                 filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @TargetApi(24)

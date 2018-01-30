@@ -2,11 +2,13 @@ package mgppgg.tioney;
 
 import android.location.Location;
 
+import java.io.Serializable;
+
 /**
  * Created by pablich on 26/12/2017.
  */
 
-public class AnunDatabase {
+public class AnunDatabase implements Serializable {
     private String titulo;
     private String precio;
     private String url;

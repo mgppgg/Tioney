@@ -44,6 +44,6 @@
         app:backgroundTint="#f79c00"
         app:elevation="10dp"
         app:fabSize="normal"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@drawable/ic_add_white_36dp" />
 
 </android.support.design.widget.CoordinatorLayout>

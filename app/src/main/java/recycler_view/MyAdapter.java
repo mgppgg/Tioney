@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,18 +41,18 @@ import mgppgg.tioney.R;
  */
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
-    private static ArrayList<Anuncio> listaAnuncios;
-    private ArrayList<AnunDatabase> anunciosDatabase;
+    private static ArrayList<AnunDatabase> anunciosDatabase;
+    private static ArrayList<String> descripciones;
     private Context context;
     private ProgressDialog dialog;
-    private static Anuncio anun;
+    private static AnunDatabase anun;
     private FirebaseStorage  storage;
 
     public MyAdapter(ArrayList<AnunDatabase> url, Context context,ProgressDialog d) {
-        this.anunciosDatabase = new ArrayList<>();
-        listaAnuncios = new ArrayList<>();
+        anunciosDatabase = new ArrayList<>();
+        descripciones = new ArrayList<>();
         this.context = context;
-        anun = new Anuncio();
+        anun = new AnunDatabase();
         storage = FirebaseStorage.getInstance();
         dialog = d;
 
@@ -71,24 +72,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
             v.setOnClickListener(new View.OnClickListener() {
                 @Override public void onClick(View v) {
-                    anun = listaAnuncios.get(getAdapterPosition());
+                    int pos = getAdapterPosition();
                     Intent intent = new Intent(v.getContext(), MostrarAnun.class);
-                    intent.putExtra("Anuncio", anun);
+                    intent.putExtra("Anuncio",anunciosDatabase.get(pos));
+                    intent.putExtra("descripcion",descripciones.get(pos));
                     v.getContext().startActivity(intent);
-
                 }
             });
         }
     }
-
-    /*private class LoadingViewHolder extends RecyclerView.ViewHolder {
-        public ProgressBar progressBar;
-
-        public LoadingViewHolder(View view) {
-            super(view);
-            progressBar = (ProgressBar) view.findViewById(R.id.PBcargar_mas);
-        }
-    }*/
 
 
     @Override
@@ -102,7 +94,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        final Anuncio a = new Anuncio();
         final StorageReference filepathDescripcion;
 
         if(anunciosDatabase.get(position).getFotos()>0){
@@ -111,27 +102,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     .skipMemoryCache(true).into(holder.image);
         }
 
-        listaAnuncios.add(a);
+        descripciones.add("...");
         filepathDescripcion =  storage.getReferenceFromUrl(anunciosDatabase.get(position).getUrl() + "Descripcion");
 
         filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @TargetApi(24)
             public void onSuccess(byte[] bytes) {
                 String descripcion = new String(bytes, StandardCharsets.UTF_8);
-                listaAnuncios.get(position).setDescripcion(descripcion);
-                listaAnuncios.get(position).setTitulo(anunciosDatabase.get(position).getTitulo());
-                listaAnuncios.get(position).setPrecio(anunciosDatabase.get(position).getPrecio());
-                listaAnuncios.get(position).setUID(anunciosDatabase.get(position).getUID());
-                listaAnuncios.get(position).setUsuario(anunciosDatabase.get(position).getUsuario());
-                listaAnuncios.get(position).setUrl(anunciosDatabase.get(position).getUrl());
-                listaAnuncios.get(position).setCategoria(anunciosDatabase.get(position).getCategoria());
-                listaAnuncios.get(position).setFotos(anunciosDatabase.get(position).getFotos());
-                listaAnuncios.get(position).setLongitud(anunciosDatabase.get(position).getLongitud());
-                listaAnuncios.get(position).setLatitud(anunciosDatabase.get(position).getLatitud());
-
-                holder.titulo.setText(a.getTitulo());
-                holder.descripcion.setText(a.getDescripcion());
-                holder.precio.setText(a.getPrecio());
+                descripciones.set(position,descripcion);
+                holder.titulo.setText(anunciosDatabase.get(position).getTitulo());
+                holder.descripcion.setText(descripcion);
+                holder.precio.setText(anunciosDatabase.get(position).getPrecio());
 
                 if(position >= anunciosDatabase.size()/2)dialog.dismiss();
 
@@ -148,25 +129,21 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        //if(anunciosDatabase.size()==0)dialog.dismiss();
         return anunciosDatabase.size();
     }
 
     public void limpiar(){
-        //Log.d("wwwwwww","anuns:"+anuns.size());
-        Log.d("wwwwwww","anuns:"+anunciosDatabase.size());
         anunciosDatabase.clear();
-        listaAnuncios.clear();
         this.notifyDataSetChanged();
-        Log.d("wwwwwww","anuns:"+anunciosDatabase.size());
 
     }
 
     public void actualizar(ArrayList<AnunDatabase> anuns){
         anunciosDatabase.addAll(anuns);
-        if(anunciosDatabase.size()==0) this.notifyItemRangeInserted(0,anuns.size());
-        else this.notifyItemRangeInserted(anunciosDatabase.size()-1,anuns.size());
+        this.notifyItemRangeInserted(anunciosDatabase.size()-anuns.size(),anuns.size());
+        if(anunciosDatabase.size()==0)dialog.dismiss();
     }
+
     public int getUltimo(){
         return anunciosDatabase.size();
     }

@@ -26,6 +26,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.Arrays;
 
+import mgppgg.tioney.AnunDatabase;
 import recycler_view.Anuncio;
 
 import static android.R.attr.width;
@@ -33,11 +34,11 @@ import static com.firebase.ui.storage.R.attr.height;
 
 public class Adaptador_ViewPager extends PagerAdapter {
     private Context Context;
-    private Anuncio anun;
+    private AnunDatabase anun;
     private FirebaseStorage storage;
 
 
-    Adaptador_ViewPager(Context context, Anuncio anun,FirebaseStorage sto) {
+    Adaptador_ViewPager(Context context, AnunDatabase anun,FirebaseStorage sto) {
         this.Context = context;
         this.anun = anun;
         this.storage = sto;

@@ -18,6 +18,7 @@ import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.Objects;
 
+import mgppgg.tioney.AnunDatabase;
 import mgppgg.tioney.Chat;
 import mgppgg.tioney.R;
 import recycler_view.Anuncio;
@@ -30,8 +31,6 @@ public class MostrarAnun extends AppCompatActivity {
 
     TextView titulo,descripcion,precio;
     private FirebaseStorage storage;
-    private DatabaseReference database;
-    private FirebaseUser user;
     Button contactar;
     private FirebaseAuth mAuth;
 
@@ -46,24 +45,23 @@ public class MostrarAnun extends AppCompatActivity {
         }
 
         storage = FirebaseStorage.getInstance();
-        database = FirebaseDatabase.getInstance().getReference();
 
 
         mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
         final FirebaseUser user = mAuth.getCurrentUser();
 
 
         contactar = (Button)findViewById(R.id.BTNcontactar);
 
-        final Anuncio anun = (Anuncio) getIntent().getSerializableExtra("Anuncio");
+        final AnunDatabase anun = (AnunDatabase) getIntent().getSerializableExtra("Anuncio");
+        String descrip =  getIntent().getExtras().getString("descripcion");
 
         titulo = (TextView) findViewById(R.id.TVtituloMostrar);
         descripcion = (TextView) findViewById(R.id.TVdescripcionMostrar);
         precio = (TextView) findViewById(R.id.TVprecioMostrar);
 
         titulo.setText(anun.getTitulo());
-        descripcion.setText(anun.getDescripcion());
+        descripcion.setText(descrip);
         precio.setText(anun.getPrecio());
 
         if (user != null && user.getUid().equals(anun.getUID())) contactar.setEnabled(false);
@@ -83,6 +81,17 @@ public class MostrarAnun extends AppCompatActivity {
                 Intent intent = new Intent(getBaseContext(),Chat.class);
                 intent.putExtra("anuncio",anun);
                 startActivity(intent);
+            }
+        });
+
+        mViewPager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                titulo.setVisibility(View.GONE);
+                descripcion.setVisibility(View.GONE);
+                precio.setVisibility(View.GONE);
+                contactar.setVisibility(View.GONE);
+
             }
         });
 
