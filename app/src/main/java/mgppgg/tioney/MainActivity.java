@@ -68,7 +68,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private SwipeRefreshLayout refreshLayout;
     private Query query;
     private Context context;
-    private String busqueda,categoria,ultimaKey;
+    private String busqueda,categoria;
     private Location local,localb;
     private boolean login = false,loading = false;
     private long ultimaFecha;
@@ -182,7 +182,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                                                public void onRefresh() {
                                                    numeroCargas = 1;
                                                    urls.clear();
-                                                   query = database.child("Anuncios1").orderByKey();
+                                                   query = database.child("Anuncios1").orderByChild("fecha");
                                                    busqueda = "";
                                                    Adapter.limpiar();
                                                    cargar(false);
@@ -273,10 +273,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
-                    ultimaKey = postSnapshot.getKey();
-                    ultimaFecha = anun.getFecha();
-                    localb.setLatitude(anun.getLatitud());
-                    localb.setLongitude(anun.getLongitud());
+                    if (anun != null) {
+                        ultimaFecha = anun.getFecha();
+                        localb.setLatitude(anun.getLatitud());
+                        localb.setLongitude(anun.getLongitud());
+                    }
                     if (anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
                         if (categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
                         else if (radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())) urls.add(anun);

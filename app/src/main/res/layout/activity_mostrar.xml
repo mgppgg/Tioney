@@ -7,6 +7,7 @@
     android:orientation="vertical">
 
     <ScrollView
+        android:id="@+id/SVmostrar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
@@ -68,17 +69,38 @@
                     android:id="@+id/TV€"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="15dp"
+                    android:paddingLeft="10dp"
                     android:text="€"
                     android:textSize="24sp" />
 
             </LinearLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp">
+
+                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/mapa"
+                    tools:context=".MapsActivity"
+                    android:name="com.google.android.gms.maps.MapFragment" />
+
+                <ImageView
+                    android:id="@+id/IVtransparente"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"/>
+            </RelativeLayout>
+
             <Button
                 android:id="@+id/BTNcontactar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
                 android:text="Contactar" />
+
 
         </LinearLayout>
 

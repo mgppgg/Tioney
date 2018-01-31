@@ -1,38 +1,49 @@
 package mostrar_Anuncio;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-
-import java.util.Objects;
 
 import mgppgg.tioney.AnunDatabase;
 import mgppgg.tioney.Chat;
 import mgppgg.tioney.R;
-import recycler_view.Anuncio;
+
 
 /**
  * Created by pablich on 01/12/2017.
  */
 
-public class MostrarAnun extends AppCompatActivity {
+public class MostrarAnun extends AppCompatActivity implements OnMapReadyCallback {
 
     TextView titulo,descripcion,precio;
     private FirebaseStorage storage;
     Button contactar;
     private FirebaseAuth mAuth;
+    private GoogleMap mMap;
+    private AnunDatabase anun;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +56,20 @@ public class MostrarAnun extends AppCompatActivity {
         }
 
         storage = FirebaseStorage.getInstance();
+        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapa);
+        mapFragment.getMapAsync(this);
 
 
         mAuth = FirebaseAuth.getInstance();
         final FirebaseUser user = mAuth.getCurrentUser();
+        anun = new AnunDatabase();
 
 
         contactar = (Button)findViewById(R.id.BTNcontactar);
+        ImageView transparentImageView = (ImageView) findViewById(R.id.IVtransparente);
+        final ScrollView scroll = (ScrollView)findViewById(R.id.SVmostrar);
 
-        final AnunDatabase anun = (AnunDatabase) getIntent().getSerializableExtra("Anuncio");
+        anun = (AnunDatabase) getIntent().getSerializableExtra("Anuncio");
         String descrip =  getIntent().getExtras().getString("descripcion");
 
         titulo = (TextView) findViewById(R.id.TVtituloMostrar);
@@ -84,7 +100,7 @@ public class MostrarAnun extends AppCompatActivity {
             }
         });
 
-        mViewPager.setOnClickListener(new View.OnClickListener() {
+        /*mViewPager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 titulo.setVisibility(View.GONE);
@@ -93,14 +109,63 @@ public class MostrarAnun extends AppCompatActivity {
                 contactar.setVisibility(View.GONE);
 
             }
+        });*/
+
+
+        transparentImageView.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        scroll.requestDisallowInterceptTouchEvent(true);
+                        // Disable touch on transparent view
+                        return false;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        scroll.requestDisallowInterceptTouchEvent(false);
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        scroll.requestDisallowInterceptTouchEvent(true);
+                        return false;
+
+                    default:
+                        return true;
+                }
+            }
         });
 
 
     }
 
+
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {  //boton de atras
         if(item.getItemId()==android.R.id.home)finish();
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney, Australia, and move the camera.
+        LatLng pos = new LatLng(anun.getLatitud(), anun.getLongitud());
+        mMap.addMarker(new MarkerOptions().position(pos).title(anun.getUsuario()));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
+
+        mMap.addCircle(new CircleOptions()
+                        .center(pos)
+                        .radius(1000)
+                        .strokeColor(Color.RED)
+                        .fillColor(0x220000FF)
+                        .strokeWidth(5)
+        );
     }
 }
