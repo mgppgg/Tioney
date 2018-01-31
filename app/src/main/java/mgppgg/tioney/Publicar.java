@@ -331,7 +331,7 @@ public class Publicar extends BaseActivity {
         showProgressDialog(this, "Creando anuncio..");
         final String descripcion, titulo, precio, ID, UID, url, usuario;
         ID = UUID.randomUUID().toString();
-        long fecha = new Date().getTime();
+        long fecha = - new Date().getTime();
         if (validar()) {
             descripcion = ETdescripcion.getText().toString();
             titulo = ETtitulo.getText().toString();

@@ -99,7 +99,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         if(anunciosDatabase.get(holder.getAdapterPosition()).getFotos()>0){
             final StorageReference filepathFoto0 = storage.getReferenceFromUrl(anunciosDatabase.get(holder.getAdapterPosition()).getUrl()+"Foto0");
             Glide.with(context).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.image);
-        }else holder.image.setImageResource(R.mipmap.ic_launcher);
+        }else holder.image.setImageResource(R.drawable.logo_fondonegro);
 
         descripciones.add("...");
         filepathDescripcion =  storage.getReferenceFromUrl(anunciosDatabase.get(holder.getAdapterPosition()).getUrl() + "Descripcion");
