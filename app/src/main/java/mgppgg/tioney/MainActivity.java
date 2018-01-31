@@ -51,6 +51,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import recycler_view.MyAdapter;
 
@@ -70,6 +71,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private String busqueda,categoria,ultimaKey;
     private Location local,localb;
     private boolean login = false,loading = false;
+    private long ultimaFecha;
     private ProgressDialog dialog;
     private ProgressBar PBcargar_mas;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -102,7 +104,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         radio = 10;
         local = new Location("LocationA");
         localb = new Location("LocationB");
-        query = database.child("Anuncios1").orderByKey();
+        query = database.child("Anuncios1").orderByChild("fecha");
 
         filtro = (TextView) findViewById(R.id.TVfiltro);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -253,7 +255,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void cargarMas(){
-        query = database.child("Anuncios1").orderByKey().startAt(ultimaKey);
+        query = database.child("Anuncios1").orderByChild("fecha").startAt(ultimaFecha);
         urls.clear();
         numeroCargas++;
         cargar(false);
@@ -272,6 +274,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
                     ultimaKey = postSnapshot.getKey();
+                    ultimaFecha = anun.getFecha();
                     localb.setLatitude(anun.getLatitud());
                     localb.setLongitude(anun.getLongitud());
                     if (anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
@@ -286,7 +289,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     loading = false;
                     PBcargar_mas.setVisibility(View.GONE);
                 }
-
                 Adapter.actualizar(urls);
                 refreshLayout.setRefreshing(false);
 

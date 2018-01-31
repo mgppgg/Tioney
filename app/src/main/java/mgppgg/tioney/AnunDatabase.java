@@ -18,8 +18,9 @@ public class AnunDatabase implements Serializable {
     private int fotos;
     private double longitud;
     private double latitud;
+    private long fecha;
 
-    public  AnunDatabase(String t,String p,String url,String e,String usu,String cat,int foto,double longi,double lat){
+    public  AnunDatabase(String t,String p,String url,String e,String usu,String cat,int foto,double longi,double lat,long f){
         this.titulo = t;
         this.precio = p;
         this.url = url;
@@ -29,6 +30,7 @@ public class AnunDatabase implements Serializable {
         this.fotos = foto;
         this.longitud=longi;
         this.latitud=lat;
+        this.fecha = f;
 
     }
     public  AnunDatabase(){
@@ -41,6 +43,7 @@ public class AnunDatabase implements Serializable {
         this.fotos=0;
         this.latitud=0;
         this.longitud=0;
+        this.fecha = 0;
 
     }
 
@@ -114,5 +117,13 @@ public class AnunDatabase implements Serializable {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
+    }
+
+    public long getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(long fecha) {
+        this.fecha = fecha;
     }
 }

@@ -60,6 +60,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -136,7 +137,6 @@ public class Publicar extends BaseActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setPrompt("Seleccione categoría");
         spinner.setAdapter(adapter);
-
 
         if (anun2 != null) {
             imageButtons = new ArrayList<>();
@@ -331,6 +331,7 @@ public class Publicar extends BaseActivity {
         showProgressDialog(this, "Creando anuncio..");
         final String descripcion, titulo, precio, ID, UID, url, usuario;
         ID = UUID.randomUUID().toString();
+        long fecha = new Date().getTime();
         if (validar()) {
             descripcion = ETdescripcion.getText().toString();
             titulo = ETtitulo.getText().toString();
@@ -346,7 +347,7 @@ public class Publicar extends BaseActivity {
 
                 String key1 = database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
                 final Map<String, Object> map = new HashMap<>();
-                AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario,categoria, arrayUris.size(),local.getLongitude(),local.getLatitude());
+                AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario,categoria, arrayUris.size(),local.getLongitude(),local.getLatitude(),fecha);
                 map.put(key1, anun);
 
                 if (i > -1) {
