@@ -152,6 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    style="@style/botones"
                     android:text="Subir" />
 
                 <Button
@@ -161,6 +162,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:text="Borrar anuncio"
+                    style="@style/botones"
                     android:visibility="invisible" />
 
 

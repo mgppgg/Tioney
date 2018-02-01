@@ -33,6 +33,7 @@ public class Conversaciones extends BaseActivity {
     private FirebaseUser user;
     private ArrayList<Conver_firebase> convers;
     private ImageButton borrar;
+    private TextView noConver;
     private String key_chat;
 
     @Override
@@ -46,6 +47,7 @@ public class Conversaciones extends BaseActivity {
 
         listOfConvers = (ListView)findViewById(R.id.list_conver);
         listOfConvers.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
+        noConver = (TextView)findViewById(R.id.TVnoAnun3);
 
         if(getSupportActionBar()!=null){
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -56,6 +58,7 @@ public class Conversaciones extends BaseActivity {
         adapter = new FirebaseListAdapter<Conver_firebase>(this, Conver_firebase.class, R.layout.conversacion, database.child("Usuarios").child(user.getUid()).child("Chats")) {
             @Override
             protected void populateView(View v, final Conver_firebase conver, final int position) {
+                noConver.setVisibility(View.GONE);
                 TextView Usuario = (TextView)v.findViewById(R.id.TVusuario);
                 ImageView nuevo_msg = (ImageView)v.findViewById(R.id.IVnuevo_msg);
                 if(conver.getNuevo_msg()==0)nuevo_msg.setVisibility(View.GONE);

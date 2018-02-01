@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -53,6 +54,7 @@ public class MisAnuncios extends BaseActivity {
     private ArrayList<Anuncio> anuncios;
     private FirebaseListAdapter <Anuncio> adapter;
     private FirebaseUser user;
+    private TextView noAnun;
     private SwipeRefreshLayout refreshLayout;
 
     @Override
@@ -71,6 +73,7 @@ public class MisAnuncios extends BaseActivity {
         listOfAnun= (ListView)findViewById(R.id.list_anun);
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_listaAnun);
         anuncios = new ArrayList<>();
+        noAnun = (TextView)findViewById(R.id.TVnoAnun);
 
         mostrar_anun(database.child("Usuarios").child(user.getUid()).child("Anuncios"));
 
@@ -107,7 +110,7 @@ public class MisAnuncios extends BaseActivity {
         adapter = new FirebaseListAdapter<Anuncio>(this, Anuncio.class, R.layout.card, ref) {
             @Override
             protected void populateView(View v, final Anuncio anun, final int position) {
-
+                noAnun.setVisibility(View.GONE);
                 anuncios.add(anun);
                 final TextView titulo = (TextView)v.findViewById(R.id.TVtituloCard);
                 final TextView descripcion = (TextView)v.findViewById(R.id.TVdescripcionCard);
@@ -117,6 +120,7 @@ public class MisAnuncios extends BaseActivity {
                 filepathDescripcion =  storage.getReferenceFromUrl(anun.getUrl() + "Descripcion");
 
                 if(anun.getFotos()>0)Glide.with(getBaseContext()).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(foto);
+                else foto.setImageResource(R.drawable.logo_fondonegro);
 
                 filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @TargetApi(24)
@@ -135,7 +139,6 @@ public class MisAnuncios extends BaseActivity {
                         Toast.makeText(getBaseContext(), "Error al descargar los anuncios", Toast.LENGTH_SHORT).show();
                     }
                 });
-
 
 
 

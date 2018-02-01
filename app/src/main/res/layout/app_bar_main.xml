@@ -35,6 +35,22 @@
 
     <include layout="@layout/content_main" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/TVnoAnun2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="false"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:text="No hay anuncios disponibles ¡Publica tú!" />
+
+    </RelativeLayout>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -45,5 +61,8 @@
         app:elevation="10dp"
         app:fabSize="normal"
         app:srcCompat="@drawable/ic_add_white_36dp" />
+
+
+
 
 </android.support.design.widget.CoordinatorLayout>

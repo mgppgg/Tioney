@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -74,9 +75,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private long ultimaFecha;
     private ProgressDialog dialog;
     private ProgressBar PBcargar_mas;
+    private TextView noAnun;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_CODE_ASK_PERMISSIONS2 = 456;
-    private static final int NUMERO_ANUNCIOS = 6;
+    private static final int NUMERO_ANUNCIOS = 10;
     private int radio, numeroCargas,posSpinner,posBar;
 
 
@@ -84,7 +86,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         context = this;
         urls = new ArrayList<>();
@@ -112,6 +113,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         getSupportActionBar().setTitle(null);
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
+        noAnun = (TextView)findViewById(R.id.TVnoAnun2);
 
         rv = (RecyclerView) findViewById(R.id.recycler_view);
         rv.setHasFixedSize(true);
@@ -170,6 +172,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        TextView Navusuario = (TextView)header.findViewById(R.id.TVnavUsuario);
+        TextView Navemail = (TextView)header.findViewById(R.id.TVnavEmail);
+        Navusuario.setText(user.getDisplayName());
+        Navemail.setText(user.getEmail());
 
         if (login) {
             String token = FirebaseInstanceId.getInstance().getToken();
@@ -273,11 +280,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 for (final DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     AnunDatabase anun = postSnapshot.getValue(AnunDatabase.class);
-                    if (anun != null) {
-                        ultimaFecha = anun.getFecha();
-                        localb.setLatitude(anun.getLatitud());
-                        localb.setLongitude(anun.getLongitud());
-                    }
+                    assert anun != null;
+                    ultimaFecha = anun.getFecha();
+                    localb.setLatitude(anun.getLatitud());
+                    localb.setLongitude(anun.getLongitud());
+
                     if (anun.getTitulo().toLowerCase().contains(busqueda.toLowerCase()))
                         if (categoria.equals("Todas las categorías") && radio > (local.distanceTo(localb) / 1000)) urls.add(anun);
                         else if (radio > (local.distanceTo(localb) / 1000) && categoria.equals(anun.getCategoria())) urls.add(anun);
@@ -285,11 +292,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     if (urls.size() == NUMERO_ANUNCIOS * numeroCargas) break;
 
                 }
+
+                if(urls.size()==0)noAnun.setVisibility(View.VISIBLE);
+                else noAnun.setVisibility(View.GONE);
+
                 if(loading){
                     urls.remove(0);
                     loading = false;
                     PBcargar_mas.setVisibility(View.GONE);
                 }
+
                 Adapter.actualizar(urls);
                 refreshLayout.setRefreshing(false);
 
@@ -343,6 +355,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         distancia.setMax(3);
         distancia.setProgress(posBar);
+        distancia.getIndeterminateDrawable().setColorFilter(0xFFFFFFFF, android.graphics.PorterDuff.Mode.MULTIPLY);
         if(radio==10000)TVdistancia.setText("10");
         else TVdistancia.setText(""+radio);
 
@@ -405,7 +418,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             @Override
             public void onClick(View v) {
                 numeroCargas = 1;
-                query = database.child("Anuncios1").orderByKey();
+                query = database.child("Anuncios1").orderByChild("fecha");
                 urls.clear();
                 Adapter.limpiar();
                 cargar(true);

@@ -143,8 +143,6 @@ public class MostrarAnun extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {  //boton de atras
         if(item.getItemId()==android.R.id.home)finish();
@@ -154,15 +152,13 @@ public class MostrarAnun extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Add a marker in Sydney, Australia, and move the camera.
         LatLng pos = new LatLng(anun.getLatitud(), anun.getLongitud());
-        mMap.addMarker(new MarkerOptions().position(pos).title(anun.getUsuario()));
+        //mMap.addMarker(new MarkerOptions().position(pos).title(anun.getUsuario())).
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 13));
 
         mMap.addCircle(new CircleOptions()
                         .center(pos)
-                        .radius(1000)
+                        .radius(500)
                         .strokeColor(Color.RED)
                         .fillColor(0x220000FF)
                         .strokeWidth(5)
