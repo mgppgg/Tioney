@@ -1,61 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <EditText
-        android:id="@+id/TFemail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Correo electrónico"
-        android:inputType="textEmailAddress"
-        android:textColor="?attr/actionMenuTextColor" />
-
-    <EditText
-        android:id="@+id/ETnombre"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Nombre y apellidos"
-        android:inputType="textPersonName"
-        android:maxLength="30" />
-
-    <EditText
-        android:id="@+id/TFpass1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Contraseña"
-        android:inputType="textPassword"
-        android:textColor="?attr/actionMenuTextColor" />
-
-    <EditText
-        android:id="@+id/TFpass2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Confirmar contraseña"
-        android:inputType="textPassword"
-        android:textColor="?attr/actionMenuTextColor" />
 
     <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@drawable/fondo_login"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/logoSignup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ETnombre"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="66dp"
+            android:layout_marginTop="16dp"
+            app:srcCompat="@drawable/logo" />
+
+        <EditText
+            android:id="@+id/ETnombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:hint="Nombre y apellidos"
+            android:inputType="textPersonName"
+            android:maxLength="30"
+            android:textColor="#FFFFFF "
+            android:textColorHint="#EEEEEE"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/TFemail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ETnombre"
+            android:layout_marginTop="8dp"
+            android:hint="Correo electrónico"
+            android:inputType="textEmailAddress"
+            android:textSize="18sp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#EEEEEE" />
+
+        <EditText
+            android:id="@+id/TFpass1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/TFemail"
+            android:layout_marginTop="8dp"
+            android:hint="Contraseña"
+            android:textSize="18sp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:inputType="textPassword"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#EEEEEE" />
+
+        <EditText
+            android:id="@+id/TFpass2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/TFpass1"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:hint="Confirmar contraseña"
+            android:inputType="textPassword"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#EEEEEE" />
 
         <Button
             android:id="@+id/Bsignupbutton"
+            style="@style/botones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aceptar" />
+            android:layout_below="@+id/TFpass2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="36dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Registrarse" />
 
-        <Button
-            android:id="@+id/BCancelar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="Cancelar" />
-    </RelativeLayout>
-
-</LinearLayout>
+</RelativeLayout>

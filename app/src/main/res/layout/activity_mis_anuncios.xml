@@ -19,6 +19,7 @@
             android:layout_height="match_parent"
             android:divider="@color/transparent"
             android:dividerHeight="2dp"
+            android:background="#BDBDBD"
             android:focusable="true"
             android:scrollbars="none" >
         </ListView>

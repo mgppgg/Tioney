@@ -30,10 +30,12 @@
         </activity>
         <activity
             android:name=".SignUp"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".LoginActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -49,8 +51,10 @@
             android:name=".Chat"
             android:screenOrientation="portrait" />
         <activity android:name=".Conversaciones"
+            android:label="Mis conversaciones"
             android:screenOrientation="portrait"/>
         <activity android:name=".MisAnuncios"
+            android:label="Mis anuncios"
             android:screenOrientation="portrait"/>
 
         <service

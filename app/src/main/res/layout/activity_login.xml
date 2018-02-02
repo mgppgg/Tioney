@@ -1,42 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondo_login">
 
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ETuser"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="66dp"
+        android:layout_marginTop="16dp"
+        app:srcCompat="@drawable/logo" />
 
     <EditText
         android:id="@+id/ETuser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Usuario"
-        android:inputType="textEmailAddress" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:hint="Correo electrónico"
+        android:inputType="textEmailAddress"
+        android:textColor="#FFFFFF "
+        android:textColorHint="#EEEEEE"
+        android:textSize="18sp" />
 
     <EditText
         android:id="@+id/ETpass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
+        android:layout_below="@+id/ETuser"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
         android:hint="Contraseña"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:textColor="#FFFFFF "
+        android:textColorHint="#EEEEEE"
+        android:textSize="18sp" />
 
-    <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+    <Button
+        android:id="@+id/BtnLogin"
+        style="@style/botones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ETpass"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="Iniciar sesión" />
 
-        <Button
-            android:id="@+id/BtnLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Iniciar sesión" />
+    <Button
+        android:id="@+id/BtnRegistrarse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/BtnLogin"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:background="@color/transparent"
+        android:text="Registrarse"
+        android:textColor="#ffa000" />
 
-            <Button
-                android:id="@+id/BtnRegistrarse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Registrarse"
-                android:layout_alignParentRight="true" />
-        </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
 

@@ -228,11 +228,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_misAnuncios) {
+        if (id == R.id.nav_misAnuncios) {
 
             Intent intent = new Intent(MainActivity.this, MisAnuncios.class);
             startActivity(intent);

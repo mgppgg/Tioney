@@ -27,7 +27,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 public class SignUp extends LoginActivity {
 
-    private Button BtnCancelar;
     private Button BtnAceptar;
     private EditText ETpass,ETpass2,ETemail,ETnombre;
     private FirebaseAuth mAuth;
@@ -45,7 +44,6 @@ public class SignUp extends LoginActivity {
         ETpass = (EditText)findViewById(R.id.TFpass1);
         ETpass2 = (EditText)findViewById(R.id.TFpass2);
         ETnombre = (EditText)findViewById(R.id.ETnombre);
-        BtnCancelar = (Button)findViewById(R.id.BCancelar);
         BtnAceptar = (Button)findViewById(R.id.Bsignupbutton);
 
         mAuth = FirebaseAuth.getInstance();
@@ -62,13 +60,6 @@ public class SignUp extends LoginActivity {
                 }
             }
         };
-
-        BtnCancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
 
         BtnAceptar.setOnClickListener(new View.OnClickListener() {
             @Override

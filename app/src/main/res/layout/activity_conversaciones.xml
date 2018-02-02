@@ -11,8 +11,8 @@
         android:id="@+id/list_conver"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
         android:focusable="true"
+        android:background="#BDBDBD"
         android:scrollbars="none" />
 
 
