@@ -46,7 +46,6 @@ public class Conversaciones extends BaseActivity {
         convers = new ArrayList<>();
 
         listOfConvers = (ListView)findViewById(R.id.list_conver);
-        listOfConvers.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
         noConver = (TextView)findViewById(R.id.TVnoAnun3);
 
         if(getSupportActionBar()!=null){
@@ -54,14 +53,13 @@ public class Conversaciones extends BaseActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-
-        adapter = new FirebaseListAdapter<Conver_firebase>(this, Conver_firebase.class, R.layout.conversacion, database.child("Usuarios").child(user.getUid()).child("Chats")) {
+        adapter = new FirebaseListAdapter<Conver_firebase>(this, Conver_firebase.class, R.layout.card_conversacion, database.child("Usuarios").child(user.getUid()).child("Chats")) {
             @Override
             protected void populateView(View v, final Conver_firebase conver, final int position) {
                 noConver.setVisibility(View.GONE);
                 TextView Usuario = (TextView)v.findViewById(R.id.TVusuario);
                 ImageView nuevo_msg = (ImageView)v.findViewById(R.id.IVnuevo_msg);
-                if(conver.getNuevo_msg()==0)nuevo_msg.setVisibility(View.GONE);
+                if(conver.getNuevo_msg()==1)nuevo_msg.setVisibility(View.VISIBLE);
                 Usuario.setText(conver.getUser());
                 convers.add(conver);
                 borrar = (ImageButton)v.findViewById(R.id.BTNborrarConver);
@@ -79,8 +77,7 @@ public class Conversaciones extends BaseActivity {
         };
 
         if(isOnlineNet())listOfConvers.setAdapter(adapter);
-        else
-            snack1();
+        else snackBar("Sin conexión a internet");
 
 
         listOfConvers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -94,8 +91,6 @@ public class Conversaciones extends BaseActivity {
                 startActivity(intent);
             }
         });
-
-
 
     }
 
@@ -147,36 +142,4 @@ public class Conversaciones extends BaseActivity {
         dialog.show();
     }
 
-
-    public void snack1(){
-        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Sin conexión a internet",  Snackbar.LENGTH_INDEFINITE).setAction("Action", null);
-        View sbView = snackbar.getView();
-        snackbar.setActionTextColor(Color.BLACK);
-        sbView.setBackgroundColor(Color.RED);
-        snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isOnlineNet())listOfConvers.setAdapter(adapter);
-                else snack2();
-            }
-        });
-
-        snackbar.show();
-    }
-
-    public void snack2(){
-        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), "Sin conexión a internet",  Snackbar.LENGTH_INDEFINITE).setAction("Action", null);
-        View sbView = snackbar.getView();
-        snackbar.setActionTextColor(Color.BLACK);
-        sbView.setBackgroundColor(Color.RED);
-        snackbar.setAction("ACTUALIZAR", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(isOnlineNet())listOfConvers.setAdapter(adapter);
-                else snack1();
-            }
-        });
-
-        snackbar.show();
-    }
 }
