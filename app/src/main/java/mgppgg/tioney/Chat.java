@@ -99,14 +99,14 @@ public class Chat extends BaseActivity{
 
                         if(borrada && conversaciones){
                             final Conver_firebase c2 = new Conver_firebase(user.getDisplayName(),chatUrl,1);
-                            database.child("Usuarios").child(key_chat).child("Chats").push().setValue(c2);
+                            database.child("Usuarios").child(key_chat).child("Chats").child(user.getUid()).setValue(c2);
                             database.child("Chats").child(chatUrl).child("Estado").setValue(0);
                             borrada = false;
                         }
 
                         if(borrada && !conversaciones){
                             final Conver_firebase c1 = new Conver_firebase(anun.getUsuario(), chatUrl,1);
-                            database.child("Usuarios").child(user.getUid()).child("Chats").push().setValue(c1);
+                            database.child("Usuarios").child(user.getUid()).child("Chats").child(user.getUid()).setValue(c1);
                             database.child("Chats").child(chatUrl).child("Estado").setValue(0);
                             borrada = false;
                         }

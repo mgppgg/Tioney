@@ -100,17 +100,6 @@ public class MostrarAnun extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
-        /*mViewPager.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                titulo.setVisibility(View.GONE);
-                descripcion.setVisibility(View.GONE);
-                precio.setVisibility(View.GONE);
-                contactar.setVisibility(View.GONE);
-
-            }
-        });*/
-
 
         transparentImageView.setOnTouchListener(new View.OnTouchListener() {
 

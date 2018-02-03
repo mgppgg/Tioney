@@ -1,6 +1,7 @@
 package mgppgg.tioney;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -68,7 +70,8 @@ public class Conversaciones extends BaseActivity {
                 borrar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(final View v) {
-                        confirmacion(conver,position);
+                        if(isOnlineNet())confirmacion(conver,position);
+                        else snackBar("Conexión a internet necesaria");
                     }
                 });
             }
@@ -83,12 +86,20 @@ public class Conversaciones extends BaseActivity {
         listOfConvers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                database.child("Usuarios").child(user.getUid()).child("Chats").child(key_chat).child("nuevo_msg").setValue(0);
-                Intent intent = new Intent(getBaseContext(), Chat.class);
-                intent.putExtra("conversaciones",true);
-                intent.putExtra("conver", convers.get(position));
-                intent.putExtra("key_chat", key_chat);
-                startActivity(intent);
+                if(isOnlineNet()){
+
+                    ImageView nuevo_msg = (ImageView)view.findViewById(R.id.IVnuevo_msg);
+                    nuevo_msg.setVisibility(View.GONE);
+                    database.child("Usuarios").child(user.getUid()).child("Chats").child(key_chat).child("nuevo_msg").setValue(0);
+                    Intent intent = new Intent(getBaseContext(), Chat.class);
+                    intent.putExtra("conversaciones",true);
+                    intent.putExtra("conver", convers.get(position));
+                    intent.putExtra("key_chat", key_chat);
+                    startActivity(intent);
+
+                }
+                else snackBar("Conexión a internet necesaria");
+
             }
         });
 

@@ -78,7 +78,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private TextView noAnun;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_CODE_ASK_PERMISSIONS2 = 456;
-    private static final int NUMERO_ANUNCIOS = 10;
+    private static final int NUMERO_ANUNCIOS = 15;
     private int radio, numeroCargas,posSpinner,posBar;
 
 
@@ -137,7 +137,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                         loading = true;
                         PBcargar_mas.setVisibility(View.VISIBLE);
                         cargarMas();
-                       Log.d("cargarrrrrrrr","massssssssssssss");
                     }
                 }
 
@@ -444,7 +443,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_ASK_PERMISSIONS2);
 
-        } else if (hasWriteContactsPermission == PackageManager.PERMISSION_GRANTED) {
+        } else {
 
             localizacion();
 
@@ -457,15 +456,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (requestCode) {
             case REQUEST_CODE_ASK_PERMISSIONS2: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     localizacion();
-
-                } else {
-
-                    Toast.makeText(context, "Para un buen funcionamiento debe aceptar", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(this, "Deslice hacia abajo para actualizar", Toast.LENGTH_SHORT).show();
                 }
+
+                else Toast.makeText(context, "Para un buen funcionamiento debe aceptar", Toast.LENGTH_SHORT).show();
 
             }
 

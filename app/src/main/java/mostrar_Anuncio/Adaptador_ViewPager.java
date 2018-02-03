@@ -27,6 +27,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.Arrays;
 
 import mgppgg.tioney.AnunDatabase;
+import mgppgg.tioney.R;
 import recycler_view.Anuncio;
 
 import static android.R.attr.width;
@@ -46,11 +47,10 @@ public class Adaptador_ViewPager extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return anun.getFotos();
+        if(anun.getFotos()>0) return anun.getFotos();
+        else return 1;
 
     }
-
-
 
     @Override
     public boolean isViewFromObject(View v, Object obj) {
@@ -60,9 +60,10 @@ public class Adaptador_ViewPager extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int i) {
         ImageView image = new ImageView(Context);
+        image.setImageResource(R.drawable.logo);
         image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         StorageReference filepathFoto = storage.getReferenceFromUrl(anun.getUrl()+"Foto"+i);
-        Glide.with(Context).using(new FirebaseImageLoader()).load(filepathFoto).diskCacheStrategy(DiskCacheStrategy.NONE).into(image);
+        if(anun.getFotos()>0)Glide.with(Context).using(new FirebaseImageLoader()).load(filepathFoto).diskCacheStrategy(DiskCacheStrategy.NONE).into(image);
         container.addView(image, 0);
         return image;
     }

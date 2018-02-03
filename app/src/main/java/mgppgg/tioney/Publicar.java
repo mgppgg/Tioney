@@ -193,10 +193,12 @@ public class Publicar extends BaseActivity {
         BtnSubir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isOnlineNet() && localizacion()) {
-                    if (anun2 == null) confirmacion("¿Esta seguro de subir el anuncio?", 0);
-                    else confirmacion("¿Esta seguro de editar el anuncio?", 0);
-                } else if(!isOnlineNet())snackBar("Sin conexión a internet");
+                if (isOnlineNet()) {
+                    if(localizacion()) {
+                        if (anun2 == null) confirmacion("¿Está seguro de subir el anuncio?", 0);
+                        else confirmacion("¿Está seguro de guardar los cambios del anuncio?", 0);
+                    }
+                } else snackBar("Sin conexión a internet");
 
             }
         });
@@ -556,23 +558,26 @@ public class Publicar extends BaseActivity {
 
 
     public boolean localizacion() {
+        final boolean[] resul = {false};
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(Publicar.this, "Debe habilitar el permiso de localización para subir anuncios", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        else {
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+
+            snackBar("Permitir localización necesario");
+
+        }else {
+                 mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
                                 local = location;
-                            }
+                                resul[0] = true;
+                            } else snackBar("Error al obtener localización");
+
                         }
                     });
-            return true;
         }
+
+        return resul[0];
     }
 
     public int obCategoria(Anuncio anun){
