@@ -1,5 +1,7 @@
 package mgppgg.tioney;
 
+import android.annotation.TargetApi;
+import android.graphics.Color;
 import android.support.design.widget.FloatingActionButton;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -7,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.firebase.ui.database.FirebaseListAdapter;
 
@@ -29,7 +32,7 @@ public class Chat extends BaseActivity{
         private FirebaseUser user;
         private AnunDatabase anun;
         private Conver_firebase conver;
-        private String chatUrl, key_chat;
+        private String chatUrl, key_chat,nombreUsuario;
         private boolean conversaciones = false;
         private boolean borrada = false;
         private boolean existe = true;
@@ -54,6 +57,7 @@ public class Chat extends BaseActivity{
         conversaciones = getIntent().getExtras().getBoolean("conversaciones");
         conver =(Conver_firebase) getIntent().getSerializableExtra("conver");
         key_chat = getIntent().getExtras().getString("key_chat");
+        nombreUsuario = user.getDisplayName();
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_chat);
         listOfMessages = (ListView)findViewById(R.id.list_chat);
@@ -138,22 +142,62 @@ public class Chat extends BaseActivity{
         mostrar_msgs(database.child("Chats").child(chatUrl).child("Mensajes"));
     }
 
-
+    @TargetApi(24)
     public void mostrar_msgs(DatabaseReference ref){
         adapter = new FirebaseListAdapter<Mensaje_chat>(this, Mensaje_chat.class, R.layout.mensaje, ref) {
             @Override
             protected void populateView(View v, Mensaje_chat model, int position) {
                 // Get references to the views of message.xml
                 TextView messageText = (TextView)v.findViewById(R.id.message_text);
-                TextView messageUser = (TextView)v.findViewById(R.id.message_user);
                 TextView messageTime = (TextView)v.findViewById(R.id.message_time);
 
                 // Set their text
                 messageText.setText(model.getMessageText());
-                messageUser.setText(model.getMessageUser());
 
                 // Format the date before showing it
                 messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getMessageTime()));
+
+                if(!model.getMessageUser().equals(nombreUsuario)){
+                    v.setBackgroundResource(R.drawable.bubble_recibir);
+                    messageText.setTextColor(Color.parseColor("#000000"));
+                    messageTime.setTextColor(Color.parseColor("#000000"));
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)messageText.getLayoutParams();
+                    params.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    params.removeRule(RelativeLayout.ALIGN_PARENT_END);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_START);
+                    RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams)messageTime.getLayoutParams();
+                    params2.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    params2.addRule(RelativeLayout.ALIGN_PARENT_END);
+                    params2.removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                    params2.removeRule(RelativeLayout.ALIGN_PARENT_START);
+
+                }
+                else{
+                    v.setBackgroundResource(R.drawable.bubble_enviar);
+                    messageText.setTextColor(Color.parseColor("#FFFFFF"));
+                    messageTime.setTextColor(Color.parseColor("#FFFFFF"));
+                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)messageText.getLayoutParams();
+                    params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_END);
+                    params.removeRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                    params.removeRule(RelativeLayout.ALIGN_PARENT_START);
+                    RelativeLayout.LayoutParams params2 = (RelativeLayout.LayoutParams)messageTime.getLayoutParams();
+                    params2.removeRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                    params2.removeRule(RelativeLayout.ALIGN_PARENT_END);
+                    params2.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                    params2.addRule(RelativeLayout.ALIGN_PARENT_START);
+                }
+
+                if(!model.getMessageUser().equals(nombreUsuario)){
+
+                }
+                else{
+
+                }
+
+
+
             }
         };
 
