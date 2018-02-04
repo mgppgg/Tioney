@@ -119,7 +119,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         rv.setHasFixedSize(true);
         LayoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(LayoutManager);
-        Adapter = new MyAdapter(urls,context,dialog);
+        Adapter = new MyAdapter(context,dialog);
 
         permiso();
 

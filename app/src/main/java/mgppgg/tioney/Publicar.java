@@ -78,7 +78,7 @@ public class Publicar extends BaseActivity {
     private ImageButton BtnIma3;
     private ImageButton BtnIma4;
     private int i;
-    private boolean seleccionar_cat;
+    private boolean seleccionar_cat,localizacion;
     private String key,categoria;
     private String cats[];
     private ArrayList<ArrrayUri> arrayUris;
@@ -123,6 +123,7 @@ public class Publicar extends BaseActivity {
         spinner = (Spinner) findViewById(R.id.spinner_publicar);
         i = -1;
         seleccionar_cat = false;
+        localizacion = false;
         arrayUris = new ArrayList<>();
         cats = getResources().getStringArray(R.array.categorias_publicar);
         local = new Location("localizacion");
@@ -138,6 +139,8 @@ public class Publicar extends BaseActivity {
         spinner.setPrompt("Seleccione categoría");
         spinner.setAdapter(adapter);
 
+        localizacion();
+
         if (anun2 != null) {
             imageButtons = new ArrayList<>();
             imageButtons.add(BtnIma1);
@@ -146,7 +149,7 @@ public class Publicar extends BaseActivity {
             imageButtons.add(BtnIma4);
 
             BtnBorrar.setVisibility(View.VISIBLE);
-            BtnSubir.setText("Editar");
+            BtnSubir.setText("Guardar");
 
             ETtitulo.setText(anun2.getTitulo());
             ETdescripcion.setText(anun2.getDescripcion());
@@ -194,10 +197,10 @@ public class Publicar extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (isOnlineNet()) {
-                    if(localizacion()) {
+                    if(localizacion) {
                         if (anun2 == null) confirmacion("¿Está seguro de subir el anuncio?", 0);
                         else confirmacion("¿Está seguro de guardar los cambios del anuncio?", 0);
-                    }
+                    }else snackBar("Error al obtener localización");
                 } else snackBar("Sin conexión a internet");
 
             }
@@ -557,27 +560,25 @@ public class Publicar extends BaseActivity {
     }
 
 
-    public boolean localizacion() {
-        final boolean[] resul = {false};
+    public void localizacion() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            snackBar("Permitir localización necesario");
+            snackBar("Permitir localización necesario para subir anuncio");
 
         }else {
                  mFusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
                         @Override
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
+                            if(location != null) {
                                 local = location;
-                                resul[0] = true;
-                            } else snackBar("Error al obtener localización");
-
-                        }
-                    });
+                                localizacion = true;
+                            }
+                        }}
+                 );
         }
 
-        return resul[0];
+
     }
 
     public int obCategoria(Anuncio anun){

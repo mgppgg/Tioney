@@ -49,7 +49,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private ProgressDialog dialog;
     private FirebaseStorage  storage;
 
-    public MyAdapter(ArrayList<AnunDatabase> url, Context context,ProgressDialog d) {
+    public MyAdapter(Context context,ProgressDialog d) {
         anunciosDatabase = new ArrayList<>();
         descripciones = new ArrayList<>();
         this.context = context;
