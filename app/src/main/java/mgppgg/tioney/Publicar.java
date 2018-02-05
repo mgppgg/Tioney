@@ -209,7 +209,7 @@ public class Publicar extends BaseActivity {
         BtnBorrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isOnlineNet()) confirmacion("¿Esta seguro de borrar el anuncio?", 1);
+                if (isOnlineNet()) confirmacion("¿Está seguro de borrar el anuncio?", 1);
                 else snackBar("Sin conexión a internet");
             }
         });
@@ -443,10 +443,6 @@ public class Publicar extends BaseActivity {
 
                         }
 
-                        /*final Map<String, Object> map = new HashMap<>();
-                        AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario,categoria, arrayUris.size(),local.getLongitude(),local.getLatitude());
-                        map.put(key, anun);*/
-
                         if (finalCont > 0) {
                             database.child("Usuarios").child(UID).child("Anuncios").child(key).child("fotos").setValue(anun2.getFotos() + finalCont);
                             database.child("Anuncios1").child(key).child("fotos").setValue(anun2.getFotos() + finalCont);
@@ -491,7 +487,7 @@ public class Publicar extends BaseActivity {
         }
         if(!seleccionar_cat){
             v = false;
-            Toast.makeText(Publicar.this, "Categoria seleccionada no válida", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Publicar.this, "Categoría seleccionada no válida", Toast.LENGTH_SHORT).show();
         }
 
         Log.d("qqq", String.valueOf(seleccionar_cat));

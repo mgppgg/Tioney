@@ -135,7 +135,7 @@ public class Conversaciones extends BaseActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(true);
-        builder.setTitle("¿Esta seguro de borrar la conversación?");
+        builder.setTitle("¿Está seguro de borrar la conversación?");
         builder.setPositiveButton("Aceptar",
                 new DialogInterface.OnClickListener() {
                     @Override

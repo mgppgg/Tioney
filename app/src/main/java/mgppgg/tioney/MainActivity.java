@@ -94,7 +94,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         database = FirebaseDatabase.getInstance().getReference();
         numeroCargas = 1;
         posSpinner = 0;
-        posBar = 2;
+        posBar = 3;
         busqueda = "";
         categoria = "Todas las categorías";
         PBcargar_mas = (ProgressBar)findViewById(R.id.PBcargar_mas);
@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         dialog.setMessage("Cargando anuncios..");
         login = getIntent().getExtras().getBoolean("login");
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        radio = 10;
+        radio = 1000;
         local = new Location("LocationA");
         localb = new Location("LocationB");
         query = database.child("Anuncios1").orderByChild("fecha");
@@ -351,7 +351,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         distancia.setMax(3);
         distancia.setProgress(posBar);
         distancia.getIndeterminateDrawable().setColorFilter(0xFFFFFFFF, android.graphics.PorterDuff.Mode.MULTIPLY);
-        if(radio==10000)TVdistancia.setText("10");
+        if(radio==1000){
+            TVdistancia.setText("10");
+            mm.setText("Distancia:   >");
+        }
         else TVdistancia.setText(""+radio);
 
         distancia.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -377,7 +380,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     case 3:
                         progress = 10;
                         mm.setText("Distancia:   >");
-                        radio= 10000;
+                        radio= 1000;
                         break;
                 }
                 TVdistancia.setText(String.valueOf(progress));

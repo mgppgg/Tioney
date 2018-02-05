@@ -50,11 +50,6 @@ public class MostrarAnun extends AppCompatActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mostrar);
 
-        if(getSupportActionBar()!=null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-
         storage = FirebaseStorage.getInstance();
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapa);
         mapFragment.getMapAsync(this);
@@ -81,6 +76,12 @@ public class MostrarAnun extends AppCompatActivity implements OnMapReadyCallback
         precio.setText(anun.getPrecio());
 
         if (user != null && user.getUid().equals(anun.getUID())) contactar.setEnabled(false);
+
+        if(getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setTitle(anun.getUsuario());
+        }
 
 
         ViewPager mViewPager = (ViewPager) findViewById(R.id.viewPager);

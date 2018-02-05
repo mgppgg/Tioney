@@ -115,8 +115,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     holder.precio.setText(anunciosDatabase.get(holder.getAdapterPosition()).getPrecio());
                 }
 
-
-                if(holder.getAdapterPosition() >= anunciosDatabase.size()/2)dialog.dismiss();
+                if(holder.getAdapterPosition() >= anunciosDatabase.size()/3){
+                    dialog.dismiss();
+                }
 
             }
         }).addOnFailureListener(new OnFailureListener() {
