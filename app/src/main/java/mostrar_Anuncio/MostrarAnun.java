@@ -65,14 +65,13 @@ public class MostrarAnun extends AppCompatActivity implements OnMapReadyCallback
         final ScrollView scroll = (ScrollView)findViewById(R.id.SVmostrar);
 
         anun = (AnunDatabase) getIntent().getSerializableExtra("Anuncio");
-        String descrip =  getIntent().getExtras().getString("descripcion");
 
         titulo = (TextView) findViewById(R.id.TVtituloMostrar);
         descripcion = (TextView) findViewById(R.id.TVdescripcionMostrar);
         precio = (TextView) findViewById(R.id.TVprecioMostrar);
 
         titulo.setText(anun.getTitulo());
-        descripcion.setText(descrip);
+        descripcion.setText(anun.getDescripcion());
         precio.setText(anun.getPrecio());
 
         if (user != null && user.getUid().equals(anun.getUID())) contactar.setEnabled(false);

@@ -66,7 +66,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-import recycler_view.Anuncio;
 
 
 
@@ -86,7 +85,7 @@ public class Publicar extends BaseActivity {
     private EditText ETdescripcion;
     private EditText ETtitulo;
     private EditText ETprecio;
-    private Anuncio anun2;
+    private AnunDatabase anun2;
     private Location local;
     private Spinner spinner;
     private FirebaseStorage storage;
@@ -109,7 +108,8 @@ public class Publicar extends BaseActivity {
         }
 
         anun2 = null;
-        anun2 = (Anuncio) getIntent().getSerializableExtra("Anuncio");
+        anun2 = (AnunDatabase) getIntent().getSerializableExtra("Anuncio");
+        key = getIntent().getStringExtra("key");
 
         BtnSubir = (Button) findViewById(R.id.BtnSubir);
         BtnBorrar = (Button) findViewById(R.id.BtnBorrarAnun);
@@ -163,23 +163,6 @@ public class Publicar extends BaseActivity {
                             .skipMemoryCache(true).into(imageButtons.get(n));
                 }
             }
-
-            database.child("Usuarios").child(user.getUid()).child("Anuncios").addListenerForSingleValueEvent(new ValueEventListener() {
-                @TargetApi(Build.VERSION_CODES.KITKAT)
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        AnunDatabase a = postSnapshot.getValue(AnunDatabase.class);
-                        if (Objects.equals(a.getTitulo(), anun2.getTitulo()))
-                            key = postSnapshot.getKey();
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
 
         }
 
@@ -347,80 +330,87 @@ public class Publicar extends BaseActivity {
 
                 usuario = user.getDisplayName();
                 url = "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/";
-                final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
-                final StorageReference filepathDescripcion = storageRef.child("Anuncios/" + ID + "/" + "Descripcion");
 
                 String key1 = database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
                 final Map<String, Object> map = new HashMap<>();
-                AnunDatabase anun = new AnunDatabase(titulo, precio, url, UID, usuario,categoria, arrayUris.size(),local.getLongitude(),local.getLatitude(),fecha);
+                AnunDatabase anun = new AnunDatabase(titulo, precio,descripcion, url, UID, usuario,categoria, arrayUris.size(),local.getLongitude(),local.getLatitude(),fecha);
                 map.put(key1, anun);
 
-                if (i > -1) {
+                database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
 
-                    for (int b = 0; b < arrayUris.size(); b++) {
+                        if (arrayUris.size()>0) {
 
-                        arrayUris.get(b).setId(b);
+                            for (int b = 0; b < arrayUris.size(); b++) {
 
-                        StorageReference filepathFotos = storageRef.child("Anuncios/" + ID + "/" + "Foto" + b);
-                        Uri file = Uri.fromFile(new File(arrayUris.get(b).getIma()));
+                                arrayUris.get(b).setId(b);
 
-                        filepathFotos.putFile(file).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                Toast.makeText(Publicar.this, "Error al subir fotos", Toast.LENGTH_SHORT).show();
+                                StorageReference filepathFotos = storageRef.child("Anuncios/" + ID + "/" + "Foto" + b);
+                                Uri file = Uri.fromFile(new File(arrayUris.get(b).getIma()));
+
+                                final int finalB = b;
+                                filepathFotos.putFile(file).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        hideProgressDialog();
+                                        Toast.makeText(Publicar.this, "Error al subir fotos", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        if(finalB == arrayUris.size()-1){
+
+                                            database.child("Anuncios1").updateChildren(map);
+                                            hideProgressDialog();
+                                            Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        }
+                                    }
+                                });
+
                             }
-                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        }else{
 
-                            }
-                        });
+                            database.child("Anuncios1").updateChildren(map);
+                            hideProgressDialog();
+                            Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
+                            finish();
+
+                        }
+
+
 
                     }
-                }
-
-                filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
+                }).addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(Publicar.this, "Error al subir anuncio", Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        database.child("Usuarios").child(user.getUid()).child("Anuncios").updateChildren(map);
-                        database.child("Anuncios1").updateChildren(map);
-
+                    public void onFailure(@NonNull Exception e) {
                         hideProgressDialog();
-
-                        Toast.makeText(Publicar.this, "Publicación subida correctamente", Toast.LENGTH_SHORT).show();
-                        finish();
+                        Toast.makeText(Publicar.this, "Error al publicar anuncio", Toast.LENGTH_SHORT).show();
                     }
                 });
 
+
             } else {
+
                 int cont = 0;
-                final StorageReference filepathDescripcion = storage.getReferenceFromUrl(anun2.getUrl() + "Descripcion");
-                final InputStream streamDescripcion = new ByteArrayInputStream(descripcion.getBytes());
 
                 for (int c = 0; c < arrayUris.size(); c++) {
                     if (arrayUris.get(c).getId() > anun2.getFotos() - 1) cont++;
                 }
                 final int finalCont = cont;
 
+                anun2.setTitulo(titulo);
+                anun2.setDescripcion(descripcion);
+                anun2.setPrecio(precio);
+                anun2.setCategoria(categoria);
+                if(finalCont > 0)anun2.setFotos(anun2.getFotos() + finalCont);
 
-                filepathDescripcion.putStream(streamDescripcion).addOnFailureListener(new OnFailureListener() {
+                database.child("Usuarios").child(UID).child("Anuncios").child(key).setValue(anun2).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(Publicar.this, "Error al actualizar", Toast.LENGTH_SHORT).show();
-                        hideProgressDialog();
+                    public void onSuccess(Void aVoid) {
 
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        if (i > -1) {
+                        if (arrayUris.size()>0) {
 
                             for (int b = 0; b < arrayUris.size(); b++) {
 
@@ -430,6 +420,7 @@ public class Publicar extends BaseActivity {
                                 filepathFotos.putFile(file).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception exception) {
+                                        hideProgressDialog();
                                         Toast.makeText(Publicar.this, "Error al subir fotos", Toast.LENGTH_SHORT).show();
                                     }
                                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -443,22 +434,18 @@ public class Publicar extends BaseActivity {
 
                         }
 
-                        if (finalCont > 0) {
-                            database.child("Usuarios").child(UID).child("Anuncios").child(key).child("fotos").setValue(anun2.getFotos() + finalCont);
-                            database.child("Anuncios1").child(key).child("fotos").setValue(anun2.getFotos() + finalCont);
-                        }
-                        database.child("Usuarios").child(UID).child("Anuncios").child(key).child("titulo").setValue(titulo);
-                        database.child("Usuarios").child(UID).child("Anuncios").child(key).child("precio").setValue(precio);
-                        database.child("Usuarios").child(UID).child("Anuncios").child(key).child("categoria").setValue(categoria);
-                        database.child("Anuncios1").child(key).child("titulo").setValue(titulo);
-                        database.child("Anuncios1").child(key).child("precio").setValue(precio);
-                        database.child("Anuncios1").child(key).child("categoria").setValue(categoria);
-
+                        database.child("Anuncios1").child(key).setValue(anun2);
 
                         hideProgressDialog();
                         Toast.makeText(Publicar.this, "Actualizado. Desliza abajo para comprobar", Toast.LENGTH_SHORT).show();
                         finish();
 
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        hideProgressDialog();
+                        Toast.makeText(Publicar.this, "Error al actualizar tu anuncio", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -498,7 +485,8 @@ public class Publicar extends BaseActivity {
 
     public void borrrarAnun() {
 
-        storage.getReferenceFromUrl(anun2.getUrl() + "Descripcion").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+
+        database.child("Usuarios").child(user.getUid()).child("Anuncios").child(key).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
 
@@ -510,25 +498,23 @@ public class Publicar extends BaseActivity {
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Publicar.this, "Error al eliminar fotos", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
 
-                database.child("Usuarios").child(user.getUid()).child("Anuncios").child(key).removeValue();
                 database.child("Anuncios1").child(key).removeValue();
-
                 Toast.makeText(Publicar.this, "Borrado. Desliza hacia abajo para comprobar", Toast.LENGTH_SHORT).show();
+                finish();
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                Toast.makeText(Publicar.this, "Error al eliminar", Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Publicar.this, "Error al eliminar anuncio", Toast.LENGTH_SHORT).show();
             }
         });
 
-
-        finish();
     }
 
 
@@ -577,7 +563,7 @@ public class Publicar extends BaseActivity {
 
     }
 
-    public int obCategoria(Anuncio anun){
+    public int obCategoria(AnunDatabase anun){
         int num=0;
         for(int a = 0;a<cats.length;a++){
             if(anun.getCategoria().equals(cats[a]))num=a;

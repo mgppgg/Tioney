@@ -11,6 +11,7 @@ import java.io.Serializable;
 public class AnunDatabase implements Serializable {
     private String titulo;
     private String precio;
+    private String descripcion;
     private String url;
     private String UID;
     private String usuario;
@@ -20,9 +21,10 @@ public class AnunDatabase implements Serializable {
     private double latitud;
     private long fecha;
 
-    public  AnunDatabase(String t,String p,String url,String e,String usu,String cat,int foto,double longi,double lat,long f){
+    public  AnunDatabase(String t,String p,String des,String url,String e,String usu,String cat,int foto,double longi,double lat,long f){
         this.titulo = t;
         this.precio = p;
+        this.descripcion = des;
         this.url = url;
         this.UID = e;
         this.usuario = usu;
@@ -36,6 +38,7 @@ public class AnunDatabase implements Serializable {
     public  AnunDatabase(){
         this.titulo = "";
         this.precio = "";
+        this.descripcion = "";
         this.url = "";
         this.UID = "";
         this.usuario="";
@@ -61,6 +64,14 @@ public class AnunDatabase implements Serializable {
 
     public void setPrecio(String precio) {
         this.precio = precio;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getUrl() {
@@ -126,4 +137,5 @@ public class AnunDatabase implements Serializable {
     public void setFecha(long fecha) {
         this.fecha = fecha;
     }
+
 }

@@ -28,7 +28,6 @@ import java.util.Arrays;
 
 import mgppgg.tioney.AnunDatabase;
 import mgppgg.tioney.R;
-import recycler_view.Anuncio;
 
 import static android.R.attr.width;
 import static com.firebase.ui.storage.R.attr.height;

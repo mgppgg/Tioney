@@ -42,17 +42,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import recycler_view.Anuncio;
 import recycler_view.MyAdapter;
 
 public class MisAnuncios extends BaseActivity {
 
     private DatabaseReference database;
-    private StorageReference filepathFoto0,filepathDescripcion;
+    private StorageReference filepathFoto0;
     private FirebaseStorage storage;
     private ListView listOfAnun;
-    private ArrayList<Anuncio> anuncios;
-    private FirebaseListAdapter <Anuncio> adapter;
+    private ArrayList<AnunDatabase> anuncios;
+    private FirebaseListAdapter <AnunDatabase> adapter;
     private FirebaseUser user;
     private TextView noAnun;
     private SwipeRefreshLayout refreshLayout;
@@ -83,6 +82,7 @@ public class MisAnuncios extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getBaseContext(), Publicar.class);
                 intent.putExtra("Anuncio",anuncios.get(position));
+                intent.putExtra("key",adapter.getRef(position).getKey());
                 startActivity(intent);
             }
         });
@@ -107,9 +107,9 @@ public class MisAnuncios extends BaseActivity {
 
 
     public void mostrar_anun(DatabaseReference ref){
-        adapter = new FirebaseListAdapter<Anuncio>(this, Anuncio.class, R.layout.card, ref) {
+        adapter = new FirebaseListAdapter<AnunDatabase>(this, AnunDatabase.class, R.layout.card, ref) {
             @Override
-            protected void populateView(View v, final Anuncio anun, final int position) {
+            protected void populateView(View v, final AnunDatabase anun, final int position) {
                 noAnun.setVisibility(View.GONE);
                 anuncios.add(anun);
                 final TextView titulo = (TextView)v.findViewById(R.id.TVtituloCard);
@@ -117,28 +117,15 @@ public class MisAnuncios extends BaseActivity {
                 final TextView precio = (TextView)v.findViewById(R.id.TVprecioCard);
                 ImageView foto =(ImageView)v.findViewById(R.id.IVfotoCard);
                 filepathFoto0 = storage.getReferenceFromUrl(anun.getUrl()+"Foto0");
-                filepathDescripcion =  storage.getReferenceFromUrl(anun.getUrl() + "Descripcion");
+
 
                 if(anun.getFotos()>0)Glide.with(getBaseContext()).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(foto);
                 else foto.setImageResource(R.drawable.logo_fondonegro);
 
-                filepathDescripcion.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @TargetApi(24)
-                    public void onSuccess(byte[] bytes) {
-                        // Use the bytes to display the image
-                        String des = new String(bytes, StandardCharsets.UTF_8);
+                titulo.setText(anun.getTitulo());
+                descripcion.setText(anun.getDescripcion());
+                precio.setText(anun.getPrecio());
 
-                        titulo.setText(anun.getTitulo());
-                        descripcion.setText(des);
-                        precio.setText(anun.getPrecio());
-                        anun.setDescripcion(des);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(getBaseContext(), "Error al descargar los anuncios", Toast.LENGTH_SHORT).show();
-                    }
-                });
 
 
 
