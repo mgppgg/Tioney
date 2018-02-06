@@ -38,6 +38,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -80,12 +84,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private static final int REQUEST_CODE_ASK_PERMISSIONS2 = 456;
     private static final int NUMERO_ANUNCIOS = 15;
     private int radio, numeroCargas,posSpinner,posBar;
+    private AdView mAdView;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MobileAds.initialize(this,getString(R.string.banner));
+        mAdView = (AdView) findViewById(R.id.AVbanner);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
 
         context = this;
         urls = new ArrayList<>();

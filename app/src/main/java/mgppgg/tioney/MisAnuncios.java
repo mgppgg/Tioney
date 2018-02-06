@@ -1,48 +1,27 @@
 package mgppgg.tioney;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Handler;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.io.ObjectInput;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Objects;
-
-import recycler_view.MyAdapter;
 
 public class MisAnuncios extends BaseActivity {
 
@@ -119,6 +98,7 @@ public class MisAnuncios extends BaseActivity {
                 filepathFoto0 = storage.getReferenceFromUrl(anun.getUrl()+"Foto0");
 
 
+
                 if(anun.getFotos()>0)Glide.with(getBaseContext()).using(new FirebaseImageLoader()).load(filepathFoto0).diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(foto);
                 else foto.setImageResource(R.drawable.logo_fondonegro);
 
@@ -141,7 +121,7 @@ public class MisAnuncios extends BaseActivity {
 
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {  //boton de atras
+    public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==android.R.id.home)finish();
         return super.onOptionsItemSelected(item);
     }

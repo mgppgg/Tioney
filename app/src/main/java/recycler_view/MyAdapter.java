@@ -89,8 +89,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-
-        final StorageReference filepathDescripcion;
+        
 
         if(anunciosDatabase.get(holder.getAdapterPosition()).getFotos()>0){
             final StorageReference filepathFoto0 = storage.getReferenceFromUrl(anunciosDatabase.get(holder.getAdapterPosition()).getUrl()+"Foto0");

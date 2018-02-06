@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,7 +37,7 @@ public class Conversaciones extends BaseActivity {
     private ArrayList<Conver_firebase> convers;
     private ImageButton borrar;
     private TextView noConver;
-    private String key_chat;
+    private ArrayList<String> keys;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class Conversaciones extends BaseActivity {
         database = FirebaseDatabase.getInstance().getReference();
         user = FirebaseAuth.getInstance().getCurrentUser();
         convers = new ArrayList<>();
+        keys = new ArrayList<>();
 
         listOfConvers = (ListView)findViewById(R.id.list_conver);
         noConver = (TextView)findViewById(R.id.TVnoAnun3);
@@ -65,7 +67,7 @@ public class Conversaciones extends BaseActivity {
                 Usuario.setText(conver.getUser());
                 convers.add(conver);
                 borrar = (ImageButton)v.findViewById(R.id.BTNborrarConver);
-                key_chat = adapter.getRef(position).getKey();
+                keys.add(adapter.getRef(position).getKey());
 
                 borrar.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -87,14 +89,14 @@ public class Conversaciones extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(isOnlineNet()){
-
+                    Log.d("eeeeeeeeeeeeeeee", convers.get(position).getUser());
                     ImageView nuevo_msg = (ImageView)view.findViewById(R.id.IVnuevo_msg);
                     nuevo_msg.setVisibility(View.GONE);
-                    database.child("Usuarios").child(user.getUid()).child("Chats").child(key_chat).child("nuevo_msg").setValue(0);
+                    database.child("Usuarios").child(user.getUid()).child("Chats").child(keys.get(position)).child("nuevo_msg").setValue(0);
                     Intent intent = new Intent(getBaseContext(), Chat.class);
                     intent.putExtra("conversaciones",true);
                     intent.putExtra("conver", convers.get(position));
-                    intent.putExtra("key_chat", key_chat);
+                    intent.putExtra("key_chat", keys.get(position));
                     startActivity(intent);
 
                 }
@@ -114,7 +116,7 @@ public class Conversaciones extends BaseActivity {
 
     public void borrarChat(final Conver_firebase conver, final int position){
 
-        database.child("Usuarios").child(user.getUid()).child("Chats").child(key_chat).removeValue();
+        database.child("Usuarios").child(user.getUid()).child("Chats").child(keys.get(position)).removeValue();
         database.child("Chats").child(conver.getChatUrl()).child("Estado").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

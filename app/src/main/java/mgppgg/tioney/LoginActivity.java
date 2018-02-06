@@ -29,7 +29,6 @@ public class LoginActivity extends BaseActivity {
     private Button BtnLogin ;
     private EditText ETpass;
     private EditText ETemail;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String TAG = "EmailPassword";

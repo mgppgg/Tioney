@@ -43,11 +43,6 @@ public class Chat extends BaseActivity{
         setContentView(R.layout.activity_chat);
 
 
-        if(getSupportActionBar()!=null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-
         database = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -57,6 +52,13 @@ public class Chat extends BaseActivity{
         conver =(Conver_firebase) getIntent().getSerializableExtra("conver");
         key_chat = getIntent().getExtras().getString("key_chat");
         nombreUsuario = user.getDisplayName();
+
+        if(getSupportActionBar()!=null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            if(conversaciones)getSupportActionBar().setTitle(conver.getUser());
+            else getSupportActionBar().setTitle(anun.getUsuario());
+        }
 
         FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab_chat);
         listOfMessages = (ListView)findViewById(R.id.list_chat);

@@ -17,7 +17,7 @@
         <meta-data android:name="android.app.default_searchable" android:value=".Buscar" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDazPPawvDpr5foXPpNDvaHouxhmRY3P1k"/>
+            android:value="AIzaSyD4bKLd8VCkxGngZn3LAADCqNtWL6hnwlI"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -43,6 +43,7 @@
         </activity>
         <activity
             android:name=".Publicar"
+            android:windowSoftInputMode="adjustResize"
             android:label="Publicar anuncio"
             android:screenOrientation="portrait" />
         <activity

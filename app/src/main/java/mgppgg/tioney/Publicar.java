@@ -38,6 +38,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -94,6 +96,7 @@ public class Publicar extends BaseActivity {
     private FirebaseUser user;
     private FusedLocationProviderClient mFusedLocationClient;
     private static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +104,9 @@ public class Publicar extends BaseActivity {
         setContentView(R.layout.activity_publicar);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        mAdView = (AdView) findViewById(R.id.AVbannerPublicar);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -329,7 +335,7 @@ public class Publicar extends BaseActivity {
             if (anun2 == null) {
 
                 usuario = user.getDisplayName();
-                url = "gs://tioney-40377.appspot.com/Anuncios/" + ID + "/";
+                url = "gs://tioney-a1c24.appspot.com/Anuncios/" + ID + "/";
 
                 String key1 = database.child("Usuarios").child(user.getUid()).child("Anuncios").push().getKey();
                 final Map<String, Object> map = new HashMap<>();
