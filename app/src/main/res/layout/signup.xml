@@ -12,80 +12,109 @@
             android:id="@+id/logoSignup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ETnombre"
-            android:layout_alignParentTop="true"
+            android:layout_above="@+id/ETnombre"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="66dp"
             android:layout_marginTop="16dp"
-            app:srcCompat="@drawable/logo" />
+            android:adjustViewBounds="true"
+            app:srcCompat="@drawable/logo"
+            android:layout_marginBottom="16dp" />
 
-        <EditText
-            android:id="@+id/ETnombre"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            android:hint="Nombre y apellidos"
-            android:inputType="textPersonName"
-            android:maxLength="30"
-            android:textColor="#FFFFFF "
-            android:textColorHint="#EEEEEE"
-            android:textSize="18sp" />
+    <EditText
+        android:id="@+id/ETnombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/TFemail"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:hint="Nombre y apellidos"
+        android:inputType="textPersonName"
+        android:maxLength="30"
+        android:textColor="#FFFFFF "
+        android:textColorHint="#EEEEEE"
+        android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/TFemail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ETnombre"
-            android:layout_marginTop="8dp"
-            android:hint="Correo electrónico"
-            android:inputType="textEmailAddress"
-            android:textSize="18sp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#EEEEEE" />
+    <EditText
+        android:id="@+id/TFemail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/TFpass1"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:hint="Correo electrónico"
+        android:inputType="textEmailAddress"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#EEEEEE"
+        android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/TFpass1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/TFemail"
-            android:layout_marginTop="8dp"
-            android:hint="Contraseña"
-            android:textSize="18sp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            android:inputType="textPassword"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#EEEEEE" />
+    <EditText
+        android:id="@+id/TFpass1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/TFpass2"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:hint="Contraseña"
+        android:inputType="textPassword"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#EEEEEE"
+        android:textSize="18sp" />
 
-        <EditText
-            android:id="@+id/TFpass2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/TFpass1"
-            android:layout_marginTop="8dp"
-            android:textSize="18sp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            android:hint="Confirmar contraseña"
-            android:inputType="textPassword"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#EEEEEE" />
+    <EditText
+        android:id="@+id/TFpass2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearlayout"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="8dp"
+        android:hint="Confirmar contraseña"
+        android:inputType="textPassword"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#EEEEEE"
+        android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/Bsignupbutton"
-            style="@style/botones"
+    <LinearLayout
+        android:id="@+id/linearlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/Bsignupbutton"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/checkBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/TFpass2"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="36dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="Registrarse" />
+            android:buttonTint="@android:color/white"
+            android:text="Acepto los "
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/TVterminos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Términos y condiciones"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textStyle="italic" />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/Bsignupbutton"
+        style="@style/botones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="Registrarse" />
 
 </RelativeLayout>

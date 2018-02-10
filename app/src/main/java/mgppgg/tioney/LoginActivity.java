@@ -1,5 +1,6 @@
 package mgppgg.tioney;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.app.ProgressDialog;
 import android.support.annotation.VisibleForTesting;
@@ -43,7 +45,6 @@ public class LoginActivity extends BaseActivity {
         BtnLogin = (Button)findViewById(R.id.BtnLogin);
         ETpass = (EditText)findViewById(R.id.ETpass);
         ETemail = (EditText)findViewById(R.id.ETuser);
-
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -159,6 +160,7 @@ public class LoginActivity extends BaseActivity {
 
         return valid;
     }
+
 
 
 

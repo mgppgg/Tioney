@@ -1,5 +1,6 @@
 package mgppgg.tioney;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,7 +9,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,7 +31,10 @@ import com.google.firebase.iid.FirebaseInstanceId;
 public class SignUp extends LoginActivity {
 
     private Button BtnAceptar;
+    private Button BtnTerminos ;
     private EditText ETpass,ETpass2,ETemail,ETnombre;
+    private CheckBox CBterminos;
+    private TextView terminos;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference database;
@@ -45,9 +51,19 @@ public class SignUp extends LoginActivity {
         ETpass2 = (EditText)findViewById(R.id.TFpass2);
         ETnombre = (EditText)findViewById(R.id.ETnombre);
         BtnAceptar = (Button)findViewById(R.id.Bsignupbutton);
+        CBterminos = (CheckBox)findViewById(R.id.checkBox);
 
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance().getReference();
+
+        terminos = (TextView)findViewById(R.id.TVterminos);
+
+        terminos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                terminos_condiciones();
+            }
+        });
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -70,14 +86,16 @@ public class SignUp extends LoginActivity {
                 String pass2str = ETpass2.getText().toString();
                 String nombre = ETnombre.getText().toString();
 
-                if(!isOnlineNet()) Toast.makeText(SignUp.this, "Sin conexión a internet", Toast.LENGTH_SHORT).show();
+                if(CBterminos.isChecked()) {
 
-                else if(!pass1str.equals(pass2str)) {
-                    Toast.makeText(SignUp.this, "Las contraseñas no coinciden!", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                    createAccount(emailstr,pass1str,nombre);
-                    }
+                    if (!isOnlineNet())
+                        Toast.makeText(SignUp.this, "Sin conexión a internet", Toast.LENGTH_SHORT).show();
+                    else if (!pass1str.equals(pass2str))
+                            Toast.makeText(SignUp.this, "Las contraseñas no coinciden!", Toast.LENGTH_SHORT).show();
+                         else createAccount(emailstr, pass1str, nombre);
+
+                }
+                else Toast.makeText(SignUp.this, "Debe aceptar los Términos y Condiciones", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -166,10 +184,24 @@ public class SignUp extends LoginActivity {
         }
 
 
-
-
-
         return valid;
+    }
+
+
+    public void terminos_condiciones(){
+
+        final Dialog Dterminos = new Dialog(this);
+        Dterminos.setContentView(R.layout.terminos);
+        BtnTerminos = (Button)Dterminos.findViewById(R.id.BTNterminos);
+
+        BtnTerminos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Dterminos.dismiss();
+            }
+        });
+
+        Dterminos.show();
     }
 
 
