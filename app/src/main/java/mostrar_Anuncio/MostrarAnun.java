@@ -147,7 +147,7 @@ public class MostrarAnun extends AppCompatActivity implements OnMapReadyCallback
 
         mMap.addCircle(new CircleOptions()
                         .center(pos)
-                        .radius(500)
+                        .radius(800)
                         .strokeColor(Color.RED)
                         .fillColor(0x220000FF)
                         .strokeWidth(5)

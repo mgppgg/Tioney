@@ -117,7 +117,6 @@ public class SignUp extends LoginActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
-                            //FirebaseUser user = mAuth.getCurrentUser();
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder().setDisplayName(nombre).build();
@@ -127,7 +126,7 @@ public class SignUp extends LoginActivity {
 
                             database.child("Usuarios").child(user.getUid()).setValue(new Usuario(nombre,user.getEmail(),token));
 
-
+                            Toast.makeText(SignUp.this, "Desliza hacia abajo para actualizar",Toast.LENGTH_LONG).show();
                             Intent intent = new Intent(SignUp.this, MainActivity.class);
                             intent.putExtra("login",false);
                             startActivity(intent);

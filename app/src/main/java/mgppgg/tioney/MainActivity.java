@@ -280,7 +280,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (mostrarDia) dialog.show();
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @TargetApi(Build.VERSION_CODES.KITKAT)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 

@@ -58,13 +58,10 @@
         <activity android:name=".MisAnuncios"
             android:label="Mis anuncios"
             android:screenOrientation="portrait"/>
+        <activity android:name=".OlvidoContra"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
 
-        <service
-            android:name=".Notifications">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>

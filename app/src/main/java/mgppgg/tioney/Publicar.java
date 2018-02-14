@@ -238,7 +238,6 @@ public class Publicar extends BaseActivity {
 
     }
 
-    @TargetApi(24)
     public void abrirGaleria() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         intent.setType("image/*");
@@ -246,7 +245,6 @@ public class Publicar extends BaseActivity {
     }
 
 
-    @TargetApi(24)
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         boolean seguir = true;

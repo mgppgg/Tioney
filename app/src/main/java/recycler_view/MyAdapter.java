@@ -1,6 +1,7 @@
 package recycler_view;
 
-import android.annotation.TargetApi;
+import
+        android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -21,20 +22,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import mgppgg.tioney.AnunDatabase;
-import mgppgg.tioney.BaseActivity;
-import mgppgg.tioney.MainActivity;
-import mgppgg.tioney.Publicar;
 import mostrar_Anuncio.MostrarAnun;
 import mgppgg.tioney.R;
 

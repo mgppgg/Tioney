@@ -31,6 +31,7 @@ public class LoginActivity extends BaseActivity {
     private Button BtnLogin ;
     private EditText ETpass;
     private EditText ETemail;
+    private TextView TVolvidar;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static final String TAG = "EmailPassword";
@@ -45,6 +46,7 @@ public class LoginActivity extends BaseActivity {
         BtnLogin = (Button)findViewById(R.id.BtnLogin);
         ETpass = (EditText)findViewById(R.id.ETpass);
         ETemail = (EditText)findViewById(R.id.ETuser);
+        TVolvidar = (TextView)findViewById(R.id.TVolvidar);
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -77,6 +79,14 @@ public class LoginActivity extends BaseActivity {
                 String passR = ETpass.getText().toString();
                 sigin(emailR,passR);
 
+            }
+        });
+
+        TVolvidar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, OlvidoContra.class);
+                startActivity(intent);
             }
         });
 
@@ -160,10 +170,6 @@ public class LoginActivity extends BaseActivity {
 
         return valid;
     }
-
-
-
-
 
 
 }

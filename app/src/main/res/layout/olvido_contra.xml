@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="8dp">
+
+
+    <TextView
+        android:id="@+id/TVolvido"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Introduzca el correo eléctrónico de su cuenta.
+Se le enviará un correo donde podrá restablecer su contraseña."
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/ETolvido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/TVolvido"
+        android:layout_marginTop="16dp"
+        android:inputType="textEmailAddress" />
+
+    <Button
+        android:id="@+id/BTNolvido"
+        style="@style/botones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ETolvido"
+        android:layout_marginTop="16dp"
+        android:text="Enviar" />
+</RelativeLayout>

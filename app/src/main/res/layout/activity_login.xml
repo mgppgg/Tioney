@@ -51,23 +51,41 @@
         style="@style/botones"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/BtnRegistrarse"
+        android:layout_above="@+id/linearLogin"
         android:layout_centerHorizontal="true"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:text="Iniciar sesión" />
 
-    <Button
-        android:id="@+id/BtnRegistrarse"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLogin"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="36dp"
         android:layout_marginTop="16dp"
-        android:background="@color/transparent"
-        android:text="Registrarse"
-        android:textColor="#ffa000" />
+        android:gravity="center_vertical|center"
+        android:orientation="horizontal">
 
-    </RelativeLayout>
+        <Button
+            android:id="@+id/BtnRegistrarse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:text="Registrarse"
+            android:textColor="#ffa000" />
+
+        <TextView
+            android:id="@+id/TVolvidar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:text="¿Olvidó su contraseña?"
+            android:textColor="@android:color/white"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+
+
+</RelativeLayout>
 

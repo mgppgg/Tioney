@@ -143,7 +143,7 @@ public class Chat extends BaseActivity{
         mostrar_msgs(database.child("Chats").child(chatUrl).child("Mensajes"));
     }
 
-    @TargetApi(24)
+    @TargetApi(20)
     public void mostrar_msgs(DatabaseReference ref){
         adapter = new FirebaseListAdapter<Mensaje_chat>(this, Mensaje_chat.class, R.layout.mensaje, ref) {
             @Override
@@ -189,14 +189,6 @@ public class Chat extends BaseActivity{
                     params2.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                     params2.addRule(RelativeLayout.ALIGN_PARENT_START);
                 }
-
-                if(!model.getMessageUser().equals(nombreUsuario)){
-
-                }
-                else{
-
-                }
-
 
 
             }
