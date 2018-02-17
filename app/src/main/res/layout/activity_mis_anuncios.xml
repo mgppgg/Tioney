@@ -7,21 +7,22 @@
     android:layout_height="match_parent"
     tools:context="mgppgg.tioney.MisAnuncios">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipe_listaAnun"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/AVbannerMisAnuncios">
 
         <ListView
             android:id="@+id/list_anun"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#BDBDBD"
             android:divider="@color/transparent"
             android:dividerHeight="2dp"
-            android:background="#BDBDBD"
             android:focusable="true"
-            android:scrollbars="none" >
+            android:scrollbars="none">
+
         </ListView>
 
     </android.support.v4.widget.SwipeRefreshLayout>
@@ -33,6 +34,16 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="No tienes anuncios publicados ¡Empieza ya!" />
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/AVbannerMisAnuncios"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner">
+    </com.google.android.gms.ads.AdView>
 
 
 

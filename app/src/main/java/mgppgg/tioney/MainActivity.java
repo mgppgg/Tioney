@@ -92,7 +92,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MobileAds.initialize(this,getString(R.string.banner));
+        MobileAds.initialize(this,getString(R.string.IniBanner));
         mAdView = (AdView) findViewById(R.id.AVbanner);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);

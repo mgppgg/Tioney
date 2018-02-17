@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +40,7 @@ public class Conversaciones extends BaseActivity {
     private ImageButton borrar;
     private TextView noConver;
     private ArrayList<String> keys;
+    private AdView mAdView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,10 @@ public class Conversaciones extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        mAdView = (AdView) findViewById(R.id.AVbannerConversaciones);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
         adapter = new FirebaseListAdapter<Conver_firebase>(this, Conver_firebase.class, R.layout.card_conversacion, database.child("Usuarios").child(user.getUid()).child("Chats")) {
             @Override

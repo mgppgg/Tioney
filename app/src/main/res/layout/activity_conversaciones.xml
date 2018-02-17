@@ -11,9 +11,10 @@
         android:id="@+id/list_conver"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusable="true"
-        android:dividerHeight="2dp"
+        android:layout_above="@+id/AVbannerConversaciones"
         android:background="#BDBDBD"
+        android:dividerHeight="2dp"
+        android:focusable="true"
         android:scrollbars="none" />
 
 
@@ -24,6 +25,16 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:text="No tienes ninguna conversación" />
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/AVbannerConversaciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner">
+    </com.google.android.gms.ads.AdView>
 
 
 
